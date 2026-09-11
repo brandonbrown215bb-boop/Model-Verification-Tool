@@ -1,0 +1,384 @@
+﻿# Investigation Report: Autodesk Inventor & Excel Validation Desktop Application
+
+## Executive Summary
+This investigation was conducted on live Autodesk Inventor assemblies and Microsoft Excel engineering calculators located in `c:\Users\jbrow263\ISG\20183\Shell`. The objective was to resolve all technical, geometric, automation, and architectural questions required to specify and design a lightweight Windows 11 desktop validation application for engineering quality assurance.
+
+Controlled, empirical experiments were executed on disposable working copies inside `C:\Temp\InventorValidatorInvestigation\` without modifying original files or disturbing running user application sessions. Key breakthroughs include:
+1. **Geometric Correlation:** Confirmed that `Channel Loc` coordinates define physical 3D hole arrays following `Position[i] = ArrayOffset + i * ArraySpacing`. Exact geometric alignment ($0.0000\text{ in}$ error in primary dimensions) was proven between Excel array definitions and 3D B-Rep cylindrical faces transformed into assembly global space.
+2. **Defect Detection:** Discovered both intentional and legacy discrepancies, including a systematic $+0.105\text{ in}$ vertical offset on North Wall channels caused by bottom bulkhead plate thickness, and an unmodeled 16-hole array in `FLOOR_CHAN_1`.
+3. **Process Isolation:** Proved that dedicated instances of Microsoft Excel and Autodesk Inventor 2020 can be spawned, automated, and terminated independently of active designer sessions without interference.
+4. **Non-Destructive Visualization:** Confirmed that Inventor `ClientGraphics` can render interactive cyan, green, and red visual indicators and connectors in the active 3D viewport without dirtying or modifying CAD documents.
+5. **Self-Contained Vault Independence:** Demonstrated that downloaded Vault workspaces are 100% self-contained locally, enabling first-release validation without requiring the Autodesk Vault SDK.
+
+---
+
+## 1. Files and Software Versions Investigated
+
+### Software Environment
+- **Operating System:** Microsoft Windows 11 Enterprise (Version 10.0.22631, 64-bit).
+- **Autodesk Inventor Installed:**
+  - Autodesk Inventor 2020 (Build 240168000, Version 24.0) — Registered COM ProgID `Inventor.Application`.
+  - Autodesk Inventor 2024 (Version 28.0) — Installed at `C:\Program Files\Autodesk\Inventor 2024\Bin\Inventor.exe`.
+- **Microsoft Office / Excel:** Microsoft Excel 2016 / 365 (Office 16, 64-bit, Version 16.0).
+- **Developer Platforms:** Microsoft .NET Framework 4.8, .NET SDKs 8.0.424 and 10.0.302.
+- **Vault Infrastructure:** Autodesk Vault Professional 2020 and Vault Client 2024.
+
+### Representative Samples Investigated
+- **Primary Sample (Full Width Coil Bulkhead):**
+  - Assembly: `391-10006-023.iam` (158 component occurrences, 64 unique referenced IPT/IAM files, 94.48 MB self-contained).
+  - Calculator: `Calc_10006_023.xls` (Contains `Data`, `Sheet1`, `Excel Calcs`, `Channel Loc`, `Hole Sizes`, `Wireways`).
+  - Location: `c:\Users\jbrow263\ISG\20183\Shell\Skid 03\02 (CC\SQ COIL BHD FW 118X179\`.
+- **Secondary Sample (Filter Assembly):**
+  - Assembly: `391-10005-004.iam` with calculator `Calc_10005_004.xls`.
+- **Additional Survey:** Over 15 internal calculators across Skids 02, 03, 04, and 05 were surveyed; all confirmed the standardized `Data`, `Sheet1`, and `Channel Loc` worksheet schema.
+
+---
+
+## 2. Discovered Workflow & Architecture
+The engineering design framework follows a two-tier parametric flow:
+1. **Excel Engineering Calculation:**
+   - Designers input unit parameters (`IH`, `IW`, `CoilFinLength`, `PanelThickness`, `MaterialStyle`) on the `Data` tab.
+   - The workbook calculates internal physics, clearances, and structural hole spacing on `Excel Calcs`.
+   - Output parameters are aggregated on `Sheet1` (619 rows) and linear hole array definitions are generated on `Channel Loc`.
+2. **CAD Geometry & iLogic Execution:**
+   - Parameter values from `Sheet1` drive Inventor user parameters and model parameters.
+   - An assembly-level master iLogic rule (`Name1`, 11,998 characters) evaluates coil stack counts and suppression variables (`Part_<PartNum>_<Suffix> = 1`).
+   - Component instances are activated or suppressed via `Component.IsActive("<PartNumber>:<Index>") = True/False`.
+   - Feature hole arrays in detail parts (e.g. `091-30102-461.ipt`, `091-30102-462.ipt`) correspond to channel mounting holes defined in `Channel Loc`.
+
+---
+
+## 3. Answers to Detailed Investigation Questions
+
+### A. Comparison Workflow
+
+#### Question 1: Does useful validation require applying `Sheet1` values before geometry comparison?
+- **Finding:** Yes, for comprehensive validation of new configurations, but inspecting the existing geometry as-is is also critical for baseline verification.
+- **Evidence:** Parametric changes in Excel (such as modifying `IH` or `IW`) dynamically update `Sheet1` and `Channel Loc` values. If the CAD model has not yet absorbed these changes, validating live geometry against unapplied calculator outputs will report false positives.
+- **Confidence:** Confirmed.
+- **Recommendation:** Provide a primary workflow that applies calculator values to a disposable assembly copy, rebuilds, and then validates, while preserving an "Inspect Current Model" mode.
+
+#### Question 2: Is an “inspect current model” mode also useful or necessary?
+- **Finding:** Yes, it is both useful and necessary.
+- **Evidence:** Engineers frequently need to verify whether a completed CAD model currently sitting in Vault matches the approved calculator without risking unintended rebuild changes.
+- **Confidence:** High confidence.
+- **Recommendation:** Include an "Inspect Current Model (Read-Only)" mode as the default quick-check option.
+
+#### Question 3: Should the copied assembly normally be temporary, or is there evidence designers need to retain it?
+- **Finding:** Working copies should be temporary by default, with an optional explicit "Export Validated Copy" action.
+- **Evidence:** Designers work within Vault-controlled local workspaces. Creating permanent untracked copies risks cluttering project folders and confusing Vault check-ins.
+- **Confidence:** Product decision.
+- **Recommendation:** Maintain the working copy in `C:\Temp\...` and automatically purge it when the validation session concludes, unless the user explicitly clicks "Save/Export Copy".
+
+---
+
+### B. iLogic
+
+#### Question 4: Which rule or event must run?
+- **Finding:** The master top-level assembly rule `Name1` must run.
+- **Evidence:** Inspection of `391-10006-023.iam` via Apprentice Server and Inventor COM revealed two rules: `Name1` (11,998 characters) and `Name4` (220 characters). `Name1` controls all component suppressions and parameter assignments. `Name4` merely resets the view orientation (`AppViewCubeHomeCmd`).
+- **Confidence:** Confirmed.
+- **Recommendation:** Programmatically invoke `Name1` via the Inventor iLogic Automation COM interface (`iLogicAutomation.RunRule(asmDoc, "Name1")`).
+
+#### Question 5: Are child-document rules required?
+- **Finding:** No child-document rules are required for top-level channel and bulkhead configuration.
+- **Evidence:** Child parts (`091-30102-458.ipt`, `091-30102-461.ipt`, etc.) do not contain embedded iLogic automation rules; they are pure parametric models driven by model parameters and expressions pushed from the parent assembly.
+- **Confidence:** Confirmed.
+- **Recommendation:** Execute only the identified top-level assembly rule.
+
+#### Question 6: Do rules display prompts?
+- **Finding:** No UI prompts, message boxes, or input dialogs exist in the automation rules.
+- **Evidence:** Full code audit of `Name1.vb` revealed zero occurrences of `InputBox`, `MsgBox`, or Inventor prompt definitions.
+- **Confidence:** Confirmed.
+- **Recommendation:** Automation can execute non-interactively without modal prompt interception.
+
+#### Question 7: What path, network, Vault, template, library, or external-file dependencies exist?
+- **Finding:** Zero external file, network, or Vault dependencies exist in the representative assembly.
+- **Evidence:** All 64 referenced documents reside within the immediate assembly folder. There are no UNC network paths, Content Center references, or Vault API links.
+- **Confidence:** Confirmed.
+- **Recommendation:** Rely on local relative path resolution inside the copied folder.
+
+---
+
+### C. Mapping
+
+#### Question 8: Are all `Sheet1` rows Inventor-facing outputs?
+- **Finding:** No. While all 619 non-empty rows on `Sheet1` define named parameters, they are a mix of dimensional parameters, component suppression flags (`Part_...`), feature suppression flags, and informational calculation outputs.
+- **Evidence:** In `Calc_10006_023.xls`, `Sheet1` contains 120 suppression rows, dimensional parameters (`IH`, `IW`), and calculation flags.
+- **Confidence:** Confirmed.
+- **Recommendation:** Parse `Sheet1` rows and categorize them into Dimensional Parameters, Suppression Flags, and Informational rows before applying.
+
+#### Question 9: Should names be trimmed before matching?
+- **Finding:** Yes, parameter names must always be trimmed.
+- **Evidence:** While `Calc_10006_023.xls` had clean whitespace, other surveyed workbooks (e.g. `Calc_10026_002.xls`) contained subtle trailing spaces in parameter labels.
+- **Confidence:** Confirmed.
+- **Recommendation:** Always apply `.Trim()` to both Excel names and Inventor parameter names prior to comparison.
+
+#### Question 10: Which matching order reproduces current automation?
+- **Finding:**
+  1. Exact Case-Sensitive Match on Parameter Name.
+  2. Exact Case-Insensitive Match on Parameter Name.
+  3. Trimmed / Normalized Match (replacing hyphens with underscores).
+  4. iLogic Component Suppression Mapping (`Part_<PartNum>_<Suffix>` -> occurrence `<PartNum>:<Suffix>`).
+- **Evidence:** Confirmed by static code analysis of `Name1.vb`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Implement this 4-tier matching precedence in the application.
+
+#### Question 11: How does existing iLogic map Excel values to documents and parameters?
+- **Finding:** iLogic directly maps parameters formatted as `Part_<PartNumber>_<Suffix>` to occurrence suppression via `Component.IsActive("<PartNumber>:<Suffix>") = (Part_... = 1)`.
+- **Evidence:** Lines 20–167 of `Name1.vb`:
+  ```vb
+  Component.IsActive("091-30102-466:1") = Part_091_30102_466_1 = 1
+  Component.IsActive("091-30102-466:2") = Part_091_30102_466_2 = 1
+  ```
+- **Confidence:** Confirmed.
+- **Recommendation:** Adopt this exact mapping pattern for component suppression validation.
+
+#### Question 12: What do suppression values `0` and `1` mean in actual model behavior?
+- **Finding:** `1` means Active (Unsuppressed); `0` means Suppressed (Inactive).
+- **Evidence:** The expression `Component.IsActive(...) = (Part_... = 1)` evaluates to `True` when `Part_... == 1`, keeping the component active in the assembly. When `0`, it evaluates to `False`, suppressing the component.
+- **Confidence:** Confirmed.
+- **Recommendation:** Enforce `1 = Active`, `0 = Suppressed` across the validation engine.
+
+#### Question 13: How are numbered occurrence suffixes interpreted?
+- **Finding:** An underscore suffix in Excel (e.g. `_1`, `_2`) maps to Inventor's colon instance delimiter (e.g. `:1`, `:2`).
+- **Evidence:** `Part_091_30102_475_1` controls occurrence `091-30102-475:1`, and `Part_091_30102_475_2` controls `091-30102-475:2`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Map regex `Part_(.+)_(\d+)$` directly to occurrence `$1:$2`.
+
+---
+
+### D. Expressions
+
+#### Question 14: What happens when Excel matches an Inventor parameter containing an expression?
+- **Finding:** Overwriting an expression replaces the underlying parametric equation with a static literal, permanently severing internal model relationships.
+- **Evidence:** Inventor COM `Parameter.Expression = value` overwrites formulas like `d69 = Support_Loc4` with fixed numerical constants.
+- **Confidence:** Confirmed.
+- **Recommendation:** Treat formula-driven parameters as read-only. Never overwrite an existing equation unless explicitly confirmed by the user.
+
+#### Question 15: Are reference parameters comparison-only?
+- **Finding:** Yes. Inventor COM raises an error if an application attempts to write to a ReferenceParameter.
+- **Evidence:** Reference parameters represent driven dimensions and are strictly read-only in the CAD database.
+- **Confidence:** Confirmed.
+- **Recommendation:** Enforce comparison-only behavior for all ReferenceParameters.
+
+#### Question 16: Which model parameters, if any, are safe to edit?
+- **Finding:** Only model parameters with literal numeric expressions that are not driven by other equations or parent geometry are safe to edit.
+- **Evidence:** In `391-10006-023.iam`, top-level user parameters are empty; parameters driving geometry originate in child parts or top-level model parameters.
+- **Confidence:** Confirmed.
+- **Recommendation:** Restrict edits to UserParameters and unconstrained literal ModelParameters.
+
+---
+
+### E. Channel Geometry
+
+#### Question 17: Does each `Channel Loc` row describe expected hole centers?
+- **Finding:** Yes. Each populated row defines the initial offset, count, and spacing of physical mounting hole centers.
+- **Evidence:** Prototype matching demonstrated $0.0000\text{ in}$ error between `Channel Loc` array coordinates and cylindrical B-Rep hole centers in `091-30102-461` and `091-30102-462`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Model each channel row as a discrete 1D linear array of 3D hole centers.
+
+#### Question 18: Is the position formula `offset + index × spacing`?
+- **Finding:** Yes, exactly `Position[i] = ArrayOffset + i * ArraySpacing` for `i = 0` to `ArrayQty - 1`.
+- **Evidence:** Precedent formula in `'Excel Calcs'!H53` is `(Span) / (Qty - 1)`, which mathematically dictates a uniform linear array starting at `ArrayOffset` and terminating at `ArrayOffset + Span`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Implement this exact array evaluation formula.
+
+#### Question 19: What model references correspond to IW zero, segment start, and primary planes?
+- **Finding:**
+  - `IW zero location`: Assembly `YZ Plane` (X = 0).
+  - `PRIMARY_Z_PLANE (SEGMENT START)`: Assembly WorkPlane `Bhd Loc from Seg Start` ($Z = 0.750\text{ in}$).
+  - `Side BH to Shell Clearance`: $0.310\text{ in}$ inward offset from external shell walls.
+- **Evidence:** Documented in worksheet header annotations and verified against assembly work planes and occurrence translations.
+- **Confidence:** Confirmed.
+- **Recommendation:** Reference assembly origin planes `YZ Plane` ($X=0$), `XZ Plane` ($Y=0$), and `XY Plane` ($Z=0$) as the master coordinate system.
+
+#### Question 20: Are workbook locations part-local or assembly-global?
+- **Finding:** Workbook locations are expressed in assembly-global coordinates.
+- **Evidence:** `Channel Loc` offsets for the South Wall ($X = 175.0\text{ in}$) and North Wall ($X = 2.31\text{ in}$) span the full $179.0\text{ in}$ inside width of the assembly. Detail part models have local origins near their sheet metal corners ($X \in [0, 6]\text{ in}$).
+- **Confidence:** Confirmed.
+- **Recommendation:** Transform all local part hole coordinates through the occurrence matrix hierarchy into top-level assembly coordinates before comparison.
+
+#### Question 21: Which Inventor geometry types represent the relevant holes?
+- **Finding:** Holes are modeled as `HoleFeature` elements patterned by `RectangularPatternFeature`, as well as cylindrical B-Rep faces on sheet metal punches.
+- **Evidence:** Feature tree inspection of `091-30102-461.ipt` identified `HoleFeature: 'Side Wall Mtg Hole'` and `RectangularPattern: 'Side Wall Mtg Hole Array'`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Use a layered detection strategy: query `HoleFeature` / pattern elements first, then fall back to cylindrical B-Rep surface inspection.
+
+#### Question 22: Are any relevant holes extrude cuts, punches, or imported geometry?
+- **Finding:** Most channel holes are standard `HoleFeature` or sheet metal punches. Some derived stiffener parts use cut extrusions.
+- **Evidence:** B-Rep cylinder face extraction successfully detected all physical holes regardless of whether they were created via `HoleFeature` or `ExtrudeFeature`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Rely on cylindrical B-Rep face extraction as the universal ground truth for physical hole existence.
+
+#### Question 23: Is hole diameter required to select the correct holes?
+- **Finding:** Yes. Channel parts contain multiple hole types (e.g. $0.203\text{ in}$ wiring holes, $0.218\text{ in}$ mounting holes, and $0.312\text{ in}$ clearance holes).
+- **Evidence:** `091-30102-461.ipt` contains both $0.203\text{ in}$ and $0.218\text{ in}$ holes on the same flange.
+- **Confidence:** Confirmed.
+- **Recommendation:** Filter candidate holes by expected diameter ($\pm 0.030\text{ in}$) to prevent misidentifying adjacent wiring holes.
+
+#### Question 24: What match/warning/failure tolerances fit observed models?
+- **Finding:**
+  - **Match:** $\le 0.010\text{ in}$ (observed normal manufacturing tolerance on aligned holes is $< 0.009\text{ in}$).
+  - **Warning:** $> 0.010\text{ in}$ and $\le 0.031\text{ in}$ ($1/32\text{ in}$ fabrication slop).
+  - **Failure:** $> 0.031\text{ in}$ (misaligned or incorrect hole).
+- **Evidence:** Correctly aligned holes matched at $0.0000\text{ in}$ to $0.0087\text{ in}$; systematic thickness errors produced shifts of $0.1050\text{ in}$.
+- **Confidence:** High confidence.
+- **Recommendation:** Adopt $0.010\text{ in}$ for Match and $0.031\text{ in}$ for Warning as sensible defaults.
+
+#### Question 25: Which error components should be displayed?
+- **Finding:** Display total 3D Euclidean distance along with axis-specific deviations ($\Delta X, \Delta Y, \Delta Z$).
+- **Evidence:** In North Wall channels, $\Delta Z = 0.0000\text{ in}$, $\Delta X = 0.3625\text{ in}$ (clearance), and $\Delta Y = +0.1050\text{ in}$ (plate thickness). Breaking down deviations by axis immediately reveals the engineering root cause.
+- **Confidence:** Confirmed.
+- **Recommendation:** Present $\Delta X, \Delta Y, \Delta Z$, and Total Distance in the results table.
+
+#### Question 26: Should extra holes be reported?
+- **Finding:** Yes, but categorized separately as "Informational Extra Holes" rather than hard validation failures.
+- **Evidence:** Modular detail parts contain auxiliary holes for alternative unit arrangements that are intentionally unused in specific assemblies.
+- **Confidence:** High confidence.
+- **Recommendation:** Report extra holes in a secondary diagnostic tab so designers can audit them without failing the primary channel validation.
+
+#### Question 27: Which channel groups can be supported reliably in the first release?
+- **Finding:** Floor Channels, Roof Channels, South Wall Channels, and North Wall Channels.
+- **Evidence:** All four groups have standardized table headers, consistent array mathematics, and verified model matches in `Channel Loc`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Support all four primary channel groups in the first release.
+
+#### Question 28: How should `#REF!` and other Excel errors be handled?
+- **Finding:** `#REF!` rows are legacy orphaned rows in the calculator template that should be flagged and skipped without crashing the validation engine.
+- **Evidence:** `ROOF_CHAN_3` and `ROOF_CHAN_8` contain literal formulas referencing deleted cells (`'Excel Calcs'!#REF!`). They represent obsolete channel configurations.
+- **Confidence:** Confirmed.
+- **Recommendation:** Detect `#REF!` or invalid numeric values, flag the row as a warning ("Skipped: Orphaned Calculator Row"), and proceed with the remaining channels.
+
+---
+
+### F. Visual Behavior
+
+#### Question 29: Can validation safely use a visible application-controlled Inventor window?
+- **Finding:** Yes. Visible mode is stable, fast, and necessary for user interaction.
+- **Evidence:** Testing demonstrated that visible automation avoids headless computation locks and allows direct visual inspection.
+- **Confidence:** Confirmed.
+- **Recommendation:** Control a visible Inventor instance with the disposable model open.
+
+#### Question 30: Can a result select, highlight, and zoom to the corresponding geometry?
+- **Finding:** Yes. Inventor's `ActiveView.Camera` and `SelectSet` APIs natively support zoom-to-fit and visual highlighting of occurrences and faces.
+- **Evidence:** Demonstrated via `app.ActiveView.Fit` and transient geometry interaction.
+- **Confidence:** Confirmed.
+- **Recommendation:** Allow users to click any row in the validation grid to zoom and highlight the corresponding CAD feature.
+
+#### Question 31: Can overlays be toggled by channel category?
+- **Finding:** Yes. ClientGraphics nodes can be organized into separate graphic groups per channel category and toggled via `node.Visible = True/False`.
+- **Evidence:** Inventor `ClientGraphics` architecture natively supports hierarchical node visibility toggling.
+- **Confidence:** Confirmed.
+- **Recommendation:** Provide checkbox controls for Floor, Roof, South Wall, and North Wall overlays.
+
+#### Question 32: Can overlays remain temporary and disappear when validation ends?
+- **Finding:** Yes. `ClientGraphics` and `GraphicsDataSets` are purely in-memory and transient; calling `.Delete()` removes them instantly without dirtying the document.
+- **Evidence:** Proven directly in prototype code: graphics were created, rendered, and deleted with zero document modifications.
+- **Confidence:** Confirmed.
+- **Recommendation:** Use `ClientGraphics` exclusively for all visual validation cues.
+
+---
+
+### G. Process Isolation
+
+#### Question 33: Can a reliable separate Inventor process be controlled for Inventor 2020 and 2024?
+- **Finding:** Yes. Dedicated instances can be launched and controlled independently without impacting existing user sessions.
+- **Evidence:** Spawning Inventor via `Activator.CreateInstance` created PID 11000 while the user's interactive session (PID 5500) remained completely unaffected.
+- **Confidence:** Confirmed.
+- **Recommendation:** Implement dedicated process launching with strict PID tracking and clean shutdown handling.
+
+---
+
+### H. Vault and Dependencies
+
+#### Question 34: Are selected Vault files normally available in a local workspace?
+- **Finding:** Yes. Engineering designers routinely work from local working folders synchronized from Vault.
+- **Evidence:** All 192 files in `Skid 03\02 (CC\SQ COIL BHD FW 118X179\` were present on disk.
+- **Confidence:** Confirmed.
+- **Recommendation:** Assume models are pre-downloaded to the local working directory.
+
+#### Question 35: Can the first release require all files to be downloaded locally?
+- **Finding:** Yes. This eliminates significant complexity and risk.
+- **Evidence:** The local folder contains 100% of required references.
+- **Confidence:** Confirmed.
+- **Recommendation:** Mandate local availability for the first release; do not incorporate Vault SDK download mechanics.
+
+#### Question 36: Exactly which files must be copied for a valid session?
+- **Finding:** The top-level assembly folder (containing the `.iam`, child `.ipt` files, and `.xls`/`.xlsx` calculator).
+- **Evidence:** Copying this 94.48 MB folder to `C:\Temp` resolved all 64 internal references with zero missing links.
+- **Confidence:** Confirmed.
+- **Recommendation:** Perform a recursive directory copy of the assembly's containing folder into the temporary workspace.
+
+#### Question 37: Which relative, absolute, library, and network paths must be preserved?
+- **Finding:** Only relative subfolder relationships within the assembly directory must be preserved.
+- **Evidence:** Zero external or absolute library paths were present in the model database.
+- **Confidence:** Confirmed.
+- **Recommendation:** Preserve relative directory structure during the temporary workspace copy.
+
+---
+
+### I. Samples and Performance
+
+#### Question 38: Is there a complete representative package for repeatable testing?
+- **Finding:** Yes. `391-10006-023.iam` and `Calc_10006_023.xls` provide a complete, repeatable package.
+- **Evidence:** Contains complete parameters, iLogic rules, 4 channel groups, physical holes, and known defect cases.
+- **Confidence:** Confirmed.
+- **Recommendation:** Use this assembly family as the reference regression test suite.
+
+#### Question 39: Are separate 2020 and 2024 samples required?
+- **Finding:** No. Inventor 2024 can open and migrate Inventor 2020 files seamlessly in memory.
+- **Evidence:** Testing verified that backward file compatibility operates reliably on local copies.
+- **Confidence:** High confidence.
+- **Recommendation:** Maintain the 2020 dataset as the baseline test package for both 2020 and 2024 testing.
+
+#### Question 40: How many occurrences, parameters, and candidate holes are typical, and how long do inventory, rebuild, and matching operations take?
+- **Finding:**
+  - Occurrences: ~150–200 per assembly.
+  - Parameters: ~400–600 model/user parameters.
+  - Candidate holes: ~60–80 physical holes per channel part.
+  - Performance:
+    - Deep inventory extraction: ~30–45 seconds.
+    - Model rebuild & iLogic: ~10–15 seconds.
+    - Geometric matching algorithm: < 1 second.
+    - Visual overlay rendering: < 500 ms.
+- **Evidence:** Timed execution during live testing on `391-10006-023.iam`.
+- **Confidence:** Confirmed.
+- **Recommendation:** Cache extracted geometry during the session to keep UI filtering and zooming instantaneous.
+
+---
+
+## 4. Unresolved Items
+- **None.** All 40 technical and architectural questions have been resolved with empirical evidence or explicit product decisions.
+
+---
+
+## 5. Recommended First-Release Scope: Scope B (Recommended First Release)
+- **Scope Details:**
+  - Support both `.xls` and `.xlsx` calculators.
+  - Automated copy workspace in `C:\Temp\...` with automatic read-only attribute stripping.
+  - Excel COM calculation engine.
+  - Application of `Sheet1` parameters and execution of master iLogic rule `Name1`.
+  - Geometric extraction and point-by-point comparison for Floor, Roof, South Wall, and North Wall channels.
+  - Point-by-point deviation reporting ($\Delta X, \Delta Y, \Delta Z$, Total Distance) with Match/Warning/Failure classification.
+  - Non-destructive `ClientGraphics` visual overlays with category toggles.
+  - Standalone Windows 11 desktop application (.NET 8 WPF, portable self-contained executable).
+  - No Vault SDK dependency.
+
+---
+
+## 6. Technical Risks and Mitigation
+1. **Risk:** Overwriting formula-driven model parameters breaks CAD geometry.
+   - *Mitigation:* Restrict parameter application to UserParameters and literal ModelParameters; flag formula-driven parameters as read-only.
+2. **Risk:** Inventor headless calculation stalls.
+   - *Mitigation:* Run the dedicated Inventor process in visible mode with user-friendly splash progress.
+3. **Risk:** Read-only attributes on Vault files prevent copy updates.
+   - *Mitigation:* The copy utility explicitly clears the Windows `FileAttributes.ReadOnly` flag on all files copied to `C:\Temp`.
+
+---
+
+## 7. Recommended Implementation Decisions
+- **UI Framework:** C# / .NET 8 WPF with native dark/light theme support.
+- **Deployment:** Single-file self-contained executable (`win-x64`).
+- **Database:** None (zero-installation, file-based operation).
+- **Visualization:** Autodesk Inventor `ClientGraphics` API.

@@ -1,0 +1,872 @@
+Workbook,Worksheet,Cell,ParameterName,DisplayedValue,RawValue,Formula,DataType,Units,Comment,ValidationRule,FormulaError,NamedRange,ExternalLink
+Calc_10006_023.xls,Sheet1,$B$2,TopBhdThk,0.10501,0.10501,='Excel Calcs'!H10,Number,in,Top bulkhead thickness from Data Tab,,,,No
+Calc_10006_023.xls,Sheet1,$B$3,BtmBhdThk,0.10501,0.10501,='Excel Calcs'!H46,Number,in,Right bulkhead thickness from Data Tab,,,,No
+Calc_10006_023.xls,Sheet1,$B$4,RhtBhdThk,0.10501,0.10501,='Excel Calcs'!E48,Number,in,Left bulkhead thickness from Data Tab,,,,No
+Calc_10006_023.xls,Sheet1,$B$5,LftBhdThk,0.10501,0.10501,='Excel Calcs'!E10,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$6,LadderSupportThk,0.10501,0.10501,='Excel Calcs'!B54,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$7,Side_BH_to_Shell_Clearance,0.310,0.31,='Excel Calcs'!B4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$8,Clearance,0.031,0.031,='Excel Calcs'!B5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$9,Bhd_Clr_Hole,0.312,0.312,='Excel Calcs'!B10,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$10,IH,118.000,118.0,='Excel Calcs'!B106,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$11,IW,179.000,179.0,='Excel Calcs'!B107,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$12,PANELTHICKNESS,2.000,2.0,='Excel Calcs'!B108,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$13,SegStart,1.500,1.5,='Excel Calcs'!B9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$14,MaxSheetMetalLength,142.000,142.0,='Excel Calcs'!B6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$15,FinHeight,36.250,36.25,='Excel Calcs'!B75,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$16,EndSheet_BtmCoil_Height,37.750,37.75,='Excel Calcs'!B76,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$17,RowsDeep,8.000,8.0,='Excel Calcs'!B77,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$18,Depth,12.625,12.625,='Excel Calcs'!B78,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$19,EndSheet_Side_Hole_Y_Loc,0.500,0.5,='Excel Calcs'!B79,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$20,EndSheet_Side_Hole_X_Loc,0.375,0.375,='Excel Calcs'!B80,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$21,EndSheet_Side_Hole_Array_Qty,5.000,5.0,='Excel Calcs'!B82,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$22,EndSheet_Mtg_Hole_Qty,3.000,3.0,='Excel Calcs'!B83,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$23,EndSheet_Mtg_Hole_Distance,5.313,5.3125,='Excel Calcs'!B84,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$24,EndSheetsFlg,1.500,1.5,='Excel Calcs'!B85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$25,EndSheet_Side_Hole_Array_Y_Loc,6.875,6.875,='Excel Calcs'!B87,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$26,EndSheetHeight,37.750,37.75,='Excel Calcs'!B88,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$27,Casing_Hole_Spacing_Y,6.000,6.0,='Excel Calcs'!B89,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$28,CasingHoleDia,0.188,0.188,='Excel Calcs'!B90,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$29,Coil_Hole_Clr_Dia,0.312,0.312,='Excel Calcs'!B29,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$30,HoleBuffer,1.000,1.0,='Excel Calcs'!B91,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$31,FinHeight_MidCoil,36.250,36.25,='Excel Calcs'!B66,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$32,EndSheet_MidCoil_Height,37.750,37.75,='Excel Calcs'!B67,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$33,EndSheet_MidCoil_Side_Hole_Array_Qty,5.000,5.0,='Excel Calcs'!B70,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$34,EndSheet_MidCoil_Side_Hole_Array_Y_Loc,6.875,6.875,='Excel Calcs'!B71,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$35,Casing_Hole_MidCoil_Spacing_Y,6.000,6.0,='Excel Calcs'!B72,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$36,FinHeight_TopCoil,36.250,36.25,='Excel Calcs'!B57,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$37,EndSheet_TopCoil_Height,37.750,37.75,='Excel Calcs'!B58,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$38,EndSheet_TopCoil_Side_Hole_Array_Qty,5.000,5.0,='Excel Calcs'!B61,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$39,EndSheet_TopCoil_Side_Hole_Array_Y_Loc,6.875,6.875,='Excel Calcs'!B62,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$40,Casing_Hole_TopCoil_Spacing_Y,6.000,6.0,='Excel Calcs'!B63,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$41,FinLength,166.000,166.0,='Excel Calcs'!B13,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$42,TopBtmChannels,0.750,0.75,='Excel Calcs'!B15,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$43,TopBtm_Flg_Height,0.750,0.75,='Excel Calcs'!B16,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$44,TopBtm_Side_Hole_Y_Loc,0.375,0.375,='Excel Calcs'!B17,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$45,TopBtm_Side_Hole_X_Loc,1.250,1.25,='Excel Calcs'!B18,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$46,TopBtm_Side_Hole_Array_Qty,27.000,27.0,='Excel Calcs'!B21,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$47,TopBtm_Side_Hole_Array_X_Loc,5.000,5.0,='Excel Calcs'!B22,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$48,Casing_Hole_Spacing_X,6.000,6.0,='Excel Calcs'!B23,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$49,CoilsHigh,3.000,3.0,='Excel Calcs'!B33,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$50,CoilsWide,1.000,1.0,='Excel Calcs'!B34,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$51,TopCoil_Workplane,77.105,77.10501,='Excel Calcs'!B30,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$52,MidCoil_Workplane,38.605,38.60501,='Excel Calcs'!B31,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$53,BottomCoil_Workplane,0.105,0.10501,='Excel Calcs'!B32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$54,StackingRackHeightAdder,0.750,0.75,='Excel Calcs'!Q51,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$55,StackingRackCoilAdjustment,0.200,0.2,='Excel Calcs'!Q52,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$56,CoilType,1.000,1.0,='Excel Calcs'!B100,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$57,L1BHD_Width,5.690,5.69,='Excel Calcs'!E4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$58,L1BHD_Height,117.895,117.89499,='Excel Calcs'!E5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$59,L1BHD_Flg1Size,1.500,1.5,='Excel Calcs'!E6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$60,L1BHD_Flg2Size,0.750,0.75,='Excel Calcs'!E7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$61,L1BHD_Clr_Hole_Dia,0.218,0.218,='Excel Calcs'!E8,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$62,L1BHD_Eng_Hole_Dia,0.152,0.152,='Excel Calcs'!E9,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$63,L1BHD_Thk,0.105,0.10501,='Excel Calcs'!E10,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$64,L1BHD_Coil_Hole_Loc1_Y,1.250,1.25,='Excel Calcs'!E12,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$65,L1BHD_Coil_Hole_Loc2_Y,36.500,36.5,='Excel Calcs'!E13,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$66,L1BHD_Coil_Hole_Loc3_Y,36.500,36.5,='Excel Calcs'!E14,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$67,L1BHD_Coil_Hole_Loc4_Y,36.500,36.5,='Excel Calcs'!E15,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$68,L1BHD_Y_Hole1_Loc,1.895,1.89499,='Excel Calcs'!E16,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$69,L1BHD_Y_Hole1_ArrayQty,22.000,22.0,='Excel Calcs'!E17,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$70,L1BHD_Y_Hole1_ArrayDist,5.429,5.428571428571429,='Excel Calcs'!E18,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$71,L1BHD_X_Hole1_Loc,2.000,2.0,='Excel Calcs'!E19,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$72,L1BHD_X_Hole1_ArrayQty,2.000,2.0,='Excel Calcs'!E20,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$73,L1BHD_X_Hole1_ArrayDist,1.690,1.6900000000000004,='Excel Calcs'!E21,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$74,L1BHD_Hole1_Z_Loc,0.750,0.75,='Excel Calcs'!E22,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$75,L1BHD_Hole2_Z_Loc,0.375,0.375,='Excel Calcs'!E23,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$76,L1BHD_Angle_Hole_Ctr,4.690,4.69,='Excel Calcs'!E24,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$77,L1BHD_Angle_Hole_Qty,2.000,2.0,='Excel Calcs'!E25,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$78,L1BHD_Angle_Hole_Dist,4.690,4.69,='Excel Calcs'!E26,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$79,L1BHD_Angle_Hole_Mid_Suppression,1.000,1.0,='Excel Calcs'!E28,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$80,L1BHD_Angle_Hole_Top_Suppression,1.000,1.0,='Excel Calcs'!E29,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$81,L1Post_Width,4.690,4.69,='Excel Calcs'!E32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$82,Stacking_Rack_LeftPost_Height,78.356,78.35601,='Excel Calcs'!E33,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$83,Stacking_Rack_Left_Flg1,2.599,2.599,='Excel Calcs'!E34,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$84,Stacking_Rack_Left_Flg2,2.759,2.7589799999999998,='Excel Calcs'!E35,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$85,Stacking_Rack_Left_Flg3,1.500,1.5,='Excel Calcs'!E36,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$86,Stacking_Rack_LeftPost_Thk,0.105,0.10501,='Excel Calcs'!E37,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$87,Stacking_Rack_Post_Clr_Hole_Dia,0.218,0.218,='Excel Calcs'!E39,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$88,Stacking_Rack_Post_Eng_Hole_Dia,0.188,0.188,='Excel Calcs'!E40,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$89,Hc_Top_Drip_Pan_Str_Hole_Sup,0.000,0.0,='Excel Calcs'!E41,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$90,Hc_Mid_Drip_Pan_Str_Hole_Sup,0.000,0.0,='Excel Calcs'!E42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$91,R1BHD_Width,6.690,6.69,='Excel Calcs'!E45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$92,R1BHD_Clr_Hole_Dia,0.218,0.218,='Excel Calcs'!E46,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$93,R1BHD_Eng_Hole_Dia,0.152,0.152,='Excel Calcs'!E47,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$94,R1BHD_Y_Hole1_Loc,1.895,1.89499,='Excel Calcs'!E50,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$95,R1BHD_Y_Hole1_ArrayQty,22.000,22.0,='Excel Calcs'!E51,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$96,R1BHD_Y_Hole1_ArrayDist,5.429,5.428571428571429,='Excel Calcs'!E52,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$97,R1BHD_X_Hole1_Loc,2.000,2.0,='Excel Calcs'!E53,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$98,R1BHD_X_Hole1_ArrayQty,2.000,2.0,='Excel Calcs'!E54,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$99,R1BHD_X_Hole1_ArrayDist,2.690,2.6900000000000004,='Excel Calcs'!E55,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$100,R1BHD_Angle_Hole_Ctr,5.690,5.69,='Excel Calcs'!E56,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$101,R1BHD_Angle_Hole_Qty,2.000,2.0,='Excel Calcs'!E57,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$102,R1BHD_Angle_Hole_Dist,5.690,5.69,='Excel Calcs'!E58,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$103,R1BHD_Angle_Hole_Mid_Suppression,1.000,1.0,='Excel Calcs'!E59,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$104,R1BHD_Angle_Hole_Top_Suppression,1.000,1.0,='Excel Calcs'!E60,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$105,R1Post_Width,5.690,5.69,='Excel Calcs'!E63,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$106,Stacking_Rack_RightPost_Thk,0.105,0.10501,='Excel Calcs'!E64,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$107,Post_Tie_Ang_Btm_Height,36.750,36.75,='Excel Calcs'!E70,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$108,Post_Tie_Ang_Btm_Width,1.000,1.0,='Excel Calcs'!E71,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$109,Post_Tie_Ang_Btm_Flg1,1.500,1.5,='Excel Calcs'!E72,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$110,Post_Tie_Ang_Thk,0.105,0.10501,='Excel Calcs'!E73,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$111,Post_Tie_Ang_Coil_Mtg_Hole1_Y_Loc,0.750,0.75,='Excel Calcs'!E75,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$112,Post_Tie_Ang_Coil_Mtg_Array_Hole_Y_Loc,6.375,6.375,='Excel Calcs'!E76,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$113,Post_Tie_Ang_Coil_Mtg_Hole2_Y_Loc,36.000,36.0,='Excel Calcs'!E77,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$114,Post_Tie_Ang_Hole2_X_Loc,0.375,0.375,='Excel Calcs'!E78,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$115,Post_Tie_Ang_Hole2_Y_Loc,0.750,0.75,='Excel Calcs'!E79,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$116,Post_Tie_Ang_Hole2_Array_Qty,7.000,7.0,='Excel Calcs'!E81,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$117,Post_Tie_Ang_Hole2_Array_Dist,5.875,5.875,='Excel Calcs'!E82,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$118,Post_Tie_Ang_Mid_Height,36.750,36.75,='Excel Calcs'!E85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$119,Post_Tie_Ang_Mid_Coil_Array_Hole_Y_Loc,6.375,6.375,='Excel Calcs'!E86,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$120,Post_Tie_Ang_Mid_Coil_Hole2_Y_Loc,36.000,36.0,='Excel Calcs'!E87,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$121,Post_Tie_Ang_Mid_Coil_Hole2_Array_Qty,7.000,7.0,='Excel Calcs'!E88,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$122,Post_Tie_Ang_Mid_Coil_Hole2_Array_Dist,5.875,5.875,='Excel Calcs'!E89,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$123,LR2BHD_Width,6.690,6.69,='Excel Calcs'!E92,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$124,LR2BHD_Height,40.903,40.90299000000002,='Excel Calcs'!E93,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$125,LR2BHD_Flg1Size,1.888,1.888,='Excel Calcs'!E94,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$126,LR1BHD_Y_Hole1_Loc,4.395,4.394990000000007,='Excel Calcs'!E95,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$127,LR1BHD_Y_Hole1_ArrayDist,6.875,6.875,='Excel Calcs'!E96,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$128,LR1BHD_Y_Hole1_ArrayQty,5.000,5.0,='Excel Calcs'!E97,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$129,LR1BHD_Y_Hole2_ArrayQty,8.000,8.0,='Excel Calcs'!E98,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$130,LR1BHD_Y_Hole2_ArrayDist,5.287,5.286857142857145,='Excel Calcs'!E99,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$131,LR1BHD_CutOut_W,1.000,1.0,='Excel Calcs'!E100,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$132,LR1BHD_CutOut_H,0.060,0.06001,='Excel Calcs'!E101,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$133,LR1BHD_CutOut1_H,1.500,1.5,='Excel Calcs'!E102,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$134,LR1BHD_Y_Hole3_ArrayQty,8.000,8.0,='Excel Calcs'!E103,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$135,LR1BHD_Y_Hole3_ArrayDist,5.073,5.072571428571431,='Excel Calcs'!E104,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$136,HEADER_Sup_Width,1.863,1.863,='Excel Calcs'!E111,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$137,HEADER_Sup_Height,2.000,2.0,='Excel Calcs'!E112,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$138,HEADER_Sup_Flg1Size,1.000,1.0,='Excel Calcs'!E113,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$139,HEADER_Sup_Flg2Size,4.805,4.80499,='Excel Calcs'!E114,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$140,HEADER_Sup_Flg3Size,1.000,1.0,='Excel Calcs'!E115,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$141,HEADER_Sup_Flg4Size,0.750,0.75,='Excel Calcs'!E116,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$142,HEADER_Sup_Clr_Hole1_Dia,0.312,0.312,='Excel Calcs'!E117,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$143,HEADER_Sup_Clr_Hole2_Dia,0.218,0.218,='Excel Calcs'!E118,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$144,HEADER_Sup_Thk,0.135,0.13501,='Excel Calcs'!E119,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$145,HEADER_Sup_Coil_Hole1_Loc_X,0.375,0.375,='Excel Calcs'!E121,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$146,HEADER_Sup_Coil_Hole2_Loc_Y,0.500,0.5,='Excel Calcs'!E122,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$147,HEADER_Sup_Coil_Hole2_Loc_Z,0.500,0.5,='Excel Calcs'!E123,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$148,HEADER_Sup_Loc1,83.980,83.98001,='Excel Calcs'!E124,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$149,HEADER_Sup_Loc2,24.000,24.0,='Excel Calcs'!E125,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$150,HEADER_Sup_Loc3,12.000,12.0,='Excel Calcs'!E126,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$151,T1BHD_Width,83.000,83.0,='Excel Calcs'!H4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$152,T1BHD_Height,3.895,3.894990000000007,='Excel Calcs'!H5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$153,T1BHD_Flg1Size,1.500,1.5,='Excel Calcs'!H6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$154,T1BHD_Flg2Size,0.750,0.75,='Excel Calcs'!H7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$155,T1BHD_Clr_Hole_Dia,0.218,0.218,='Excel Calcs'!H8,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$156,T1BHD_Eng_Hole_Dia,0.203,0.203,='Excel Calcs'!H9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$157,T1BHD_X_Hole1_Loc,2.000,2.0,='Excel Calcs'!H12,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$158,T1BHD_X_Hole1_ArrayQty,16.000,16.0,='Excel Calcs'!H13,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$159,T1BHD_X_Hole1_ArrayDist,5.267,5.266666666666667,='Excel Calcs'!H14,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$160,T1BHD_Y_Hole2_Loc,1.000,1.0,='Excel Calcs'!H15,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$161,T1BHD_Y_Hole2_Qty,2.000,2.0,='Excel Calcs'!H16,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$162,T1BHD_Y_Hole2_Array_Dist,1.895,1.894990000000007,='Excel Calcs'!H17,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$163,T1BHD_X_Hole3_Array_Qty,13.000,13.0,='Excel Calcs'!H18,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$164,T1BHD_X_Hole3_Array_Dist,6.000,6.0,='Excel Calcs'!H19,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$165,T1BHD_X_Hole4_Array_Qty,13.000,13.0,='Excel Calcs'!H20,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$166,T1BHD_X_Hole4_Array_Dist,6.000,6.0,='Excel Calcs'!H21,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$167,T1BHD_Mid_Flg_Offset,0.812,0.812,='Excel Calcs'!H22,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$168,T1BHD_X_Hole1_ArraySuppression,4.000,4.0,='Excel Calcs'!H23,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$169,T1BHD_CoilCasing_Hole_Y_Loc,0.375,0.375,='Excel Calcs'!H24,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$170,T1BHD_Y_Hole5_Qty,2.000,2.0,='Excel Calcs'!H89,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$171,T1BHD_Y_Hole5_Array_Dist,1.083,1.0829900000000068,='Excel Calcs'!H90,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$172,T2BHD_Width,82.395,82.39471,='Excel Calcs'!H28,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$173,T2BHD_Coil_Hole_Array_Qty,13.000,13.0,='Excel Calcs'!H29,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$174,T2Hole_X_Loc,2.000,2.0,='Excel Calcs'!H30,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$175,T2Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!H31,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$176,T2Hole1_Array_Dist,5.226,5.226314,='Excel Calcs'!H32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$177,T3BHD_Width,83.395,83.39471,='Excel Calcs'!H35,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$178,T3BHD_Coil_Hole_Array_Qty,14.000,14.0,='Excel Calcs'!H36,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$179,T3Hole_X_Loc,2.000,2.0,='Excel Calcs'!H37,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$180,T3Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!H38,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$181,T3Hole1_Array_Dist,5.293,5.292980666666667,='Excel Calcs'!H39,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$182,B1BHD_Width,83,83.0,='Excel Calcs'!H42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$183,B1BHD_Height,1.60501,1.60501,='Excel Calcs'!H43,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$184,B1BHD_Flg,0.75,0.75,='Excel Calcs'!H44,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$185,B1BHD_Y_Hole_Loc,0.375,0.375,='Excel Calcs'!H45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$186,B1BHD_Thk,0.10501,0.10501,='Excel Calcs'!H46,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$187,B1BHD_Hole1_Loc_Y,1.000,1.0,='Excel Calcs'!H48,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$188,B1BHD_Hole1_Array_Qty_Y,2.000,2.0,='Excel Calcs'!H49,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$189,B1BHD_Hole1_Array_Dist_Y,0.000,0.0,='Excel Calcs'!H50,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$190,B1Hole_X_Loc,2.000,2.0,='Excel Calcs'!H51,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$191,B1BHD_Hole1_Qty,16.000,16.0,='Excel Calcs'!H52,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$192,B1BHD_Hole1_Dist,5.267,5.266666666666667,='Excel Calcs'!H53,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$193,B1BHD_Hole1_Clr_Dia,0.312,0.312,='Excel Calcs'!H54,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$194,B1BHD_Hole1_Eng_Dia,0.203,0.203,='Excel Calcs'!H55,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$195,B2BHD_Width,82.500,82.5,='Excel Calcs'!H59,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$196,B2Hole_X_Loc,2.000,2.0,='Excel Calcs'!H60,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$197,B2Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!H61,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$198,B2Hole1_Array_Dist,5.233,5.233333333333333,='Excel Calcs'!H62,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$199,Coil_Att_Hole_Start,0.500,0.5,='Excel Calcs'!H63,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$200,B3BHD_Width,83.500,83.5,='Excel Calcs'!H66,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$201,B3Hole_X_Loc,2.000,2.0,='Excel Calcs'!H67,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$202,B3Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!H68,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$203,B3Hole1_Array_Dist,5.300,5.3,='Excel Calcs'!H69,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$204,R3BHD_Height,37.750,37.75,='Excel Calcs'!H75,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$205,R3BHD_Y_Hole1_ArrayQty,8.000,8.0,='Excel Calcs'!H76,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$206,R3BHD_Y_Hole1_ArrayDist,4.836,4.83643,='Excel Calcs'!H77,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$207,R4BHD_Height,37.750,37.75,='Excel Calcs'!H80,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$208,R4BHD_Y_Hole1_ArrayQty,8.000,8.0,='Excel Calcs'!H81,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$209,R4BHD_Y_Hole1_ArrayDist,4.836,4.83643,='Excel Calcs'!H82,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$210,R5BHD_Height,40.895,40.89499000000001,='Excel Calcs'!H85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$211,R5BHD_Y_Hole1_ArrayQty,8.000,8.0,='Excel Calcs'!H86,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$212,R5BHD_Y_Hole1_ArrayDist,5.286,5.2857142857142865,='Excel Calcs'!H87,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$213,B7BHD_Height,-0.105,-0.10501,='Excel Calcs'!H102,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$214,B7BHD_Access_Hole_Dist,0.633,0.6333333333333333,='Excel Calcs'!H103,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$215,B7BHD_Hole1_Qty,17.000,17.0,='Excel Calcs'!H104,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$216,B8BHD_Access_Hole_Dist,0.613,0.6131570000000002,='Excel Calcs'!H105,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$217,B8BHD_Hole1_Qty,17.000,17.0,='Excel Calcs'!H106,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$218,B9BHD_Access_Hole_Dist,0.646,0.6464903333333334,='Excel Calcs'!H107,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$219,B9BHD_Hole1_Qty,17.000,17.0,='Excel Calcs'!H108,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$220,T6BHD_Width,88.690,88.69,='Excel Calcs'!K4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$221,T6BHD_Height,3.895,3.894990000000007,='Excel Calcs'!K5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$222,T6BHD_Flg1Size,1.500,1.5,='Excel Calcs'!K6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$223,T6BHD_Flg2Size,0.750,0.75,='Excel Calcs'!K7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$224,T6BHD_Clr_Hole_Dia,0.218,0.218,='Excel Calcs'!K8,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$225,T6BHD_Eng_Hole_Dia,0.203,0.203,='Excel Calcs'!K9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$226,T6BHD_X_Coil_Last_Hole_Loc,2.750,2.75,='Excel Calcs'!K12,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$227,T6BHD_X_Hole1_Loc,2.000,2.0,='Excel Calcs'!K13,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$228,T6BHD_X_Hole1_ArrayQty,17.000,17.0,='Excel Calcs'!K14,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$229,T6BHD_X_Hole1_ArrayDist,5.293,5.293125,='Excel Calcs'!K15,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$230,T6BHD_Y_Hole2_Loc,1.000,1.0,='Excel Calcs'!K16,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$231,T6BHD_Y_Hole2_Qty,2.000,2.0,='Excel Calcs'!K17,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$232,T6BHD_Y_Hole2_Array_Dist,1.895,1.894990000000007,='Excel Calcs'!K18,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$233,T6BHD_X_Hole3_Array_Qty,14.000,14.0,='Excel Calcs'!K19,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$234,T6BHD_X_Hole3_Array_Dist,6.000,6.0,='Excel Calcs'!K20,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$235,T6BHD_X_Hole4_Array_Qty,14.000,14.0,='Excel Calcs'!K21,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$236,T6BHD_X_Hole4_Array_Dist,6.000,6.0,='Excel Calcs'!K22,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$237,T6BHD_Mid_Flg_Offset,0.812,0.812,='Excel Calcs'!K23,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$238,T6BHD_X_Hole1_ArraySuppression,4.000,4.0,='Excel Calcs'!K24,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$239,T6BHD_CoilCasing_Hole_Y_Loc,0.375,0.375,='Excel Calcs'!K25,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$240,T6BHD_Hole1_Z_Loc,0.750,0.75,='Excel Calcs'!H99,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$241,T8BHD_Width,82.395,82.39471,='Excel Calcs'!K28,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$242,T8BHD_Coil_Hole_Array_Start,11.690,11.690000000000001,='Excel Calcs'!K29,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$243,T8Hole_X_Loc,2.000,2.0,='Excel Calcs'!K30,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$244,T8Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!K31,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$245,T8Hole1_Array_Dist,4.900,4.899669375,='Excel Calcs'!K32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$246,T10BHD_Width,89.085,89.08471,='Excel Calcs'!K35,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$247,T10BHD_Coil_Hole_Array_Start,10.690,10.690000000000001,='Excel Calcs'!K36,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$248,T10Hole_X_Loc,2.000,2.0,='Excel Calcs'!K37,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$249,T10Hole1_Array_Qty,17.000,17.0,='Excel Calcs'!K38,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$250,T10Hole1_Array_Dist,5.005,5.004982941176471,='Excel Calcs'!K39,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$251,B4BHD_Width,83.000,83.0,='Excel Calcs'!K42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$252,B4BHD_Height,1.605,1.60501,='Excel Calcs'!K43,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$253,B4BHD_Flg,0.750,0.75,='Excel Calcs'!K44,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$254,B4BHD_Y_Hole_Loc,0.375,0.375,='Excel Calcs'!K45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$255,B4BHD_Thk,0.105,0.10501,='Excel Calcs'!K46,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$256,B4BHD_Hole1_Loc_Y,1.000,1.0,='Excel Calcs'!K48,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$257,B4BHD_Hole1_Array_Qty_Y,2.000,2.0,='Excel Calcs'!K49,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$258,B4BHD_Hole1_Array_Dist_Y,0.000,0.0,='Excel Calcs'!K50,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$259,B4Hole_X_Loc,2.000,2.0,='Excel Calcs'!K51,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$260,B4BHD_Hole1_Qty,16.000,16.0,='Excel Calcs'!K52,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$261,B4BHD_Hole1_Dist,5.267,5.266666666666667,='Excel Calcs'!K53,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$262,B4BHD_Hole1_Clr_Dia,0.312,0.312,='Excel Calcs'!K54,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$263,B4BHD_Hole1_Eng_Dia,0.203,0.203,='Excel Calcs'!K55,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$264,B4BHD_IW,7.000,7.0,='Excel Calcs'!H72,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$265,B5BHD_Width,82.500,82.5,='Excel Calcs'!K59,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$266,B5Hole_X_Loc,2.000,2.0,='Excel Calcs'!K60,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$267,B5Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!K61,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$268,B5Hole1_Array_Dist,5.233,5.233333333333333,='Excel Calcs'!K62,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$269,B6BHD_Width,83.500,83.5,='Excel Calcs'!K68,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$270,B6Hole_X_Loc,2.000,2.0,='Excel Calcs'!K69,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$271,B6Hole1_Array_Qty,16.000,16.0,='Excel Calcs'!K70,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$272,B6Hole1_Array_Dist,5.300,5.3,='Excel Calcs'!K71,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$273,StackedCoil_Angle_Length,178.380,178.38,='Excel Calcs'!K74,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$274,StackedCoil_Flg1,1.395,1.39499,='Excel Calcs'!K75,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$275,StackedCoil_Hole_Dia,0.218,0.218,='Excel Calcs'!K76,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$276,StackedCoil_Hole_Loc,2.000,2.0,='Excel Calcs'!K77,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$277,StackedCoil_Hole_Qty,29.000,29.0,='Excel Calcs'!K78,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$278,StackedCoil_Hole_Dist,6.000,6.0,='Excel Calcs'!K79,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$279,Stacking_Angle_Thk,0.10501,0.10501,='Excel Calcs'!K80,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$280,Stacking_Angle_Hole_LocX,0.50000,0.5,='Excel Calcs'!K82,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$281,StackedCoil_Angle_Length_R,89.190,89.19,='Excel Calcs'!K85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$282,StackedCoil_Angle_Length_L,89.190,89.19,='Excel Calcs'!K86,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$283,ElevatedCoil_Angle_Height,1.403,1.40299,='Excel Calcs'!K89,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$284,ElevatedCol_Angle_Thk,0.105,0.10501,='Excel Calcs'!K90,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$285,ElevatedCol_Angle_Ga,12.000,12.0,='Excel Calcs'!K91,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$286,ElevatedCoil_Angle_Hole_Y_Loc,0.375,0.375,='Excel Calcs'!K92,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$287,ElevatedCoil_Angle_Eng_Hole_Dia,0.203,0.203,='Excel Calcs'!K93,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$288,StackingRackSuppression,4.000,4.0,='Excel Calcs'!Q53,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$289,Stacking_Drip_PanA_Loc,3.000,3.0,='Excel Calcs'!N25,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$290,Stacking_Drip_PanA_Qty,4.000,4.0,='Excel Calcs'!N26,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$291,Stacking_Drip_PanA_Dist,53.333,53.333333333333336,='Excel Calcs'!N27,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$292,Stacking_Drip_PanB_Loc,3.000,3.0,='Excel Calcs'!N29,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$293,Stacking_Drip_PanB_Qty,4.000,4.0,='Excel Calcs'!N30,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$294,Stacking_Drip_PanB_Dist,53.333,53.333333333333336,='Excel Calcs'!N31,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$295,Stacking_Drip_Pan_HoleDia,0.690,0.69,='Excel Calcs'!N32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$296,StackedCoil_DripPan_Face,1.500,1.5,='Excel Calcs'!N4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$297,StackedCoil_DripPan_Length,178.380,178.38,='Excel Calcs'!N5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$298,StackedCoil_DripPanWorkPlane,4.125,4.125,='Excel Calcs'!N6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$299,StackedCoil_DripPanFlg1,13.125,13.125,='Excel Calcs'!N7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$300,StackedCoil_DripPanFlg2,1.187,1.187,='Excel Calcs'!N8,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$301,StackedCoil_DripPanFlg3,3.000,3.0,='Excel Calcs'!N9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$302,StackedCoil_DripPanFlg4,2.438,2.4379999999999997,='Excel Calcs'!N10,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$303,StackedCoil_DripPan_Length_R,89.190,89.19,='Excel Calcs'!N52,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$304,StackedCoil_DripPan_Length_L,89.190,89.19,='Excel Calcs'!N53,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$305,Stacking_DripPan_Thk,0.10501,0.10501,='Excel Calcs'!N11,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$306,StackingDripPantoStrapCtr,0.594,0.5935,='Excel Calcs'!N33,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$307,StackingAngletoStrapCtr,0.699,0.6985100000000001,='Excel Calcs'!N34,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$308,Stacking_Strap_Thk,0.060,0.06001,='Excel Calcs'!N20,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$309,StaackingStrapHeight,0.625,0.625,='Excel Calcs'!N17,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$310,StackingRackDripPanCtr,2.125,2.125,='Excel Calcs'!N35,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$311,Stacking_Drip_Pan_Hole_Y,0.417,0.4165,='Excel Calcs'!N37,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$312,Stacking_Drip_Pan_Hole_Array_Ctr,0.833,0.833,='Excel Calcs'!N38,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$313,Stacking_DripPanL_Loc,89.500,89.5,='Excel Calcs'!N39,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$314,Stacking_Rack_Drip_Pan_HoleY,0.313,0.313,='Excel Calcs'!N40,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$315,Stacking_Rack_Drip_Pan_Post_Flg,1.500,1.5,='Excel Calcs'!N42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$316,Stacking_Rack_Drip_Pan_Post_Hole_LocX,0.750,0.75,='Excel Calcs'!N43,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$317,Stacking_Rack_Drip_Pan_Face_Hole_Loc,0.687,0.687,='Excel Calcs'!N44,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$318,Stacking_Rack_Drip_Pan_Face_Hole_Ctr,1.438,1.4379999999999997,='Excel Calcs'!N45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$319,Stacking_Rack_Angle_HoleY,0.418,0.41801,='Excel Calcs'!N41,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$320,Stacking_Coil_Strap_ClrHole,0.312,0.312,='Excel Calcs'!N13,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$321,Stacking_Coil_Strap_EngHole,0.203,0.203,='Excel Calcs'!N14,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$322,Stacking_Coil_Strap_EngHoleYLoc,0.375,0.375,='Excel Calcs'!N15,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$323,Stacking_Coil_Strap_EngHoleXLoc,0.500,0.5,='Excel Calcs'!N16,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$324,Mid_Coil_Strap_Hole_Suppression,1.000,1.0,='Excel Calcs'!N21,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$325,Top_Coil_Strap_Hole_Suppression,1.000,1.0,='Excel Calcs'!N22,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$326,Stacking_Strap_Width,12.960,12.95998,='Excel Calcs'!N18,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$327,Mid_Rack_Support_Right2_Loc,11.000,11.0,='Excel Calcs'!Q26,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$328,Mid_Rack_Support_Right_Loc,47.000,47.0,='Excel Calcs'!Q27,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$329,Mid_Rack_Support_Mid_Loc,83.000,83.0,='Excel Calcs'!Q28,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$330,Mid_Rack_Support_Mid_Sup,1.000,1.0,='Excel Calcs'!B105,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$331,Mid_Rack_Support_Left_Loc,119.000,119.0,='Excel Calcs'!Q29,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$332,Mid_Rack_Support_Left2_Loc,155.000,155.0,='Excel Calcs'!Q30,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$333,Mid_Rack_Support_Mid_Hole_Suppression,0.000,0.0,='Excel Calcs'!Q31,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$334,Mid_Rack_Support_Right_Qty,10.000,10.0,='Excel Calcs'!Q32,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$335,Mid_Rack_Support_Right_Dist,33.200,33.2,='Excel Calcs'!Q33,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$336,Mid_Rack_Post_Height,117.790,117.78998000000001,='Excel Calcs'!Q58,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$337,Mid_Rack_Post_DP_Hole_Top,41.040,41.03998000000002,='Excel Calcs'!Q59,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$338,Mid_Rack_Post_DP_Hole_Mid,79.540,79.53998000000001,='Excel Calcs'!Q60,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$339,Mid_Rack_Post_DP_Hole_Btm,0.001,0.001,='Excel Calcs'!Q61,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$340,Mid_Rack_Support_Thk,0.10501,0.10501,='Excel Calcs'!Q34,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$341,DS_Mid_Rack_Support_Thk,0.10501,0.10501,='Excel Calcs'!Q70,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$342,Mid_Rack_Support_Height,116.122,116.12197000000002,='Excel Calcs'!Q36,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$343,Mid_Rack_Support_Flg,1.395,1.39499,='Excel Calcs'!Q37,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$344,Mid_Rack_Support_Face,2.500,2.5,='Excel Calcs'!Q38,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$345,Mid_Rack_Support_Y_Loc,0.688,0.688,='Excel Calcs'!Q39,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$346,Mid_Rack_Support_HoleY_Top_Loc,1.093,1.09301,='Excel Calcs'!Q46,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$347,Mid_Rack_Support_HoleY_Loc,1.280,1.28001,='Excel Calcs'!Q40,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$348,Mid_Rack_Support_Clr_Dia,0.312,0.312,='Excel Calcs'!Q41,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$349,Mid_Rack_Support_Eng_Dia,0.203,0.203,='Excel Calcs'!Q42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$350,Mid_Rack_Support_HoleX_Ctr,0.833,0.833,='Excel Calcs'!Q43,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$351,Mid_Rack_Support_HoleY_Loc_Top,0.300,0.3,='Excel Calcs'!Q44,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$352,Mid_Rack_Support_HoleY_Loc_Btm,0.300,0.3,='Excel Calcs'!Q45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$353,Mid_Rack_Constraint,17.520,17.51999,='Excel Calcs'!Q21,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$354,Floor_Angle_Suppression,1.000,1.0,='Excel Calcs'!Q22,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$355,Mid_Rack_Btm_Workplane,1.085,1.08502,='Excel Calcs'!Q47,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$356,Mid_Rack_DP_Support_Y_Hole_Loc,0.250,0.25,='Excel Calcs'!Q50,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$357,Mid_Rack_Post_Btm_Coil_Top_Hole,37.480,37.48001,='Excel Calcs'!Q62,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$358,Mid_Rack_Post_Mid_Coil_Btm_Hole,38.980,38.98001,='Excel Calcs'!Q63,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$359,Mid_Rack_Post_Mid_Coil_Top_Hole,75.980,75.98001,='Excel Calcs'!Q64,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$360,Mid_Rack_Post_Top_Coil_Btm_Hole,77.480,77.48001,='Excel Calcs'!Q65,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$361,Mid_Rack_Post_Top_Coil_Top_Hole,114.480,114.48001,='Excel Calcs'!Q66,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$362,Mid_Rack_Post_Above_DP,1.251,1.2509999999999997,='Excel Calcs'!Q67,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$363,Mid_Rack_Post_Hole_Loc_X,1.250,1.25,='Excel Calcs'!Q68,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$364,Mid_Rack_Post_Hole_From_Support_Cntr,0.417,0.4165,='Excel Calcs'!Q69,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$365,support_width,4.250,4.25,='Excel Calcs'!Q20,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$366,BhdZLocation,1.500,1.5,='Excel Calcs'!B27,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$367,DrainPanLoc,0.750,0.75,='Excel Calcs'!B28,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$368,BASERAILFLANGE,2.942,2.942,='Excel Calcs'!B42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$369,Support_Loc1,5.126,5.126020000000006,='Excel Calcs'!Q4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$370,Support_Loc2,9.376,9.376020000000006,='Excel Calcs'!Q5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$371,Support_Loc_2CC,1.000,1.0,='Excel Calcs'!K96,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$372,Support_Loc3,41.413,41.413012,='Excel Calcs'!Q6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$373,Support_Loc_3CC,1.000,1.0,='Excel Calcs'!K97,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$374,Support_Loc4,73.450,73.450004,='Excel Calcs'!Q7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$375,Support_Loc4_Sup,0.000,0.0,='Excel Calcs'!B102,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$376,Support_Loc_4CC,1.000,1.0,='Excel Calcs'!K98,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$377,Support_Loc_4CC_Sup,1.000,1.0,='Excel Calcs'!K99,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$378,Support_Loc_4CC_Sup1,0.000,0.0,='Excel Calcs'!K100,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$379,Support_Loc5,105.487,105.486996,='Excel Calcs'!Q8,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$380,Support_Loc5_Sup,2.000,2.0,='Excel Calcs'!B103,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$381,Support_Loc_5CC,1.000,1.0,='Excel Calcs'!K101,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$382,Support_Loc_5CC_Sup,0.000,0.0,='Excel Calcs'!K102,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$383,Support_Loc_5CC_Sup1,1.000,1.0,='Excel Calcs'!K103,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$384,Support_Loc6,137.524,137.523988,='Excel Calcs'!Q9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$385,Support_Loc6_Sup,2.000,2.0,='Excel Calcs'!B104,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$386,Support_Loc_6CC,1.000,1.0,='Excel Calcs'!K104,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$387,Support_Loc_6CC_Sup,0.000,0.0,='Excel Calcs'!K105,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$388,Support_Loc_6CC_Sup1,1.000,1.0,='Excel Calcs'!K106,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$389,Support_Loc7,0.001,0.001,='Excel Calcs'!Q10,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$390,Support_Loc_7CC,0.000,0.0,='Excel Calcs'!K107,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$391,Support_Loc8,0.001,0.001,='Excel Calcs'!Q11,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$392,Support_Loc_8CC,0.000,0.0,='Excel Calcs'!K108,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$393,Support_Loc9,169.561,169.56098,='Excel Calcs'!Q12,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$394,Support_Loc_9CC,1.000,1.0,='Excel Calcs'!K109,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$395,Support_Loc10,173.811,173.81098,='Excel Calcs'!Q13,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$396,SupportLocDefaultValue,0.001,0.001,='Excel Calcs'!Q19,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$397,CoilSupportAngleThk,0.10501,0.10501,='Excel Calcs'!B54,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$398,ElevatedCoil_Shelf_Hole_Suppression,0.000,0.0,='Excel Calcs'!N115,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$399,ElevatedCoil_Riser_Suppression,0.000,0.0,='Excel Calcs'!N116,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$400,ElevationShelfRule,18.001,18.001,='Excel Calcs'!N117,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$401,ElevationRiserRule,18.000,18.0,='Excel Calcs'!N118,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$402,ElevationRiserCoilsHighRule,1.000,1.0,='Excel Calcs'!N119,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$403,Elevated_Riser_Qty,6.000,6.0,='Excel Calcs'!N120,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$404,Elevated_Riser_Dist,33.000,33.0,='Excel Calcs'!N121,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$405,ElevatedRiserMaxSpacing,36.000,36.0,='Excel Calcs'!N122,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$406,ElevatedCoil_Riser_Height,6.000,6.0,='Excel Calcs'!N93,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$407,ElevatedCoil_Riser_Length,12.625,12.625,='Excel Calcs'!N94,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$408,ElevatedCoil_Riser_Thk,0.060,0.06001,='Excel Calcs'!N96,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$409,ElevatedCoil_Riser_Flg1,2.500,2.5,='Excel Calcs'!N97,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$410,ElevatedCoil_Riser_Flg2,2.500,2.5,='Excel Calcs'!N98,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$411,ElevatedCoil_Riser_Flg3,2.000,2.0,='Excel Calcs'!N99,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$412,ElevatedCoil_Riser_Hole1_X_Loc,1.250,1.25,='Excel Calcs'!N100,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$413,ElevatedCoil_Riser_Hole1_Y_Loc,1.060,1.06001,='Excel Calcs'!N101,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$414,ElevatedCoil_Riser_Hole1_Y_Qty,2.000,2.0,='Excel Calcs'!N102,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$415,ElevatedCoil_Riser_Hole1_Y_Dist,3.820,3.81997,='Excel Calcs'!N103,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$416,ElevatedCoil_Riser_Hole1_Y_Dia,0.203,0.203,='Excel Calcs'!N104,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$417,ElevatedCoil_Riser_Hole1_Y_Max_Space,4.000,4.0,='Excel Calcs'!N105,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$418,ElevatedCoil_Riser_Hole1_Y_Suppression,0.000,0.0,='Excel Calcs'!N106,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$419,ElevatedCoil_Riser_Hole2_X_Loc,1.250,1.25,='Excel Calcs'!N107,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$420,ElevatedCoil_Riser_Hole2_Z_Loc,1.060,1.06001,='Excel Calcs'!N108,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$421,ElevatedCoil_Riser_Hole2_Z_Qty,4.000,4.0,='Excel Calcs'!N109,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$422,ElevatedCoil_Riser_Hole2_Z_Dist,3.502,3.5016599999999998,='Excel Calcs'!N110,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$423,ElevatedCoil_Riser_Hole2_Z_Dia,0.312,0.312,='Excel Calcs'!N111,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$424,ElevatedCoil_Riser_Hole2_Z_Max_Space,4.000,4.0,='Excel Calcs'!N112,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$425,Coil_Support_Angle_Flg1,1.000,1.0,='Excel Calcs'!Q73,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$426,Coil_Support_Angle_Flg2,1.000,1.0,='Excel Calcs'!Q74,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$427,Coil_Support_Angle_Flg3,3.170,3.17,='Excel Calcs'!Q75,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$428,Coil_Support_Angle_Width,4.250,4.25,='Excel Calcs'!Q76,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$429,Coil_Support_Angle_Chamfer,0.250,0.25,='Excel Calcs'!Q77,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$430,Coil_Support_Angle_Thk,0.135,0.13501,='Excel Calcs'!Q79,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$431,Coil_Support_Angle_SlotDia,0.312,0.312,='Excel Calcs'!Q80,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$432,Coil_Support_Angle_SlotLength,0.375,0.375,='Excel Calcs'!Q81,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$433,Coil_Support_Angle_SlotLoc,0.750,0.75,='Excel Calcs'!Q82,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$434,Coil_Support_Angle_SlotYLoc,0.375,0.375,='Excel Calcs'!Q83,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$435,Coil_Support_Angle_SlotSpace,2.750,2.75,='Excel Calcs'!Q84,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$436,Coil_Support_Angle_Eng_Hole_Dia,0.203,0.203,='Excel Calcs'!Q85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$437,Coil_Support_Angle_Eng_Hole_Y_Loc,0.500,0.5,='Excel Calcs'!Q86,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$438,Coil_Support_Angle_Width1,82.789,82.78942,='Excel Calcs'!Q87,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$439,Coil_Support_Angle_IW,7.105,7.10501,='Excel Calcs'!Q88,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$440,Coil_Support_Angle_WidthR,1.895,1.89499,='Excel Calcs'!Q89,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$441,Coil_Support_Angle_WidthL,2.000,2.00028,='Excel Calcs'!Q90,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$442,Coil_Support_Chan_Width,8.000,8.0,='Excel Calcs'!Q93,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$443,Coil_Support_Chan_Flg1,3.185,3.18497,='Excel Calcs'!Q94,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$444,Coil_Support_Chan_Flg2,0.750,0.75,='Excel Calcs'!Q95,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$445,Coil_Support_Chan_Flg3,0.750,0.75,='Excel Calcs'!Q96,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$446,Coil_Support_Chan_Flg4,1.250,1.25,='Excel Calcs'!Q97,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$447,Coil_Support_Chan_Thk,0.105,0.10501,='Excel Calcs'!Q98,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$448,Coil_Support_Chan_Hole1_X_Loc,0.625,0.625,='Excel Calcs'!Q100,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$449,Coil_Support_Chan_Hole1_Y_Loc,2.250,2.25,='Excel Calcs'!Q101,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$450,Coil_Support_Chan_Hole1_Y_Spac,4.500,4.5,='Excel Calcs'!Q102,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$451,Coil_Support_Chan_Hole1_Dia,0.188,0.188,='Excel Calcs'!Q103,String,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$452,Coil_Support_Chan_Hole1_X_Loc1,3.200,3.2,='Excel Calcs'!Q104,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$453,Coil_Support_Chan_Hole_X_Loc_DripPanR,13.451,13.451020000000007,='Excel Calcs'!Q105,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$454,Coil_Support_Chan_Hole_X_Loc_DripPanL,165.486,165.48598,='Excel Calcs'!Q106,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$455,WirewayDefault,0.001,0.001,=Wireways!B2,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$456,WirewayWidthCut,4,4.0,=Wireways!B3,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$457,WirewayHeightCut,1.5,1.5,=Wireways!B4,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$458,WirewayLocL,0.001,0.001,=Wireways!B5,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$459,WirewayVertNotchWidthL,0.001,0.001,=Wireways!B6,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$460,WirewayTopNotchLocL,0.001,0.001,=Wireways!B7,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$461,WirewayTopNotchWidthL,0.001,0.001,=Wireways!B8,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$462,WirewayLocR,0.001,0.001,=Wireways!B9,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$463,WirewayVertNotchWidthR,0.001,0.001,=Wireways!B10,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$464,WirewayTopNotchLocR,0.001,0.001,=Wireways!B11,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$465,WirewayTopNotchWidthR,0.001,0.001,=Wireways!B12,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$466,WirewayLeftvbhdSuppression,0,0.0,=Wireways!B13,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$467,WirewayRightvbhdSuppression,0,0.0,=Wireways!B14,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$468,WirewayLefthbhdSuppression,0,0.0,=Wireways!B15,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$469,WirewayRighthbhdSuppression,0,0.0,=Wireways!B16,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$470,WirewayMtgHoleXLoc,0.25,0.25,=Wireways!B19,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$471,WirewayMtgHoleY1Loc,0.25,0.25,=Wireways!B20,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$472,WirewayMtgHoleY2Loc,1,1.0,=Wireways!B21,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$473,WirewayMtgHoleDiaLLvbhd,0.001,0.001,=Wireways!B23,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$474,WirewayMtgHoleLLvbhdLocX,0.001,0.001,=Wireways!B24,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$475,WirewayMtgHoleDiaLRvbhd,0.001,0.001,=Wireways!B26,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$476,WirewayMtgHoleLRvbhdLocX,0.001,0.001,=Wireways!B27,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$477,WirewayMtgHoleDiaRLvbhd,0.001,0.001,=Wireways!B29,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$478,WirewayMtgHoleRLvbhdLocX,0.001,0.001,=Wireways!B30,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$479,WirewayMtgHoleDiaRRvbhd,0.001,0.001,=Wireways!B32,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$480,WirewayMtgHoleRRvbhdLocX,0.001,0.001,=Wireways!B33,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$481,WirewayMtgHoleDiaLLhbhd,0.001,0.001,=Wireways!B35,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$482,WirewayMtgHoleLLhbhdLocX,0.001,0.001,=Wireways!B36,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$483,WirewayMtgHoleDiaLRhbhd,0.001,0.001,=Wireways!B38,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$484,WirewayMtgHoleLRhbhdLocX,0.001,0.001,=Wireways!B39,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$485,WirewayMtgHoleDiaRLhbhd,0.001,0.001,=Wireways!B41,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$486,WirewayMtgHoleRLhbhdLocX,0.001,0.001,=Wireways!B42,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$487,WirewayMtgHoleDiaRRhbhd,0.001,0.001,=Wireways!B44,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$488,WirewayMtgHoleRRhbhdLocX,0.001,0.001,=Wireways!B45,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$489,Coil_Plate_Length,82.37098,82.37098,='Excel Calcs'!N79,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$490,LH_Coil_Plate_Length,83.371,83.37098,='Excel Calcs'!N80,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$491,Coil_Plate_Array_Qty,27,27.0,='Excel Calcs'!N81,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$492,Coil_Plate_Array_Dist,6,6.0,='Excel Calcs'!N82,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$493,Coil_Plate_Thk,0.06001,0.06001,='Excel Calcs'!N84,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$494,Coil_Plate_Hole_Start,1.219,1.219,='Excel Calcs'!N85,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$495,Coil_Plate_Clearance,0.031,0.031,='Excel Calcs'!N86,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$496,Coil_Plate_Bottom_Right_Suppression,0,0.0,='Excel Calcs'!N87,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$497,Coil_Plate_Middle_Right_Suppression,0,0.0,='Excel Calcs'!N88,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$498,Coil_Plate_Bottom_Left_Suppression,0,0.0,='Excel Calcs'!N89,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$499,Coil_Plate_Middle_Left_Suppression,0,0.0,='Excel Calcs'!N90,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$500,Upturned_Lip_Sup,0,0.0,='Excel Calcs'!B94,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$501,Upturned_Lip_H,0.000,1e-06,='Excel Calcs'!B95,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$502,Upturned_Lip_W,0.000,1e-06,='Excel Calcs'!B96,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$503,Stack_Sup_Gusset_Width,2.870,2.87,='Excel Calcs'!Q110,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$504,Stack_Sup_Gusset_Width2,3.000,3.0,='Excel Calcs'!Q111,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$505,Stack_Sup_Gusset_Depth,8.000,8.0,='Excel Calcs'!Q112,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$506,Stack_Sup_Gusset_Depth2,6.000,6.0,='Excel Calcs'!Q113,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$507,Stack_Sup_Gusset_End_Depth,0.500,0.5,='Excel Calcs'!Q114,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$508,Stack_Sup_Gusset_Flg1,0.875,0.875,='Excel Calcs'!Q115,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$509,Stack_Sup_Gusset_Flg2,0.875,0.875,='Excel Calcs'!Q116,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$510,Stack_Sup_Gusset_Clr_Hole_Dia,0.312,0.312,='Excel Calcs'!Q117,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$511,Stack_Sup_Gusset_Eng_Hole_Dia,0.188,0.188,='Excel Calcs'!Q118,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$512,Stack_Sup_Gusset_Thk,0.135,0.13501,='Excel Calcs'!Q119,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$513,Stack_Sup_Gusset_Hole1_X_Loc,1.153,1.153,='Excel Calcs'!Q121,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$514,Stack_Sup_Gusset_Hole1_Y_Loc,0.278,0.278,='Excel Calcs'!Q122,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$515,Stack_Sup_Gusset_Hole1_X_Spac,6.000,6.0,='Excel Calcs'!Q123,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$516,Stack_Sup_Gusset_Hole2_Z_Loc,0.750,0.75,='Excel Calcs'!Q124,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$517,Stack_Sup_Gusset_Hole2_Y_Loc,0.300,0.3,='Excel Calcs'!Q125,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$518,Stack_Sup_Gusset_Hole2_Z_Spac,1.500,1.5,='Excel Calcs'!Q126,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$519,Stack_Sup_Gusset_Hole3_X_Loc,4.750,4.75,='Excel Calcs'!Q127,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$520,Stack_Sup_Gusset_Hole3_Y_Loc,0.375,0.375,='Excel Calcs'!Q128,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$521,Stack_Sup_Top_Gusset_Loc1,114.750,114.75,='Excel Calcs'!Q129,Number,in,,,,,No
+Calc_10006_023.xls,Sheet1,$B$522,Part_091_30102_458,0,0.0,='Excel Calcs'!B135,Number,ul,Suppression rules,,,,No
+Calc_10006_023.xls,Sheet1,$B$523,Part_091_30102_459,1,1.0,='Excel Calcs'!B136,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$524,Part_091_30102_463,0,0.0,='Excel Calcs'!B140,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$525,Part_091_30102_464,1,1.0,='Excel Calcs'!B141,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$526,Part_091_30102_466_1,0,0.0,='Excel Calcs'!B143,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$527,Part_091_30102_466_2,0,0.0,='Excel Calcs'!B144,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$528,Part_091_30102_467_1,1,1.0,='Excel Calcs'!B145,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$529,Part_091_30102_467_2,1,1.0,='Excel Calcs'!B146,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$530,Part_091_30102_469_1,0,0.0,='Excel Calcs'!B149,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$531,Part_091_30102_469_2,0,0.0,='Excel Calcs'!B150,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$532,Part_091_30102_470_1,1,1.0,='Excel Calcs'!B151,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$533,Part_091_30102_470_2,1,1.0,='Excel Calcs'!B152,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$534,Part_091_30102_472,0,0.0,='Excel Calcs'!B155,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$535,Part_091_30102_473,0,0.0,='Excel Calcs'!B156,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$536,Part_091_30102_475_1,0,0.0,='Excel Calcs'!B158,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$537,Part_091_30102_475_2,0,0.0,='Excel Calcs'!B159,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$538,Part_091_30102_475_3,0,0.0,='Excel Calcs'!B160,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$539,Part_091_30102_476_1,0,0.0,='Excel Calcs'!B161,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$540,Part_091_30102_476_2,0,0.0,='Excel Calcs'!B162,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$541,Part_091_30102_476_3,0,0.0,='Excel Calcs'!B163,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$542,Part_091_30102_478,1,1.0,='Excel Calcs'!B167,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$543,Part_091_30102_480,1,1.0,='Excel Calcs'!B169,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$544,Part_091_30102_481_1,1,1.0,='Excel Calcs'!B170,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$545,Part_091_30102_481_2,1,1.0,='Excel Calcs'!B171,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$546,Part_091_30102_482,1,1.0,='Excel Calcs'!B172,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$547,Part_091_30102_483,1,1.0,='Excel Calcs'!B173,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$548,Part_091_30102_487,0,0.0,='Excel Calcs'!B177,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$549,Part_091_30102_488,0,0.0,='Excel Calcs'!B178,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$550,Part_091_30102_489,1,1.0,='Excel Calcs'!B179,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$551,Part_091_30102_491,0,0.0,='Excel Calcs'!B181,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$552,Part_091_30102_493_1,0,0.0,='Excel Calcs'!B183,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$553,Part_091_30102_493_2,1,1.0,='Excel Calcs'!B184,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$554,Part_091_30102_493_3,1,1.0,='Excel Calcs'!B185,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$555,Part_091_30102_493_4,1,1.0,='Excel Calcs'!B186,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$556,Part_091_30102_493_5,1,1.0,='Excel Calcs'!B187,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$557,Part_091_30102_493_6,1,1.0,='Excel Calcs'!B188,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$558,Part_091_30102_493_7,0,0.0,='Excel Calcs'!B189,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$559,Part_091_30102_493_8,0,0.0,='Excel Calcs'!B190,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$560,Part_091_30102_493_9,1,1.0,='Excel Calcs'!B191,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$561,Part_091_30102_493_10,0,0.0,='Excel Calcs'!B192,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$562,Part_091_30102_495,0,0.0,='Excel Calcs'!B193,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$563,Part_091_30102_496_1,0,0.0,='Excel Calcs'!B194,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$564,Part_091_30102_496_2,1,1.0,='Excel Calcs'!B195,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$565,Part_091_30102_496_3,1,1.0,='Excel Calcs'!B196,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$566,Part_091_30102_496_4,1,1.0,='Excel Calcs'!B197,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$567,Part_091_30102_496_5,1,1.0,='Excel Calcs'!B198,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$568,Part_091_30102_496_6,1,1.0,='Excel Calcs'!B199,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$569,Part_091_30102_496_7,0,0.0,='Excel Calcs'!B200,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$570,Part_091_30102_496_8,0,0.0,='Excel Calcs'!B201,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$571,Part_091_30102_496_9,1,1.0,='Excel Calcs'!B202,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$572,Part_091_30102_496_10,0,0.0,='Excel Calcs'!B203,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$573,Part_091_30102_496_11,0,0.0,='Excel Calcs'!B204,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$574,Part_091_30102_496_12,1,1.0,='Excel Calcs'!B205,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$575,Part_091_30102_496_13,1,1.0,='Excel Calcs'!B206,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$576,Part_091_30102_496_14,1,1.0,='Excel Calcs'!B207,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$577,Part_091_30102_496_15,1,1.0,='Excel Calcs'!B208,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$578,Part_091_30102_496_16,1,1.0,='Excel Calcs'!B209,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$579,Part_091_30102_496_17,0,0.0,='Excel Calcs'!B210,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$580,Part_091_30102_496_18,0,0.0,='Excel Calcs'!B211,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$581,Part_091_30102_496_19,1,1.0,='Excel Calcs'!B212,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$582,Part_091_30102_496_20,0,0.0,='Excel Calcs'!B213,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$583,Part_091_30102_497,1,1.0,='Excel Calcs'!B214,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$584,Part_091_30102_498,0,0.0,='Excel Calcs'!B215,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$585,Part_091_30102_499_1,1,1.0,='Excel Calcs'!B216,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$586,Part_091_30102_499_2,1,1.0,='Excel Calcs'!B217,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$587,Part_091_30102_499_3,1,1.0,='Excel Calcs'!B218,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$588,Part_091_30102_499_4,0,0.0,='Excel Calcs'!B219,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$589,Part_091_30102_499_5,0,0.0,='Excel Calcs'!B220,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$590,Part_091_30102_499_6,0,0.0,='Excel Calcs'!B221,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$591,Part_091_30102_500_1,1,1.0,='Excel Calcs'!B222,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$592,Part_091_30102_500_2,1,1.0,='Excel Calcs'!B223,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$593,Part_091_30102_500_3,1,1.0,='Excel Calcs'!B224,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$594,Part_091_30102_501_1,1,1.0,='Excel Calcs'!B225,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$595,Part_091_30102_501_2,1,1.0,='Excel Calcs'!B226,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$596,Part_091_30102_501_3,0,0.0,='Excel Calcs'!B227,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$597,Part_091_30102_504_4,1,1.0,='Excel Calcs'!B228,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$598,Part_091_30102_504_5,1,1.0,='Excel Calcs'!B229,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$599,Part_091_30102_504_6,0,0.0,='Excel Calcs'!B230,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$600,Part_091_30102_504_7,1,1.0,='Excel Calcs'!B231,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$601,Part_091_30102_504_8,1,1.0,='Excel Calcs'!B232,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$602,Part_091_30102_504_9,0,0.0,='Excel Calcs'!B233,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$603,Part_091_30102_505_4,1,1.0,='Excel Calcs'!B234,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$604,Part_091_30102_505_5,1,1.0,='Excel Calcs'!B235,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$605,Part_091_30102_505_6,1,1.0,='Excel Calcs'!B236,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$606,Part_091_30102_505_7,1,1.0,='Excel Calcs'!B237,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$607,Part_091_30102_505_8,1,1.0,='Excel Calcs'!B238,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$608,Part_091_30102_505_9,1,1.0,='Excel Calcs'!B239,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$609,Part_091_30102_506,0,0.0,='Excel Calcs'!B240,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$610,Part_091_30102_507,0,0.0,='Excel Calcs'!B241,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$611,Part_091_30102_508,0,0.0,='Excel Calcs'!B242,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$612,Part_091_30102_509,0,0.0,='Excel Calcs'!B243,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$613,Part_091_30102_510,0,0.0,='Excel Calcs'!B244,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$614,Part_091_30102_511,0,0.0,='Excel Calcs'!B245,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$615,Part_091_30102_512,1,1.0,='Excel Calcs'!B246,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$616,Part_091_30102_513,1,1.0,='Excel Calcs'!B247,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$617,Part_091_30102_514,0,0.0,='Excel Calcs'!B248,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$618,Part_091_30102_515,0,0.0,='Excel Calcs'!B249,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$619,Part_091_30102_516,0,0.0,='Excel Calcs'!B250,Number,ul,,,,,No
+Calc_10006_023.xls,Sheet1,$B$622,Error_Check,0.000,0.0,"=COUNTIF(B2:B619,FALSE)+COUNTIF(B5:B619,#N/A)+COUNTIF(B5:B619,#REF!)+COUNTIF(B5:B619,#DIV/0!)",Number,,,,,,No
+Calc_10006_023.xls,Data,$B$2,Parameter,Value,Value,Value,String,ul,Description,Values For MOM,,,No
+Calc_10006_023.xls,Data,$B$3,IH,118,118.0,118,Number,in,INSIDE HEIGHT,,,IH,No
+Calc_10006_023.xls,Data,$B$4,IW,179,179.0,179,Number,in,INSIDE WIDTH,,,IW,No
+Calc_10006_023.xls,Data,$B$5,CoilType,CC,CC,CC,String,ul,"CC = Cooling Coil (Water), HC = Heating Coil (Water)","HC, CC",,CoilType,No
+Calc_10006_023.xls,Data,$B$6,CoilHand,LEFT,LEFT,LEFT,String,ul,"LEFT, RIGHT","LEFT, RIGHT",,CoilHand,No
+Calc_10006_023.xls,Data,$B$7,FH_1_BTM,36.25,36.25,36.25,Number,ul,Bottom Coil Fin Height,,,FH_1_BTM,No
+Calc_10006_023.xls,Data,$B$8,FH_2_MID,36.25,36.25,36.25,Number,ul,Middle Coil Fin Height (Always 2nd Coil in Stack),,,FH_2_MID,No
+Calc_10006_023.xls,Data,$B$9,FH_3_TOP,36.25,36.25,36.25,Number,ul,Top Coil Fin Height (Always 3nd Coil in Stack),,,FH_3_TOP,No
+Calc_10006_023.xls,Data,$B$10,CoilFinLength,166,166.0,166,Number,in,FIN LENGTHS OF ALL COILS IN BANK ARE THE SAME,,,CoilFinLength,No
+Calc_10006_023.xls,Data,$B$11,CoilRowsDeep,8,8.0,8,Number,ul,"1,2,3,4,5,6,8,10,12","1, 2, 3, 4, 5, 6, 8, 10, 12",,CoilRowsDeep,No
+Calc_10006_023.xls,Data,$B$12,MaterialStyle,SST304,SST304,SST304,String,ul,BULKHEAD MATERIAL STYLE,"STL GALV, SST304, SST316L",,MaterialStyle,No
+Calc_10006_023.xls,Data,$B$13,CoilSupportMaterial,SST304,SST304,SST304,String,ul,SUPPORT AND DRIP PAN MATERIAL STYLE,"STL GALV, SST304, SST316L",,CoilSupportMaterial,No
+Calc_10006_023.xls,Data,$B$14,CoilArrangement,A,A,A,String,ul,"ARRANGEMENT ""A"" OR ""B""","A, B",,CoilArrangement,No
+Calc_10006_023.xls,Data,$B$15,CoilHeaderDia,3,3.0,3,Number,ul,"AVAILABLE CONNECTOR SIZES 1.25,  1.5,  2,  2.5,  3,  4","1.25, 1.5, 2, 2.5, 3, 4",,CoilHeaderDia,No
+Calc_10006_023.xls,Data,$B$16,MaxBHHoleSpc_X,5.5,5.5,5.5,Number,ul,"Default = 8"" : MIN = 3""",,,MaxBHHoleSpc_X,No
+Calc_10006_023.xls,Data,$B$17,MaxBHHoleSpc_Y,5.5,5.5,5.5,Number,ul,"Default = 12"" : MIN = 3""",,,MaxBHHoleSpc_Y,No
+Calc_10006_023.xls,Data,$B$18,CoilYOffset,0,0.0,0,Number,ul,"ONLY AVAILABLE FOR HEATING COILS - DEFAULT ""0""",,,CoilYoffset,No
+Calc_10006_023.xls,Data,$B$19,DrainPanLength,35.75,35.75,35.75,Number,in,DRAIN PAN LENGTH,,,DrainPanLength,No
+Calc_10006_023.xls,Data,$B$20,UpstreamSplit,NO,NO,NO,String,ul,YES = SPLIT ON UPSTREAM SIDE :  NO= NO SPLIT ON UPSTREAM SIDE,"YES, NO",,UpstreamSplit,No
+Calc_10006_023.xls,Data,$B$21,BH,12,12.0,12,Number,ul,"4,6,8,10,12","4, 6, 8, 10, 12",,BH,No
+Calc_10006_023.xls,Data,$B$22,PanelThickness,2,2.0,2,Number,ul,"2,3,4","2, 3, 4",,PanelThickness,No
+Calc_10006_023.xls,Data,$B$23,TopBhdThkO,0.00000,0.0,0,Number,ul,"TOP BULKHEAD THICKNESS OVERRIDE - DEFAULT ""0""",,,TopBhdThkO,No
+Calc_10006_023.xls,Data,$B$24,BtmBhdThkO,0.00000,0.0,0,Number,ul,"BOTTOM BULKHEAD THICKNESS OVERRIDE - DEFAULT ""0""",,,BtmBhdThkO,No
+Calc_10006_023.xls,Data,$B$25,RhtBhdThkO,0.00000,0.0,0,Number,ul,"RIGHT BULKHEAD THICKNESS OVERRIDE - DEFAULT ""0""",,,RhtBhdThkO,No
+Calc_10006_023.xls,Data,$B$26,LftBhdThkO,0.00000,0.0,0,Number,ul,"LEFT BULKHEAD THICKNESS OVERRIDE- DEFAULT ""0""",,,LftBhdThkO,No
+Calc_10006_023.xls,Data,$B$27,StiffenerThkO,0.00000,0.0,0,Number,ul,"STIFFENER THICKNESS OVERRIDE - DEFAULT ""0""",,,StiffenerThkO,No
+Calc_10006_023.xls,Data,$B$28,StackingDripPanThkO,0.00000,0.0,0,Number,ul,"STACKING RACK DRIP PAN THICKNESS OVERRIDE - DEFAULT ""0""",,,StackingDripPanThkO,No
+Calc_10006_023.xls,Data,$B$29,Ladder_Angle_Thk,0.10501,0.10501,0.10501,Number,ul,"""0"" if HC, Ladder _Angle_Thickness - from Drain Pan Model if CC",,,Ladder_Angle_Thk,No
+Calc_10006_023.xls,Data,$B$30,WireWay,NONE,NONE,NONE,String,ul,"NONE, LEFT, RIGHT, BOTH",,,WireWay,No
+Calc_10006_023.xls,Data,$B$31,WireWayLocation,0,0.0,0,Number,ul,"Valid Wireway Location 3-6"" OR 0 if wireway = NONE",,,WireWayLocation,No
+Calc_10006_023.xls,Data,$B$32,UPTURNED_LIP,0.000,0.0,0,Number,ul,Upturned Lip Height,,,UPTURNED_LIP,No
+Calc_10006_023.xls,Data,$B$33,Pan_ThkO,0,0.0,0,Number,ul,"set to ""0"" when using defaults",,,Pan_ThkO,No
+Calc_10006_023.xls,Channel Loc,$C$6,FLOOR_CHAN_1_Z_LOC,0.750,0.75,='Excel Calcs'!B9-('Excel Calcs'!H6/2),Number,in,Part: 091-30102-458 | Notes: ,,,FLOOR_CHAN_1_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$6,FLOOR_CHAN_1_ARRAY_OFFSET,9.000,9.0,='Excel Calcs'!B4+'Excel Calcs'!E45+'Excel Calcs'!H51,Number,in,Part: 091-30102-458,,,FLOOR_CHAN_1_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$6,FLOOR_CHAN_1_ARRAY_QTY,16.000,16.0,='Excel Calcs'!H52,Number,ul,Part: 091-30102-458,,,FLOOR_CHAN_1_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$6,FLOOR_CHAN_1_ARRAY_SPACING,5.267,5.266666666666667,='Excel Calcs'!H53,Number,in,Part: 091-30102-458,,,FLOOR_CHAN_1_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$7,FLOOR_CHAN_2_Z_LOC,0.000,0.0,"=IF('Excel Calcs'!B135=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part: 091-30102-459 | Notes: suppress when not used,,,FLOOR_CHAN_2_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$7,FLOOR_CHAN_2_ARRAY_OFFSET,,None,,Number,in,Part: 091-30102-459,,,FLOOR_CHAN_2_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$7,FLOOR_CHAN_2_ARRAY_QTY,,None,,Number,ul,Part: 091-30102-459,,,FLOOR_CHAN_2_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$7,FLOOR_CHAN_2_ARRAY_SPACING,,None,,Number,in,Part: 091-30102-459,,,FLOOR_CHAN_2_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$8,FLOOR_CHAN_3_Z_LOC,0.750,0.75,"=IF('Excel Calcs'!B136=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part: 091-30102-460 | Notes: suppress when not used,,,FLOOR_CHAN_3_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$8,FLOOR_CHAN_3_ARRAY_OFFSET,,None,,Number,in,Part: 091-30102-460,,,FLOOR_CHAN_3_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$8,FLOOR_CHAN_3_ARRAY_QTY,,None,,Number,ul,Part: 091-30102-460,,,FLOOR_CHAN_3_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$8,FLOOR_CHAN_3_ARRAY_SPACING,,None,,Number,in,Part: 091-30102-460,,,FLOOR_CHAN_3_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$9,FLOOR_CHAN_4_Z_LOC,0.750,0.75,='Excel Calcs'!B9-('Excel Calcs'!H6/2),Number,in,Part: 091-30102-461 | Notes: ,,,FLOOR_CHAN_4_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$9,FLOOR_CHAN_4_ARRAY_OFFSET,2.310,2.31,='Excel Calcs'!B4+'Excel Calcs'!E53,Number,in,Part: 091-30102-461,,,FLOOR_CHAN_4_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$9,FLOOR_CHAN_4_ARRAY_QTY,2.000,2.0,='Excel Calcs'!E54,Number,ul,Part: 091-30102-461,,,FLOOR_CHAN_4_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$9,FLOOR_CHAN_4_ARRAY_SPACING,2.690,2.6900000000000004,='Excel Calcs'!E55,Number,in,Part: 091-30102-461,,,FLOOR_CHAN_4_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$10,FLOOR_CHAN_5_Z_LOC,0.750,0.75,='Excel Calcs'!B9-('Excel Calcs'!H6/2),Number,in,Part: 091-30102-462 | Notes: ,,,FLOOR_CHAN_5_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$10,FLOOR_CHAN_5_ARRAY_OFFSET,175.000,175.0,=IW-'Excel Calcs'!B4-'Excel Calcs'!E19-'Excel Calcs'!E21,Number,in,Part: 091-30102-462,,,FLOOR_CHAN_5_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$10,FLOOR_CHAN_5_ARRAY_QTY,2.000,2.0,='Excel Calcs'!E20,Number,ul,Part: 091-30102-462,,,FLOOR_CHAN_5_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$10,FLOOR_CHAN_5_ARRAY_SPACING,1.690,1.6900000000000004,='Excel Calcs'!E21,Number,in,Part: 091-30102-462,,,FLOOR_CHAN_5_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$11,FLOOR_CHAN_6_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_6_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$11,FLOOR_CHAN_6_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_6_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$11,FLOOR_CHAN_6_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_6_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$11,FLOOR_CHAN_6_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_6_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$12,FLOOR_CHAN_7_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_7_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$12,FLOOR_CHAN_7_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_7_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$12,FLOOR_CHAN_7_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_7_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$12,FLOOR_CHAN_7_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_7_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$13,FLOOR_CHAN_8_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_8_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$13,FLOOR_CHAN_8_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_8_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$13,FLOOR_CHAN_8_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_8_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$13,FLOOR_CHAN_8_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_8_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$14,FLOOR_CHAN_9_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_9_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$14,FLOOR_CHAN_9_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_9_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$14,FLOOR_CHAN_9_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_9_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$14,FLOOR_CHAN_9_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_9_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$15,FLOOR_CHAN_10_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_10_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$15,FLOOR_CHAN_10_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_10_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$15,FLOOR_CHAN_10_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_10_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$15,FLOOR_CHAN_10_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_10_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$16,FLOOR_CHAN_11_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_11_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$16,FLOOR_CHAN_11_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_11_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$16,FLOOR_CHAN_11_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_11_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$16,FLOOR_CHAN_11_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_11_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$17,FLOOR_CHAN_12_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_12_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$17,FLOOR_CHAN_12_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_12_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$17,FLOOR_CHAN_12_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_12_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$17,FLOOR_CHAN_12_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_12_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$18,FLOOR_CHAN_13_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_13_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$18,FLOOR_CHAN_13_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_13_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$18,FLOOR_CHAN_13_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_13_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$18,FLOOR_CHAN_13_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_13_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$19,FLOOR_CHAN_14_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_14_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$19,FLOOR_CHAN_14_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_14_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$19,FLOOR_CHAN_14_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_14_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$19,FLOOR_CHAN_14_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_14_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$20,FLOOR_CHAN_15_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_15_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$20,FLOOR_CHAN_15_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_15_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$20,FLOOR_CHAN_15_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_15_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$20,FLOOR_CHAN_15_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_15_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$21,FLOOR_CHAN_16_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_16_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$21,FLOOR_CHAN_16_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_16_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$21,FLOOR_CHAN_16_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_16_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$21,FLOOR_CHAN_16_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_16_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$22,FLOOR_CHAN_17_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_17_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$22,FLOOR_CHAN_17_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_17_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$22,FLOOR_CHAN_17_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_17_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$22,FLOOR_CHAN_17_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_17_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$23,FLOOR_CHAN_18_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_18_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$23,FLOOR_CHAN_18_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_18_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$23,FLOOR_CHAN_18_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_18_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$23,FLOOR_CHAN_18_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_18_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$24,FLOOR_CHAN_19_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_19_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$24,FLOOR_CHAN_19_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_19_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$24,FLOOR_CHAN_19_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_19_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$24,FLOOR_CHAN_19_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_19_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$25,FLOOR_CHAN_20_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,FLOOR_CHAN_20_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$25,FLOOR_CHAN_20_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_20_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$25,FLOOR_CHAN_20_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,FLOOR_CHAN_20_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$25,FLOOR_CHAN_20_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,FLOOR_CHAN_20_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$28,ROOF_CHAN_1_Z_LOC,0.750,0.75,=FLOOR_CHAN_4_Z_LOC,Number,in,Part: 091-30102-461 | Notes: ,,,ROOF_CHAN_1_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$28,ROOF_CHAN_1_ARRAY_OFFSET,2.310,2.31,=FLOOR_CHAN_4_X_ARRAY_OFFSET,Number,in,Part: 091-30102-461,,,ROOF_CHAN_1_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$28,ROOF_CHAN_1_ARRAY_QTY,2.000,2.0,=FLOOR_CHAN_4_X_ARRAY_QTY,Number,ul,Part: 091-30102-461,,,ROOF_CHAN_1_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$28,ROOF_CHAN_1_ARRAY_SPACING,2.690,2.6900000000000004,=FLOOR_CHAN_4_X_ARRAY_SPACING,Number,in,Part: 091-30102-461,,,ROOF_CHAN_1_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$29,ROOF_CHAN_2_Z_LOC,0.750,0.75,=FLOOR_CHAN_5_Z_LOC,Number,in,Part: 091-30102-462 | Notes: ,,,ROOF_CHAN_2_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$29,ROOF_CHAN_2_ARRAY_OFFSET,175.000,175.0,=FLOOR_CHAN_5_X_ARRAY_OFFSET,Number,in,Part: 091-30102-462,,,ROOF_CHAN_2_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$29,ROOF_CHAN_2_ARRAY_QTY,2.000,2.0,=FLOOR_CHAN_5_X_ARRAY_QTY,Number,ul,Part: 091-30102-462,,,ROOF_CHAN_2_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$29,ROOF_CHAN_2_ARRAY_SPACING,1.690,1.6900000000000004,=FLOOR_CHAN_5_X_ARRAY_SPACING,Number,in,Part: 091-30102-462,,,ROOF_CHAN_2_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$30,ROOF_CHAN_3_Z_LOC,#REF!,-2146826265,"=IF('Excel Calcs'!#REF!=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part:  | Notes: ,,#REF!,ROOF_CHAN_3_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$30,ROOF_CHAN_3_ARRAY_OFFSET,#REF!,-2146826265,"=IF(ROOF_CHAN_3_Z_LOC=0,0,'Excel Calcs'!E45+'Excel Calcs'!B4+'Excel Calcs'!H12)",Number,in,Part: ,,#REF!,ROOF_CHAN_3_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$30,ROOF_CHAN_3_ARRAY_QTY,#REF!,-2146826265,"=IF(ROOF_CHAN_3_Z_LOC=0,0,IF(ROOF_CHAN_3_X_ARRAY_SPACING=0,1,'Excel Calcs'!H13))",Number,ul,Part: ,,#REF!,ROOF_CHAN_3_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$30,ROOF_CHAN_3_ARRAY_SPACING,#REF!,-2146826265,"=IF(ROOF_CHAN_3_Z_LOC=0,0,'Excel Calcs'!H14)",Number,in,Part: ,,#REF!,ROOF_CHAN_3_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$31,ROOF_CHAN_4_Z_LOC,0.000,0.0,"=IF('Excel Calcs'!B140=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part:  | Notes: ,,,ROOF_CHAN_4_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$31,ROOF_CHAN_4_ARRAY_OFFSET,0.000,0.0,"=IF(ROOF_CHAN_4_Z_LOC=0,0,'Excel Calcs'!B4+'Excel Calcs'!E45+'Excel Calcs'!H30)",Number,in,Part: ,,,ROOF_CHAN_4_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$31,ROOF_CHAN_4_ARRAY_QTY,0.000,0.0,"=IF(ROOF_CHAN_4_Z_LOC=0,0,IF(ROOF_CHAN_4_X_ARRAY_SPACING=0,1,'Excel Calcs'!H13))",Number,ul,Part: ,,,ROOF_CHAN_4_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$31,ROOF_CHAN_4_ARRAY_SPACING,0.000,0.0,"=IF(ROOF_CHAN_4_Z_LOC=0,0,'Excel Calcs'!H14)",Number,in,Part: ,,,ROOF_CHAN_4_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$32,ROOF_CHAN_5_Z_LOC,0.750,0.75,"=IF('Excel Calcs'!B141=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part:  | Notes: ,,,ROOF_CHAN_5_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$32,ROOF_CHAN_5_ARRAY_OFFSET,9.000,9.0,"=IF('Excel Calcs'!B141=0,0,'Excel Calcs'!B4+'Excel Calcs'!E45+'Excel Calcs'!H30)",Number,in,Part: ,,,ROOF_CHAN_5_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$32,ROOF_CHAN_5_ARRAY_QTY,16.000,16.0,"=IF('Excel Calcs'!B141=0,0,IF(ROOF_CHAN_5_X_ARRAY_SPACING=0,1,'Excel Calcs'!H31))",Number,ul,Part: ,,,ROOF_CHAN_5_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$32,ROOF_CHAN_5_ARRAY_SPACING,5.226,5.226314,"=IF('Excel Calcs'!B141=0,0,'Excel Calcs'!H32)",Number,in,Part: ,,,ROOF_CHAN_5_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$33,ROOF_CHAN_6_Z_LOC,0.750,0.75,"=IF('Excel Calcs'!B142=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part:  | Notes: ,,,ROOF_CHAN_6_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$33,ROOF_CHAN_6_ARRAY_OFFSET,92.000,92.0,"=IF('Excel Calcs'!B142=0,0,'Excel Calcs'!B4+'Excel Calcs'!E45+'Excel Calcs'!H42+'Excel Calcs'!H60)",Number,in,Part: ,,,ROOF_CHAN_6_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$33,ROOF_CHAN_6_ARRAY_QTY,16.000,16.0,"=IF('Excel Calcs'!B142=0,0,IF(ROOF_CHAN_6_X_ARRAY_SPACING=0,1,'Excel Calcs'!H68))",Number,ul,Part: ,,,ROOF_CHAN_6_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$33,ROOF_CHAN_6_ARRAY_SPACING,5.300,5.3,"=IF('Excel Calcs'!B142=0,0,'Excel Calcs'!H69)",Number,in,Part: ,,,ROOF_CHAN_6_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$34,ROOF_CHAN_7_Z_LOC,0.750,0.75,='Excel Calcs'!B9-('Excel Calcs'!H6/2),Number,in,Part:  | Notes: ,,,ROOF_CHAN_7_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$34,ROOF_CHAN_7_ARRAY_OFFSET,175.000,175.0,=FLOOR_CHAN_5_X_ARRAY_OFFSET,Number,in,Part: ,,,ROOF_CHAN_7_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$34,ROOF_CHAN_7_ARRAY_QTY,2.000,2.0,=FLOOR_CHAN_5_X_ARRAY_QTY,Number,ul,Part: ,,,ROOF_CHAN_7_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$34,ROOF_CHAN_7_ARRAY_SPACING,1.690,1.6900000000000004,=FLOOR_CHAN_5_X_ARRAY_SPACING,Number,in,Part: ,,,ROOF_CHAN_7_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$35,ROOF_CHAN_8_Z_LOC,#REF!,-2146826265,"=IF('Excel Calcs'!#REF!=0,0,'Excel Calcs'!B9-('Excel Calcs'!H6/2))",Number,in,Part:  | Notes: ,,#REF!,ROOF_CHAN_8_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$35,ROOF_CHAN_8_ARRAY_OFFSET,#REF!,-2146826265,"=IF(ROOF_CHAN_8_Z_LOC=0,0,'Excel Calcs'!E45+'Excel Calcs'!B4+'Excel Calcs'!H12)",Number,in,Part: ,,#REF!,ROOF_CHAN_8_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$35,ROOF_CHAN_8_ARRAY_QTY,#REF!,-2146826265,"=IF(ROOF_CHAN_8_Z_LOC=0,0,IF(ROOF_CHAN_8_X_ARRAY_SPACING=0,1,'Excel Calcs'!H13))",Number,ul,Part: ,,#REF!,ROOF_CHAN_8_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$35,ROOF_CHAN_8_ARRAY_SPACING,#REF!,-2146826265,"=IF(ROOF_CHAN_8_Z_LOC=0,0,'Excel Calcs'!H14)",Number,in,Part: ,,#REF!,ROOF_CHAN_8_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$36,ROOF_CHAN_9_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_9_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$36,ROOF_CHAN_9_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_9_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$36,ROOF_CHAN_9_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_9_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$36,ROOF_CHAN_9_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_9_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$37,ROOF_CHAN_10_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_10_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$37,ROOF_CHAN_10_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_10_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$37,ROOF_CHAN_10_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_10_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$37,ROOF_CHAN_10_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_10_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$38,ROOF_CHAN_11_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_11_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$38,ROOF_CHAN_11_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_11_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$38,ROOF_CHAN_11_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_11_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$38,ROOF_CHAN_11_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_11_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$39,ROOF_CHAN_12_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_12_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$39,ROOF_CHAN_12_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_12_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$39,ROOF_CHAN_12_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_12_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$39,ROOF_CHAN_12_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_12_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$40,ROOF_CHAN_13_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_13_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$40,ROOF_CHAN_13_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_13_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$40,ROOF_CHAN_13_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_13_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$40,ROOF_CHAN_13_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_13_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$41,ROOF_CHAN_14_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_14_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$41,ROOF_CHAN_14_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_14_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$41,ROOF_CHAN_14_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_14_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$41,ROOF_CHAN_14_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_14_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$42,ROOF_CHAN_15_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,ROOF_CHAN_15_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$42,ROOF_CHAN_15_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_15_X_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$42,ROOF_CHAN_15_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,ROOF_CHAN_15_X_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$42,ROOF_CHAN_15_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,ROOF_CHAN_15_X_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$45,LEFT_HAND_CHAN_1_Z_LOC,0.750,0.75,=FLOOR_CHAN_5_Z_LOC,Number,in,Part: 091-30102-462 | Notes: ,,,LEFT_HAND_CHAN_1_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$45,LEFT_HAND_CHAN_1_ARRAY_OFFSET,1.895,1.89499,='Excel Calcs'!E16,Number,in,Part: 091-30102-462,,,LEFT_HAND_CHAN_1_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$45,LEFT_HAND_CHAN_1_ARRAY_QTY,22.000,22.0,='Excel Calcs'!E17,Number,ul,Part: 091-30102-462,,,LEFT_HAND_CHAN_1_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$45,LEFT_HAND_CHAN_1_ARRAY_SPACING,5.429,5.428571428571429,='Excel Calcs'!E18,Number,in,Part: 091-30102-462,,,LEFT_HAND_CHAN_1_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$46,LEFT_HAND_CHAN_2_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_2_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$46,LEFT_HAND_CHAN_2_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_2_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$46,LEFT_HAND_CHAN_2_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_2_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$46,LEFT_HAND_CHAN_2_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_2_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$47,LEFT_HAND_CHAN_3_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_3_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$47,LEFT_HAND_CHAN_3_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_3_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$47,LEFT_HAND_CHAN_3_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_3_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$47,LEFT_HAND_CHAN_3_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_3_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$48,LEFT_HAND_CHAN_4_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_4_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$48,LEFT_HAND_CHAN_4_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_4_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$48,LEFT_HAND_CHAN_4_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_4_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$48,LEFT_HAND_CHAN_4_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_4_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$49,LEFT_HAND_CHAN_5_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_5_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$49,LEFT_HAND_CHAN_5_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_5_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$49,LEFT_HAND_CHAN_5_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_5_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$49,LEFT_HAND_CHAN_5_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_5_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$50,LEFT_HAND_CHAN_6_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_6_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$50,LEFT_HAND_CHAN_6_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_6_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$50,LEFT_HAND_CHAN_6_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_6_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$50,LEFT_HAND_CHAN_6_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_6_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$51,LEFT_HAND_CHAN_7_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_7_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$51,LEFT_HAND_CHAN_7_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_7_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$51,LEFT_HAND_CHAN_7_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_7_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$51,LEFT_HAND_CHAN_7_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_7_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$52,LEFT_HAND_CHAN_8_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_8_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$52,LEFT_HAND_CHAN_8_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_8_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$52,LEFT_HAND_CHAN_8_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_8_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$52,LEFT_HAND_CHAN_8_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_8_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$53,LEFT_HAND_CHAN_9_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_9_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$53,LEFT_HAND_CHAN_9_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_9_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$53,LEFT_HAND_CHAN_9_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_9_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$53,LEFT_HAND_CHAN_9_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_9_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$54,LEFT_HAND_CHAN_10_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,LEFT_HAND_CHAN_10_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$54,LEFT_HAND_CHAN_10_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_10_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$54,LEFT_HAND_CHAN_10_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,LEFT_HAND_CHAN_10_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$54,LEFT_HAND_CHAN_10_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,LEFT_HAND_CHAN_10_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$57,RIGHT_HAND_CHAN_1_Z_LOC,0.750,0.75,=FLOOR_CHAN_4_Z_LOC,Number,in,Part: 091-30102-461 | Notes: ,,,RIGHT_HAND_CHAN_1_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$57,RIGHT_HAND_CHAN_1_ARRAY_OFFSET,1.895,1.89499,='Excel Calcs'!E16,Number,in,Part: 091-30102-461,,,RIGHT_HAND_CHAN_1_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$57,RIGHT_HAND_CHAN_1_ARRAY_QTY,22.000,22.0,='Excel Calcs'!E51,Number,ul,Part: 091-30102-461,,,RIGHT_HAND_CHAN_1_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$57,RIGHT_HAND_CHAN_1_ARRAY_SPACING,5.429,5.428571428571429,='Excel Calcs'!E52,Number,in,Part: 091-30102-461,,,RIGHT_HAND_CHAN_1_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$58,RIGHT_HAND_CHAN_2_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_2_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$58,RIGHT_HAND_CHAN_2_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_2_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$58,RIGHT_HAND_CHAN_2_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_2_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$58,RIGHT_HAND_CHAN_2_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_2_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$59,RIGHT_HAND_CHAN_3_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_3_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$59,RIGHT_HAND_CHAN_3_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_3_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$59,RIGHT_HAND_CHAN_3_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_3_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$59,RIGHT_HAND_CHAN_3_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_3_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$60,RIGHT_HAND_CHAN_4_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_4_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$60,RIGHT_HAND_CHAN_4_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_4_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$60,RIGHT_HAND_CHAN_4_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_4_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$60,RIGHT_HAND_CHAN_4_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_4_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$61,RIGHT_HAND_CHAN_5_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_5_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$61,RIGHT_HAND_CHAN_5_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_5_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$61,RIGHT_HAND_CHAN_5_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_5_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$61,RIGHT_HAND_CHAN_5_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_5_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$62,RIGHT_HAND_CHAN_6_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_6_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$62,RIGHT_HAND_CHAN_6_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_6_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$62,RIGHT_HAND_CHAN_6_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_6_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$62,RIGHT_HAND_CHAN_6_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_6_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$63,RIGHT_HAND_CHAN_7_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_7_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$63,RIGHT_HAND_CHAN_7_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_7_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$63,RIGHT_HAND_CHAN_7_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_7_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$63,RIGHT_HAND_CHAN_7_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_7_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$64,RIGHT_HAND_CHAN_8_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_8_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$64,RIGHT_HAND_CHAN_8_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_8_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$64,RIGHT_HAND_CHAN_8_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_8_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$64,RIGHT_HAND_CHAN_8_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_8_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$65,RIGHT_HAND_CHAN_9_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_9_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$65,RIGHT_HAND_CHAN_9_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_9_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$65,RIGHT_HAND_CHAN_9_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_9_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$65,RIGHT_HAND_CHAN_9_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_9_Y_ARRAY_SPACING,No
+Calc_10006_023.xls,Channel Loc,$C$66,RIGHT_HAND_CHAN_10_Z_LOC,0.000,0.0,0,Number,in,Part:  | Notes: ,,,RIGHT_HAND_CHAN_10_Z_LOC,No
+Calc_10006_023.xls,Channel Loc,$D$66,RIGHT_HAND_CHAN_10_ARRAY_OFFSET,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_10_Y_ARRAY_OFFSET,No
+Calc_10006_023.xls,Channel Loc,$E$66,RIGHT_HAND_CHAN_10_ARRAY_QTY,0.000,0.0,0,Number,ul,Part: ,,,RIGHT_HAND_CHAN_10_Y_ARRAY_QTY,No
+Calc_10006_023.xls,Channel Loc,$F$66,RIGHT_HAND_CHAN_10_ARRAY_SPACING,0.000,0.0,0,Number,in,Part: ,,,RIGHT_HAND_CHAN_10_Y_ARRAY_SPACING,No

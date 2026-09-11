@@ -1,0 +1,1338 @@
+<Window x:Class="InventorValidator.UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:InventorValidator.UI.ViewModels"
+        mc:Ignorable="d"
+        Title="Autodesk Inventor &amp; Excel Model Verification Utility"
+        Height="780" Width="1100"
+        MinHeight="600" MinWidth="850"
+        Background="{DynamicResource BgPrimaryBrush}"
+        Foreground="{DynamicResource FgPrimaryBrush}"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <vm:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisConverter"/>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Top Command Toolbar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Live Progress Bar -->
+            <RowDefinition Height="Auto"/>
+            <!-- Main Content Area -->
+            <RowDefinition Height="*"/>
+            <!-- Status Bar -->
+            <RowDefinition Height="24"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Command Toolbar (Strict Boring Corporate: Solid header, crisp 1px bottom border) -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource BgSecondaryBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Product Identity -->
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                    <TextBlock Text="INVENTOR &amp; EXCEL MODEL VERIFICATION"
+                               FontWeight="Bold"
+                               FontSize="13"
+                               Foreground="{DynamicResource FgBrightBrush}"/>
+                    <TextBlock Text="Independent Parametric CAD QA Utility • Disposable Workspace Engine"
+                               FontSize="11"
+                               Foreground="{DynamicResource FgMutedBrush}"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Content="START VALIDATION"
+                            Command="{Binding StartValidationCommand}"
+                            Style="{DynamicResource AccentButtonStyle}"
+                            Width="140" Height="30"
+                            Margin="0,0,8,0"/>
+                    <Button Content="CANCEL"
+                            Command="{Binding CancelValidationCommand}"
+                            Width="90" Height="30"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Live Progress Ribbon -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource BgTertiaryBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,4"
+                Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisConverter}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding StageStatus}"
+                           FontSize="11"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource AccentBrush}"
+                           Margin="0,0,12,0"
+                           VerticalAlignment="Center"/>
+                <ProgressBar Grid.Column="1"
+                             IsIndeterminate="{Binding IsProgressIndeterminate}"
+                             Value="{Binding ProgressValue}"
+                             Height="4"
+                             VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Main Body: Left Navigation List + Content View -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <!-- Left Nav Stepper -->
+                <ColumnDefinition Width="200"/>
+                <!-- Detail View -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Navigation List (Utilitarian rectangular tabs) -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource BgSecondaryBrush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,1,0">
+                <StackPanel Margin="0,8,0,0">
+                    <TextBlock Text="NAVIGATION"
+                               FontSize="10"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource FgMutedBrush}"
+                               Margin="16,8,16,6"/>
+
+                    <!-- Navigation Items -->
+                    <Button Content="1. Setup &amp; Preflight"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Setup"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Button Content="2. Calculator"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Calculator"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Button Content="3. Model Inventory (Phase 3)"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Model Inventory"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Button Content="4. Parameter Preview (Phase 4)"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Parameter Preview"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Button Content="5. Channel Results (Phase 5)"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Channel Results"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Button Content="6. Diagnostics"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Diagnostics"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+
+                    <Separator Background="{DynamicResource BorderBrush}" Margin="12,12"/>
+
+                    <Button Content="Settings &amp; Tolerances"
+                            Command="{Binding SelectNavCommand}"
+                            CommandParameter="Settings"
+                            HorizontalContentAlignment="Left"
+                            BorderThickness="0"
+                            Background="Transparent"
+                            Padding="16,8"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Active Content View Area -->
+            <Grid Grid.Column="1" Margin="20">
+                <ContentControl Content="{Binding CurrentView}">
+                    <ContentControl.Resources>
+                        <!-- Setup View DataTemplate -->
+                        <DataTemplate DataType="{x:Type vm:SetupViewModel}">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel MaxWidth="820" HorizontalAlignment="Left">
+                                    <TextBlock Text="Session Setup &amp; Configuration"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource FgBrightBrush}"
+                                               Margin="0,0,0,16"/>
+
+                                    <!-- Group: File Selection -->
+                                    <Border Background="{DynamicResource BgSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            Padding="16"
+                                            Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <TextBlock Text="INPUT MODELS &amp; CALCULATOR"
+                                                       FontWeight="Bold"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,0,0,12"/>
+
+                                            <!-- IAM Path -->
+                                            <TextBlock Text="Autodesk Inventor Assembly (.iam):"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,4"/>
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding IamPath, UpdateSourceTrigger=PropertyChanged}"
+                                                         Height="26"
+                                                         VerticalContentAlignment="Center"/>
+                                                <Button Grid.Column="1"
+                                                        Content="Browse..."
+                                                        Command="{Binding BrowseIamCommand}"
+                                                        Height="26"
+                                                        Margin="8,0,0,0"/>
+                                            </Grid>
+
+                                            <!-- Calculator Path -->
+                                            <TextBlock Text="Engineering Calculator (.xls / .xlsx):"
+                                                       FontWeight="SemiBold"
+                                                       Margin="0,0,0,4"/>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBox Text="{Binding CalculatorPath, UpdateSourceTrigger=PropertyChanged}"
+                                                         Height="26"
+                                                         VerticalContentAlignment="Center"/>
+                                                <Button Grid.Column="1"
+                                                        Content="Browse..."
+                                                        Command="{Binding BrowseCalculatorCommand}"
+                                                        Height="26"
+                                                        Margin="8,0,0,0"/>
+                                                <Button Grid.Column="2"
+                                                        Content="Inspect Calculator"
+                                                        Command="{Binding InspectCalculatorCommand}"
+                                                        Height="26"
+                                                        Margin="8,0,0,0"/>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Group: Workflow Mode & Execution -->
+                                    <Border Background="{DynamicResource BgSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            Padding="16"
+                                            Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <TextBlock Text="VALIDATION WORKFLOW"
+                                                       FontWeight="Bold"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,0,0,12"/>
+
+                                            <!-- Mode Selector -->
+                                            <RadioButton Content="Mode A — Inspect Current Model (Read-Only Baseline)"
+                                                         IsChecked="{Binding SelectedMode, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Inspect}"
+                                                         FontWeight="SemiBold"
+                                                         Margin="0,0,0,4"/>
+                                            <TextBlock Text="Opens assembly in disposable copy without applying calculator values. Answers: 'Does current model match calculator?'"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="24,0,0,12"/>
+
+                                            <RadioButton Content="Mode B — Apply Calculator to Copy, Then Inspect"
+                                                         IsChecked="{Binding SelectedMode, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Apply}"
+                                                         FontWeight="SemiBold"
+                                                         Margin="0,0,0,4"/>
+                                            <TextBlock Text="Pushes calculator values into model copy, executes master iLogic rule, rebuilds, and validates resulting geometry."
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="24,0,0,8"/>
+
+                                            <!-- Formula Overwrite Toggle (Direct user requirement) -->
+                                            <Border BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    Background="{DynamicResource BgTertiaryBrush}"
+                                                    Padding="12,8"
+                                                    Margin="24,4,0,0">
+                                                <CheckBox Content="Allow overwriting formula-driven model parameters with literal values in Apply mode"
+                                                          IsChecked="{Binding AllowFormulaOverwrite}"
+                                                          FontWeight="Normal"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Group: Inventor Target Version -->
+                                    <Border Background="{DynamicResource BgSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            Padding="16"
+                                            Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <TextBlock Text="AUTODESK INVENTOR ENGINE"
+                                                       FontWeight="Bold"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,0,0,12"/>
+
+                                            <!-- Detected Badges (Strict rectangular corporate indicators) -->
+                                            <Grid Margin="0,0,0,12">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Inventor 2020 Status -->
+                                                <Border BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="1"
+                                                        Background="{DynamicResource BgTertiaryBrush}"
+                                                        Padding="10,6"
+                                                        Margin="0,0,6,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Inventor 2020" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Inventor2020Status}"
+                                                                   FontSize="11"
+                                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                                   Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+
+                                                <!-- Inventor 2024 Status -->
+                                                <Border Grid.Column="1"
+                                                        BorderBrush="{DynamicResource BorderBrush}"
+                                                        BorderThickness="1"
+                                                        Background="{DynamicResource BgTertiaryBrush}"
+                                                        Padding="10,6"
+                                                        Margin="6,0,0,0">
+                                                    <StackPanel>
+                                                        <TextBlock Text="Inventor 2024" FontWeight="SemiBold"/>
+                                                        <TextBlock Text="{Binding Inventor2024Status}"
+                                                                   FontSize="11"
+                                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                                   Margin="0,2,0,0"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </Grid>
+
+                                            <!-- Version Selection Radio -->
+                                            <StackPanel Orientation="Horizontal">
+                                                <RadioButton Content="Automatic (Default)"
+                                                             IsChecked="{Binding SelectedVersion, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Automatic}"
+                                                             Margin="0,0,16,0"/>
+                                                <RadioButton Content="Inventor 2020"
+                                                             IsChecked="{Binding SelectedVersion, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Inventor 2020}"
+                                                             IsEnabled="{Binding IsInventor2020Installed}"
+                                                             Margin="0,0,16,0"/>
+                                                <RadioButton Content="Inventor 2024"
+                                                             IsChecked="{Binding SelectedVersion, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Inventor 2024}"
+                                                             IsEnabled="{Binding IsInventor2024Installed}"/>
+                                            </StackPanel>
+
+                                            <!-- Background / Headless vs Visible Toggle -->
+                                            <Border BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    Background="{DynamicResource BgTertiaryBrush}"
+                                                    Padding="12,8"
+                                                    Margin="0,12,0,0">
+                                                <StackPanel>
+                                                    <CheckBox Content="Show Autodesk Inventor window during validation"
+                                                              IsChecked="{Binding ShowInventorWindow}"
+                                                              FontWeight="SemiBold"/>
+                                                    <TextBlock Text="Leave unchecked to run validation silently in the background without desktop interruptions."
+                                                               FontSize="11"
+                                                               Foreground="{DynamicResource FgMutedBrush}"
+                                                               Margin="24,2,0,0"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Preflight Status Message -->
+                                    <Border BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            Background="{DynamicResource BgTertiaryBrush}"
+                                            Padding="12,8">
+                                        <TextBlock Text="{Binding PreflightStatus}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource FgPrimaryBrush}"/>
+                                    </Border>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </DataTemplate>
+
+                        <!-- Diagnostics View DataTemplate -->
+                        <DataTemplate DataType="{x:Type vm:DiagnosticsViewModel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                    <Button Content="Copy Diagnostics to Clipboard"
+                                            Command="{Binding CopyDiagnosticsCommand}"
+                                            Margin="0,0,8,0"/>
+                                    <Button Content="Clear Log"
+                                            Command="{Binding ClearCommand}"/>
+                                </StackPanel>
+
+                                <Border Grid.Row="1"
+                                        Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1">
+                                    <ListBox ItemsSource="{Binding LogEntries}"
+                                             Background="Transparent"
+                                             Foreground="{DynamicResource FgPrimaryBrush}"
+                                             BorderThickness="0"
+                                             FontFamily="Consolas"
+                                             FontSize="11">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" Margin="2,1"/>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+
+                        <!-- Settings View DataTemplate -->
+                        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+                            <StackPanel MaxWidth="700" HorizontalAlignment="Left">
+                                <TextBlock Text="Preferences &amp; Tolerances"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource FgBrightBrush}"
+                                           Margin="0,0,0,16"/>
+
+                                <Border Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16"
+                                        Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="VISUAL THEME"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="0,0,0,8"/>
+                                        <StackPanel Orientation="Horizontal">
+                                            <RadioButton Content="Dark (Default)"
+                                                         IsChecked="{Binding SelectedTheme, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Dark}"
+                                                         Margin="0,0,16,0"/>
+                                            <RadioButton Content="Light"
+                                                         IsChecked="{Binding SelectedTheme, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=Light}"
+                                                         Margin="0,0,16,0"/>
+                                            <RadioButton Content="System Match"
+                                                         IsChecked="{Binding SelectedTheme, Converter={x:Static vm:ModeToBoolConverter.Instance}, ConverterParameter=System}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16"
+                                        Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="GEOMETRIC TOLERANCES (INCHES)"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="0,0,0,12"/>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="220"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Match Threshold (≤):" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding MatchTolerance, StringFormat=N3}"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="220"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Warning Threshold (≤):" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding WarningTolerance, StringFormat=N3}"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="220"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="Diameter Filter Tolerance (±):" VerticalAlignment="Center"/>
+                                            <TextBox Grid.Column="1" Text="{Binding DiameterTolerance, StringFormat=N3}"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16"
+                                        Margin="0,0,0,16">
+                                    <StackPanel>
+                                        <TextBlock Text="AUTODESK INVENTOR AUTOMATION"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="0,0,0,8"/>
+                                        <CheckBox Content="Show Autodesk Inventor window during validation"
+                                                  IsChecked="{Binding ShowInventorWindow}"
+                                                  FontWeight="SemiBold"/>
+                                        <TextBlock Text="When unchecked, Inventor runs silently in the background without opening a window or interrupting your work."
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="24,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16">
+                                    <StackPanel>
+                                        <TextBlock Text="TEMPORARY WORKSPACE MAINTENANCE"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="0,0,0,8"/>
+                                        <TextBlock Text="{Binding CleanupStatus}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgMutedBrush}"
+                                                   Margin="0,0,0,12"/>
+                                        <Button Content="Clean All Temporary Workspaces Now"
+                                                Command="{Binding CleanTempWorkspacesCommand}"
+                                                HorizontalAlignment="Left"
+                                                Padding="16,6"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+
+                        <!-- Calculator Inspection DataTemplate (Phase 2) -->
+                        <DataTemplate DataType="{x:Type vm:CalculatorViewModel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Top Summary Card -->
+                                <Border Grid.Row="0"
+                                        Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Workbook Info & Status -->
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="CALCULATOR RECALCULATION &amp; PARSING"
+                                                       FontWeight="Bold"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding WorkbookPath}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"
+                                                       Foreground="{DynamicResource FgBrightBrush}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                                <TextBlock Text="Duration: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding RecalculationDuration}" FontWeight="SemiBold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                <TextBlock Text="Calculation: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding CalculationState}" FontWeight="SemiBold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                <TextBlock Text="Data Inputs: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalDataInputs}" FontWeight="SemiBold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                <TextBlock Text="Sheet1 Parameters: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalSheet1Parameters}" FontWeight="SemiBold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                <TextBlock Text="Channels: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalChannels}" FontWeight="SemiBold" Foreground="{DynamicResource FgPrimaryBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- Error_Check Status Banner/Badge -->
+                                        <Border Grid.Column="1"
+                                                BorderThickness="1"
+                                                Padding="14,6"
+                                                VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
+                                                    <Setter Property="Background" Value="#1A388A34"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsErrorCheckPassed}" Value="False">
+                                                            <Setter Property="BorderBrush" Value="{DynamicResource ErrorBrush}"/>
+                                                            <Setter Property="Background" Value="#25F14C4C"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <StackPanel HorizontalAlignment="Center">
+                                                <TextBlock Text="Error_Check"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsErrorCheckPassed}" Value="False">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock Text="{Binding ErrorCheckRaw}"
+                                                           FontSize="13"
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsErrorCheckPassed}" Value="False">
+                                                                    <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Sub-Tabs: Sheet1 Parameters, Channel Locations, Data Inputs -->
+                                <TabControl Grid.Row="1"
+                                            Background="{DynamicResource BgSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1">
+
+                                    <!-- Sub-Tab 1: Sheet1 Parameters -->
+                                    <TabItem Header="Sheet1 Parameters"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Filter Controls & Counters -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="240"/>
+                                                    <ColumnDefinition Width="140"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Search Box -->
+                                                <TextBox Grid.Column="0"
+                                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                         Height="26"
+                                                         VerticalContentAlignment="Center"
+                                                         Margin="0,0,8,0"/>
+
+                                                <!-- Category Filter ComboBox -->
+                                                <ComboBox Grid.Column="1"
+                                                          ItemsSource="{Binding Categories}"
+                                                          SelectedItem="{Binding SelectedCategory}"
+                                                          Height="26"
+                                                          Margin="0,0,12,0"/>
+
+                                                <!-- Category Badges -->
+                                                <StackPanel Grid.Column="2"
+                                                            Orientation="Horizontal"
+                                                            VerticalAlignment="Center"
+                                                            HorizontalAlignment="Right">
+                                                    <TextBlock Text="Dims: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding DimensionCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,12,0"/>
+
+                                                    <TextBlock Text="Suppression: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding SuppressionCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,12,0"/>
+
+                                                    <TextBlock Text="Counts: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding UnitlessCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,12,0"/>
+
+                                                    <TextBlock Text="Other: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding OtherCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- Parameters DataGrid -->
+                                            <DataGrid Grid.Row="1"
+                                                      ItemsSource="{Binding FilteredSheet1Parameters}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True"
+                                                      CanUserAddRows="False"
+                                                      CanUserDeleteRows="False"
+                                                      HeadersVisibility="Column"
+                                                      GridLinesVisibility="Horizontal"
+                                                      Background="{DynamicResource BgPrimaryBrush}"
+                                                      RowBackground="{DynamicResource BgPrimaryBrush}"
+                                                      AlternatingRowBackground="{DynamicResource BgSecondaryBrush}"
+                                                      Foreground="{DynamicResource FgPrimaryBrush}"
+                                                      BorderBrush="{DynamicResource BorderBrush}"
+                                                      HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                      RowHeight="24">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="#" Binding="{Binding RowIndex}" Width="45"/>
+                                                    <DataGridTextColumn Header="Parameter" Binding="{Binding ParameterName}" Width="190">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Value" Binding="{Binding DisplayedValue}" Width="100"/>
+                                                    <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="50"/>
+                                                    <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="130"/>
+                                                    <DataGridTextColumn Header="Formula Error" Binding="{Binding FormulaError}" Width="100">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Comments / Description" Binding="{Binding Comment}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Sub-Tab 2: Channel Locations -->
+                                    <TabItem Header="Channel Locations"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Summary & View Mode Bar -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <TextBlock Text="Total Channels: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding TotalChannels}" FontSize="11" FontWeight="Bold" Margin="0,0,16,0"/>
+
+                                                    <TextBlock Text="Valid: " FontSize="11" Foreground="{DynamicResource SuccessBrush}"/>
+                                                    <TextBlock Text="{Binding ValidChannelsCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}" Margin="0,0,16,0"/>
+
+                                                    <TextBlock Text="Active Segments: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding TotalSegmentsCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource FgPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                    <TextBlock Text="Total Holes: " FontSize="11" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding TotalHolesCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource AccentPrimaryBrush}" Margin="0,0,16,0"/>
+
+                                                    <TextBlock Text="Skipped / Template Rows: " FontSize="11" Foreground="{DynamicResource WarningBrush}"/>
+                                                    <TextBlock Text="{Binding SkippedChannelsCount}" FontSize="11" FontWeight="Bold" Foreground="{DynamicResource WarningBrush}"/>
+                                                </StackPanel>
+
+                                                <CheckBox Grid.Column="1"
+                                                          Content="Show All Raw Sheet Rows"
+                                                          IsChecked="{Binding ShowAllRowsView}"
+                                                          VerticalAlignment="Center"
+                                                          FontSize="11"/>
+                                            </Grid>
+
+                                            <!-- VIEW 1: Unified Channels (Default) -->
+                                            <Grid Grid.Row="1" Visibility="{Binding ShowAllRowsView, Converter={StaticResource InverseBoolToVisConverter}}">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="180*"/>
+                                                    <RowDefinition Height="4"/>
+                                                    <RowDefinition Height="160*"/>
+                                                </Grid.RowDefinitions>
+
+                                                <!-- Master: Unified Channels -->
+                                                <DataGrid Grid.Row="0"
+                                                          ItemsSource="{Binding UnifiedChannels}"
+                                                          SelectedItem="{Binding SelectedUnifiedChannel, Mode=TwoWay}"
+                                                          AutoGenerateColumns="False"
+                                                          IsReadOnly="True"
+                                                          CanUserAddRows="False"
+                                                          CanUserDeleteRows="False"
+                                                          HeadersVisibility="Column"
+                                                          GridLinesVisibility="Horizontal"
+                                                          Background="{DynamicResource BgPrimaryBrush}"
+                                                          RowBackground="{DynamicResource BgPrimaryBrush}"
+                                                          AlternatingRowBackground="{DynamicResource BgSecondaryBrush}"
+                                                          Foreground="{DynamicResource FgPrimaryBrush}"
+                                                          BorderBrush="{DynamicResource BorderBrush}"
+                                                          HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                          RowHeight="26">
+                                                    <DataGrid.Columns>
+                                                        <DataGridTextColumn Header="Channel" Binding="{Binding ChannelName}" Width="220">
+                                                            <DataGridTextColumn.ElementStyle>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                </Style>
+                                                            </DataGridTextColumn.ElementStyle>
+                                                        </DataGridTextColumn>
+                                                        <DataGridTextColumn Header="Z Loc (Offset)" Binding="{Binding ZLocation, StringFormat=N3}" Width="95"/>
+                                                        <DataGridTextColumn Header="Unit Sides" Binding="{Binding SidesSummary}" Width="230"/>
+                                                        <DataGridTextColumn Header="Arrays" Binding="{Binding SegmentCount}" Width="65"/>
+                                                        <DataGridTextColumn Header="Total Holes" Binding="{Binding TotalHoles}" Width="80"/>
+                                                        <DataGridTextColumn Header="Referenced Parts" Binding="{Binding ReferencedPartsSummary}" Width="160"/>
+                                                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="110"/>
+                                                        <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                                                    </DataGrid.Columns>
+                                                </DataGrid>
+
+                                                <GridSplitter Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource BorderBrush}"/>
+
+                                                <!-- Detail: Constituent Array Segments -->
+                                                <Grid Grid.Row="2" Margin="0,4,0,0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="*"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <Border Grid.Row="0" Background="{DynamicResource BgSecondaryBrush}" Padding="8,4" Margin="0,0,0,4">
+                                                        <TextBlock Text="CONSTITUENT ARRAY SEGMENTS (Selected Channel)" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    </Border>
+
+                                                    <DataGrid Grid.Row="1"
+                                                              ItemsSource="{Binding SelectedChannelSegments}"
+                                                              AutoGenerateColumns="False"
+                                                              IsReadOnly="True"
+                                                              CanUserAddRows="False"
+                                                              CanUserDeleteRows="False"
+                                                              HeadersVisibility="Column"
+                                                              GridLinesVisibility="Horizontal"
+                                                              Background="{DynamicResource BgPrimaryBrush}"
+                                                              RowBackground="{DynamicResource BgPrimaryBrush}"
+                                                              AlternatingRowBackground="{DynamicResource BgSecondaryBrush}"
+                                                              Foreground="{DynamicResource FgPrimaryBrush}"
+                                                              BorderBrush="{DynamicResource BorderBrush}"
+                                                              HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                              RowHeight="24">
+                                                        <DataGrid.Columns>
+                                                            <DataGridTextColumn Header="Group" Binding="{Binding ChannelGroup}" Width="150"/>
+                                                            <DataGridTextColumn Header="Segment Name" Binding="{Binding ChannelName}" Width="150">
+                                                                <DataGridTextColumn.ElementStyle>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                    </Style>
+                                                                </DataGridTextColumn.ElementStyle>
+                                                            </DataGridTextColumn>
+                                                            <DataGridTextColumn Header="Axis" Binding="{Binding Axis}" Width="45"/>
+                                                            <DataGridTextColumn Header="Offset" Binding="{Binding Offset, StringFormat=N3}" Width="75"/>
+                                                            <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50"/>
+                                                            <DataGridTextColumn Header="Spacing" Binding="{Binding Spacing, StringFormat=N3}" Width="75"/>
+                                                            <DataGridTextColumn Header="Z Loc" Binding="{Binding ZLocation, StringFormat=N3}" Width="75"/>
+                                                            <DataGridTextColumn Header="Referenced Part" Binding="{Binding ReferencedPart}" Width="140"/>
+                                                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                                                            <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                                                        </DataGrid.Columns>
+                                                    </DataGrid>
+                                                </Grid>
+                                            </Grid>
+
+                                            <!-- VIEW 2: All Raw Sheet Rows -->
+                                            <DataGrid Grid.Row="1"
+                                                      ItemsSource="{Binding ChannelLocations}"
+                                                      Visibility="{Binding ShowAllRowsView, Converter={StaticResource BoolToVisConverter}}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True"
+                                                      CanUserAddRows="False"
+                                                      CanUserDeleteRows="False"
+                                                      HeadersVisibility="Column"
+                                                      GridLinesVisibility="Horizontal"
+                                                      Background="{DynamicResource BgPrimaryBrush}"
+                                                      RowBackground="{DynamicResource BgPrimaryBrush}"
+                                                      AlternatingRowBackground="{DynamicResource BgSecondaryBrush}"
+                                                      Foreground="{DynamicResource FgPrimaryBrush}"
+                                                      BorderBrush="{DynamicResource BorderBrush}"
+                                                      HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                      RowHeight="24">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Group" Binding="{Binding ChannelGroup}" Width="150"/>
+                                                    <DataGridTextColumn Header="Channel" Binding="{Binding ChannelName}" Width="160">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Axis" Binding="{Binding Axis}" Width="45"/>
+                                                    <DataGridTextColumn Header="Offset" Binding="{Binding Offset, StringFormat=N3}" Width="75"/>
+                                                    <DataGridTextColumn Header="Qty" Binding="{Binding Quantity}" Width="50"/>
+                                                    <DataGridTextColumn Header="Spacing" Binding="{Binding Spacing, StringFormat=N3}" Width="75"/>
+                                                    <DataGridTextColumn Header="Z Loc" Binding="{Binding ZLocation, StringFormat=N3}" Width="75"/>
+                                                    <DataGridTextColumn Header="Referenced Part" Binding="{Binding ReferencedPart}" Width="140"/>
+                                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="130"/>
+                                                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Sub-Tab 3: Data Inputs -->
+                                    <TabItem Header="Data Inputs"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <DataGrid ItemsSource="{Binding DataInputs}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True"
+                                                      CanUserAddRows="False"
+                                                      CanUserDeleteRows="False"
+                                                      HeadersVisibility="Column"
+                                                      GridLinesVisibility="Horizontal"
+                                                      Background="{DynamicResource BgPrimaryBrush}"
+                                                      RowBackground="{DynamicResource BgPrimaryBrush}"
+                                                      AlternatingRowBackground="{DynamicResource BgSecondaryBrush}"
+                                                      Foreground="{DynamicResource FgPrimaryBrush}"
+                                                      BorderBrush="{DynamicResource BorderBrush}"
+                                                      HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                      RowHeight="24">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="#" Binding="{Binding RowIndex}" Width="45"/>
+                                                    <DataGridTextColumn Header="Parameter" Binding="{Binding ParameterName}" Width="180">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+                                                    <DataGridTextColumn Header="Current Value" Binding="{Binding DisplayedValue}" Width="120"/>
+                                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="240"/>
+                                                    <DataGridTextColumn Header="Allowed Values" Binding="{Binding AllowedValues}" Width="180"/>
+                                                    <DataGridTextColumn Header="Error Check" Binding="{Binding ErrorCheckValue}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
+                        </DataTemplate>
+
+                        <!-- Model Inventory DataTemplate (Phase 3) -->
+                        <DataTemplate DataType="{x:Type vm:ModelInventoryViewModel}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <!-- Header & KPI Cards -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Search & Filter Bar -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Main Tabs -->
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Header & KPI Metric Cards -->
+                                <StackPanel Grid.Row="0" Margin="0,0,0,14">
+                                    <Grid Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{Binding AssemblyName}"
+                                                       FontSize="16"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{DynamicResource FgBrightBrush}"/>
+                                            <TextBlock Text="{Binding InventorVersionInfo, StringFormat='Autodesk Inventor Engine: {0}'}"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,2,0,0"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="View in Inventor"
+                                                    Command="{Binding ViewInInventorCommand}"
+                                                    IsEnabled="{Binding CanViewInInventor}"
+                                                    ToolTip="Display the dedicated Autodesk Inventor window on screen for interactive inspection"
+                                                    Padding="12,4"
+                                                    Margin="0,0,8,0"/>
+                                            <Border Background="{DynamicResource BgTertiaryBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    Padding="10,4">
+                                                <TextBlock Text="{Binding ActiveRepresentation, StringFormat='Active LOD / State: {0}'}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource InfoBrush}"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- 4 KPI Cards -->
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Card 1: Components -->
+                                        <Border Grid.Column="0"
+                                                Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                Padding="12,10"
+                                                Margin="0,0,8,0">
+                                            <StackPanel>
+                                                <TextBlock Text="COMPONENTS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalOccurrences}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource FgBrightBrush}" Margin="0,2,0,0"/>
+                                                <TextBlock FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Margin="0,2,0,0">
+                                                    <Run Text="{Binding ActiveOccurrences, Mode=OneWay}"/> Active • <Run Text="{Binding SuppressedOccurrences, Mode=OneWay}"/> Suppressed
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Card 2: Parameters -->
+                                        <Border Grid.Column="1"
+                                                Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                Padding="12,10"
+                                                Margin="0,0,8,0">
+                                            <StackPanel>
+                                                <TextBlock Text="CAD PARAMETERS" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalParameters}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource FgBrightBrush}" Margin="0,2,0,0"/>
+                                                <TextBlock FontSize="10" Foreground="{DynamicResource InfoBrush}" Margin="0,2,0,0">
+                                                    <Run Text="{Binding SafeToWriteCount, Mode=OneWay}"/> Safe to Write • <Run Text="{Binding ProtectedFormulaCount, Mode=OneWay}"/> Formulas
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Card 3: Matches -->
+                                        <Border Grid.Column="2"
+                                                Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                Padding="12,10"
+                                                Margin="0,0,8,0">
+                                            <StackPanel>
+                                                <TextBlock Text="EXCEL MATCHES" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding MatchedCount}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource SuccessBrush}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="Agreed with Sheet1" FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Card 4: Discrepancies -->
+                                        <Border Grid.Column="3"
+                                                Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                Padding="12,10">
+                                            <StackPanel>
+                                                <TextBlock Text="DISCREPANCIES" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding DiscrepancyCount}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource WarningBrush}" Margin="0,2,0,0"/>
+                                                <TextBlock Text="Inspect Discrepancies" FontSize="10" Foreground="{DynamicResource FgMutedBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </StackPanel>
+
+                                <!-- Filter Toolbar -->
+                                <Border Grid.Row="1"
+                                        Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="10,6"
+                                        Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="Filter:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,8,0"/>
+                                            <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                     Width="260"
+                                                     VerticalAlignment="Center"/>
+                                            <Button Content="Clear"
+                                                    Command="{Binding ClearSearchCommand}"
+                                                    Width="50" Height="24"
+                                                    Margin="6,0,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <CheckBox Content="Show Discrepancies Only"
+                                                      IsChecked="{Binding ShowDiscrepanciesOnly}"
+                                                      VerticalAlignment="Center"
+                                                      Margin="12,0,0,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Main Tabbed Grids -->
+                                <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0">
+                                    <!-- Tab 1: Parameter Comparison & Discrepancies -->
+                                    <TabItem Header="Parameters &amp; Discrepancy Analysis">
+                                        <Grid Margin="0,10,0,0">
+                                            <DataGrid ItemsSource="{Binding ParametersView}"
+                                                       AutoGenerateColumns="False"
+                                                       IsReadOnly="True"
+                                                       SelectionMode="Single"
+                                                       Background="{DynamicResource BgPrimaryBrush}"
+                                                       BorderBrush="{DynamicResource BorderBrush}"
+                                                       HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                       RowHeight="26">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="Text" Value="Match">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="Text" Value="Discrepancy">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="Text" Value="MissingInModel">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource FgMutedBrush}"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Excel Parameter" Binding="{Binding ExcelParameterName}" Width="160">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Excel Value" Binding="{Binding ExcelValueRaw}" Width="90"/>
+                                                    <DataGridTextColumn Header="Unit" Binding="{Binding ExcelUnit}" Width="50"/>
+
+                                                    <DataGridTextColumn Header="CAD Target" Binding="{Binding TargetParameterName}" Width="140"/>
+                                                    <DataGridTextColumn Header="CAD Expression" Binding="{Binding ModelExpression}" Width="140"/>
+
+                                                    <DataGridTextColumn Header="Match Precedence" Binding="{Binding MatchType}" Width="130"/>
+                                                    <DataGridTextColumn Header="Safe-Write Policy" Binding="{Binding WritePolicy}" Width="140">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="Text" Value="SafeToWrite">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="Text" Value="ReadOnlyFormula">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource InfoBrush}"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="Text" Value="ReadOnlyReference">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource FgMutedBrush}"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Notes / Discrepancy Details" Binding="{Binding Notes}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Tab 2: Assembly Occurrences -->
+                                    <TabItem Header="Assembly Occurrences">
+                                        <Grid Margin="0,10,0,0">
+                                            <DataGrid ItemsSource="{Binding OccurrencesView}"
+                                                       AutoGenerateColumns="False"
+                                                       IsReadOnly="True"
+                                                       SelectionMode="Single"
+                                                       Background="{DynamicResource BgPrimaryBrush}"
+                                                       BorderBrush="{DynamicResource BorderBrush}"
+                                                       HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                       RowHeight="26">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Occurrence Name" Binding="{Binding OccurrenceName}" Width="180">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Part Number" Binding="{Binding PartNumber}" Width="140"/>
+                                                    
+                                                    <DataGridTextColumn Header="State" Binding="{Binding StateText}" Width="90">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="Text" Value="Active">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource SuccessBrush}"/>
+                                                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                    </Trigger>
+                                                                    <Trigger Property="Text" Value="Suppressed">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource FgMutedBrush}"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Depth" Binding="{Binding DepthLevel}" Width="60"/>
+                                                    <DataGridTextColumn Header="Document File" Binding="{Binding DocumentPath}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Tab 3: Detected CAD Features -->
+                                    <TabItem Header="Detected Features &amp; Holes">
+                                        <Grid Margin="0,10,0,0">
+                                            <DataGrid ItemsSource="{Binding FeaturesView}"
+                                                       AutoGenerateColumns="False"
+                                                       IsReadOnly="True"
+                                                       SelectionMode="Single"
+                                                       Background="{DynamicResource BgPrimaryBrush}"
+                                                       BorderBrush="{DynamicResource BorderBrush}"
+                                                       HorizontalGridLinesBrush="{DynamicResource BorderBrush}"
+                                                       RowHeight="26">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Feature Name" Binding="{Binding FeatureName}" Width="200">
+                                                        <DataGridTextColumn.ElementStyle>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                            </Style>
+                                                        </DataGridTextColumn.ElementStyle>
+                                                    </DataGridTextColumn>
+
+                                                    <DataGridTextColumn Header="Feature Type" Binding="{Binding FeatureType}" Width="160"/>
+                                                    <DataGridTextColumn Header="Containing Occurrence" Binding="{Binding ContainingOccurrence}" Width="180"/>
+                                                    <DataGridTextColumn Header="Hole Diameter (in)" Binding="{Binding HoleDiameter, StringFormat='{}{0:F3}'}" Width="130"/>
+                                                    <DataGridTextColumn Header="Elements" Binding="{Binding ElementCount}" Width="80"/>
+                                                    <DataGridTextColumn Header="Document" Binding="{Binding DocumentPath}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type vm:ParameterPreviewViewModel}">
+                            <Border Background="{DynamicResource BgSecondaryBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    Padding="24">
+                                <StackPanel>
+                                    <TextBlock Text="Parameter Diff &amp; Preview (Phase 4)"
+                                               FontSize="15"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource FgBrightBrush}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock Text="{Binding StatusMessage}"
+                                               Foreground="{DynamicResource FgMutedBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+
+                        <DataTemplate DataType="{x:Type vm:ChannelResultsViewModel}">
+                            <Border Background="{DynamicResource BgSecondaryBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    Padding="24">
+                                <StackPanel>
+                                    <TextBlock Text="Channel Verification Results (Phase 5)"
+                                               FontSize="15"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource FgBrightBrush}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock Text="{Binding StatusMessage}"
+                                               Foreground="{DynamicResource FgMutedBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
+            </Grid>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="3"
+                Background="{DynamicResource BgTertiaryBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,0">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding StageStatus}"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgMutedBrush}"/>
+                <TextBlock Grid.Column="1"
+                           Text="Status: Ready"
+                           FontSize="11"
+                           Foreground="{DynamicResource FgMutedBrush}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/InventorValidator/InventorValidator.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/InventorValidator.Tests/InventorValidator.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,171 @@
+{
+  "investigationDate": "2026-09-11",
+  "software": {
+    "windows": "Microsoft Windows 11 Enterprise (Version 10.0.22631, 64-bit)",
+    "inventorVersionsInstalled": [
+      "Autodesk Inventor 2020 (Build 240168000, Version 24.0)",
+      "Autodesk Inventor 2024 (Version 28.0)"
+    ],
+    "inventorCOMRegisteredProgID": "Inventor.Application (points to Inventor 2020)",
+    "excelVersion": "Microsoft Excel 2016 / 365 (Office 16, 64-bit, Version 16.0)",
+    "dotnetRuntimes": [
+      "net48",
+      "net6.0",
+      "net8.0",
+      "net10.0"
+    ],
+    "dotnetSdks": [
+      "8.0.424",
+      "10.0.302"
+    ]
+  },
+  "samples": [
+    {
+      "id": "Sample-1",
+      "name": "Full Width Coil Bulkhead",
+      "assembly": "391-10006-023.iam",
+      "assemblyPath": "C:\\Users\\jbrow263\\ISG\\20183\\Shell\\Skid 03\\02 (CC\\SQ COIL BHD FW 118X179\\391-10006-023.iam",
+      "calculator": "Calc_10006_023.xls",
+      "calculatorPath": "C:\\Users\\jbrow263\\ISG\\20183\\Shell\\Skid 03\\02 (CC\\SQ COIL BHD FW 118X179\\Calc_10006_023.xls",
+      "totalOccurrences": 158,
+      "uniqueReferencedDocuments": 64,
+      "folderSizeMB": 94.48,
+      "channelGroupsPresent": [
+        "Floor Channels",
+        "Roof Channels",
+        "South Wall Channels",
+        "North Wall Channels"
+      ],
+      "discrepancyIdentified": "FLOOR_CHAN_1 array in Excel (16 holes) does not match physical part 091-30102-458."
+    },
+    {
+      "id": "Sample-2",
+      "name": "Filter Type 8 Assembly",
+      "assembly": "391-10005-004.iam",
+      "calculator": "Calc_10005_004.xls",
+      "assemblyPath": "C:\\Users\\jbrow263\\ISG\\20183\\Shell\\Skid 05\\01 RF2)\\SQ FLTR TYPE8 118 X 179 - RF-2\\391-10005-004.iam"
+    }
+  ],
+  "workflow": {
+    "recommendedMode": "Dual Mode: 'Inspect Current Model' (read-only baseline) and 'Apply Calculator to Copy, Then Inspect'",
+    "copyStrategy": "Deep copy of assembly directory into dedicated timestamped temporary folder in C:\\Temp",
+    "retentionPolicy": "Temporary by default with user prompt to export/retain validated copy if desired"
+  },
+  "excel": {
+    "format": ".xls (Excel 97-2003 Binary Format) and .xlsx",
+    "calculationMode": "xlCalculationAutomatic",
+    "iteration": false,
+    "maxIterations": 100,
+    "maxChange": 0.001,
+    "vbaPresent": false,
+    "externalLinks": [],
+    "connections": [],
+    "namedRangesCount": 307,
+    "tabs": {
+      "Data": {
+        "userInputsRange": "Rows 2-32",
+        "validationColumn": "Column D (Values For MOM)",
+        "errorCheckColumn": "Column E (Error Check)",
+        "errorCheckFormula": "Row 34 Error_Check = 0.0"
+      },
+      "Sheet1": {
+        "parameterCount": 619,
+        "duplicates": 0,
+        "whitespaceErrors": 0,
+        "units": [
+          "in",
+          "ul",
+          ""
+        ],
+        "ulMeaning": "Unitless numeric flag (used for counts, multipliers, and boolean suppression flags)",
+        "suppressionRowCount": 120
+      },
+      "ChannelLoc": {
+        "groups": [
+          "FLOOR CHANNELS",
+          "ROOF CHANNELS",
+          "SOUTH WALL CHANNELS",
+          "NORTH WALL CHANNELS"
+        ],
+        "formulaType": "Position[i] = ArrayOffset + i * ArraySpacing",
+        "knownErrors": [
+          "ROOF_CHAN_3 (#REF!)",
+          "ROOF_CHAN_8 (#REF!)"
+        ]
+      }
+    }
+  },
+  "inventor": {
+    "modelParametersCount": 474,
+    "userParametersCount": 0,
+    "workPlanes": [
+      "YZ Plane",
+      "XZ Plane",
+      "XY Plane",
+      "Bhd Loc from Seg Start",
+      "IW",
+      "Bottom Coil Workplane",
+      "Middle Coil Workplane",
+      "Top Coil Workplane"
+    ],
+    "geometryTypes": [
+      "HoleFeature",
+      "RectangularPatternFeature",
+      "CylinderSurface B-Rep faces"
+    ],
+    "coaxialDeduplicationRequired": true,
+    "clientGraphicsFeasibility": "Confirmed non-destructive; graphics node created, rendered, and deleted without dirtying document"
+  },
+  "ilogic": {
+    "masterRule": "Name1 (11,998 characters, controls coil, bulkhead, and angle suppression)",
+    "viewRule": "Name4 (executes AppViewCubeHomeCmd and ActiveView.Fit)",
+    "eventTriggers": "None defined in document; master rule must be invoked programmatically via iLogic Automation",
+    "childRules": "Not required; top-level rule directly drives component suppression and parameter pushing",
+    "uiPrompts": "None encountered in automation rules"
+  },
+  "parameterMapping": {
+    "suppressionSyntax": "1 = Active / Unsuppressed; 0 = Suppressed",
+    "occurrenceSuffixMapping": "Parameter Part_<PartNum>_<Suffix> maps to occurrence <PartNum>:<Suffix> (e.g. Part_091_30102_466_2 -> 091-30102-466:2)",
+    "matchingPrecedence": [
+      "1. Exact Case-Sensitive Match",
+      "2. Exact Case-Insensitive Match",
+      "3. Trimmed & Underscore-Normalized Match",
+      "4. iLogic Component Suppression Map (Part_... -> Component.IsActive)"
+    ]
+  },
+  "channelLoc": {
+    "primaryZPlane": "Bhd Loc from Seg Start (Z = SegStart - ChannelFlange/2 = 1.5 - 0.75 = 0.75 in)",
+    "iwZeroLocation": "Assembly YZ origin plane (X = 0); South Wall at X = IW (179.0 in), North Wall at X = 0.0 in",
+    "shellClearance": "Side_BH_to_Shell_Clearance (0.310 in) offsets structural members from outer skin",
+    "formulaChainVerified": "Confirmed from 'Excel Calcs' precedents for Floor, Roof, South, and North channels"
+  },
+  "geometryMatching": {
+    "tolerances": {
+      "match": "<= 0.010 in",
+      "warning": "> 0.010 in and <= 0.031 in",
+      "failure": "> 0.031 in"
+    },
+    "observedFindings": [
+      "Floor Channels 4 and 5 match expected X and Z exactly (DeltaX = 0.0000 in, DeltaZ = 0.0000 in).",
+      "South Wall holes match Y array spacing within 0.0087 in (under 0.010 in tolerance).",
+      "North Wall holes exhibit a systematic +0.105 in Y shift matching BtmBhdThk plate thickness.",
+      "Floor Channel 1 array in Excel (16 holes) does not match model 091-30102-458 (missing array)."
+    ]
+  },
+  "processIsolation": {
+    "excel": "Confirmed isolated; new dedicated invisible process spawned and cleanly terminated.",
+    "inventor": "Confirmed isolated; Activator.CreateInstance launches new Inventor process without redirecting to active user session PID 5500.",
+    "rotBehavior": "GetActiveObject fails safely (MK_E_UNAVAILABLE) when user session is not automation-locked."
+  },
+  "vaultAndDependencies": {
+    "localWorkspaceSelfContained": true,
+    "externalReferencesCount": 0,
+    "vaultSDKRequired": false,
+    "readOnlyAttributeHandling": "Copy engine must clear Windows ReadOnly attribute on copied files before rebuild."
+  },
+  "recommendedScope": {
+    "selectedScope": "Scope B -- Recommended First Release",
+    "rationale": "Provides full support for .xls/.xlsx, automated copy workspace, Excel recalculation, iLogic execution, multi-group channel validation, ClientGraphics visual overlay, and warning reports without Vault SDK overhead."
+  },
+  "unresolvedQuestions": []
+}
