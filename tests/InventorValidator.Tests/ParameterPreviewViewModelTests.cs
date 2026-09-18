@@ -61,12 +61,32 @@ public class ParameterPreviewViewModelTests
         vm.LoadSessionData(manifest, calcResult, invResult, compResult, null!);
 
         Assert.Equal(2, vm.DataInputs.Count);
-        // Includes Skip option + 2 detected rules = 3
-        Assert.Equal(3, vm.AvailableRules.Count);
-        Assert.Equal("CustomRule_A", vm.SelectedRule);
+        // Includes All Rules option + 2 detected rules + Skip option = 4
+        Assert.Equal(4, vm.AvailableRules.Count);
+        Assert.Contains(ParameterPreviewViewModel.AllRulesOption, vm.AvailableRules);
+        Assert.Equal(ParameterPreviewViewModel.AllRulesOption, vm.SelectedRule);
         Assert.Single(vm.PlannedChanges);
         Assert.False(vm.HasAppliedResults);
         Assert.False(vm.HasErrors);
+    }
+
+    [Fact]
+    public void LoadSessionData_WhenSuppressionRuleExists_PrioritizesSuppressionRule()
+    {
+        var vm = new ParameterPreviewViewModel();
+        var manifest = new SessionManifest();
+        var calcResult = new CalculatorSessionResult();
+        var compResult = new ParameterComparisonResult();
+
+        var invResult = new AssemblyInventoryResult
+        {
+            AvailableRules = new List<string> { "Home View", "Part Suppression" }
+        };
+
+        vm.LoadSessionData(manifest, calcResult, invResult, compResult, null!);
+
+        // Even though "Home View" is first, "Part Suppression" should be prioritized as default
+        Assert.Equal("Part Suppression", vm.SelectedRule);
     }
 
     [Fact]

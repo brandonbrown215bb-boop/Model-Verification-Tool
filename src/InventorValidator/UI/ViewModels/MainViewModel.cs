@@ -310,6 +310,7 @@ public class MainViewModel : ViewModelBase
                 requestedVersion: SetupVM.SelectedVersion,
                 isVisible: SetupVM.ShowInventorWindow,
                 progress: progress,
+                repointCalculatorPath: ActiveManifest.CopiedCalculatorPath,
                 cancellationToken: _cts.Token
             );
 

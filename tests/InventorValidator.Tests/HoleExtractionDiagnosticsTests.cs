@@ -41,6 +41,36 @@ public class HoleExtractionDiagnosticsTests
     }
 
     [Fact]
+    public void CheckWindowsSizeEnumValues()
+    {
+        string interopPath = @"C:\Program Files\Autodesk\Inventor 2020\Bin\Public Assemblies\Autodesk.Inventor.Interop.dll";
+        if (!File.Exists(interopPath))
+        {
+            _output.WriteLine("Interop DLL not found at default path.");
+            return;
+        }
+
+        var asm = Assembly.LoadFrom(interopPath);
+        var enumType = asm.GetType("Inventor.WindowsSizeEnum");
+        Assert.NotNull(enumType);
+
+        foreach (var name in Enum.GetNames(enumType))
+        {
+            var val = Convert.ToInt32(Enum.Parse(enumType, name));
+            _output.WriteLine($"{name} = {val}");
+        }
+
+        var maxVal = Convert.ToInt32(Enum.Parse(enumType, "kMaximize"));
+        Assert.Equal(32514, maxVal);
+
+        var viewType = asm.GetType("Inventor.View");
+        Assert.NotNull(viewType);
+        var prop = viewType.GetProperty("WindowState");
+        Assert.NotNull(prop);
+        _output.WriteLine($"View.WindowState property type: {prop.PropertyType.FullName}");
+    }
+
+    [Fact]
     public async Task ExtractHolesFromRealSample_Skid02()
     {
         string iamPath = @"C:\Users\jbrow263\ISG\20183\Shell\Skid 02\02 (RF1\SQ FLTR TYPE8 118 X 179\391-10005-004.iam";

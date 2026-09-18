@@ -97,6 +97,7 @@ public class ChannelResultsViewModel : ViewModelBase
     private HoleMatchResultItemViewModel? _selectedItem;
     private bool _showOverlaysInInventor = true;
     private bool _autoZoomInInventor = true;
+    private bool _isLoadingResults;
 
     public ObservableCollection<HoleMatchResultItemViewModel> AllResults { get; } = new();
     public ObservableCollection<HoleMatchResultItemViewModel> FilteredResults { get; } = new();
@@ -343,7 +344,8 @@ public class ChannelResultsViewModel : ViewModelBase
             if (session != null && session.IsActive)
             {
                 DiagnosticsLogger.Instance.Info("Rendering 3D visual markers in Autodesk Inventor...");
-                _ = session.RenderOverlaysAsync(_validationResult);
+                var holesToRender = FilteredResults.Select(r => r.Model).ToList();
+                _ = session.RenderOverlaysAsync(_validationResult, holesToRender, _showExtraHoles);
             }
         }
         catch (Exception ex)
@@ -456,14 +458,22 @@ public class ChannelResultsViewModel : ViewModelBase
         OnPropertyChanged(nameof(MissingCount));
         OnPropertyChanged(nameof(ExtraCount));
 
-        SelectedChannelFilter = "All Channels";
-        SelectedStatusFilter = "All Statuses";
-        SelectedGroupFilter = "All Groups";
+        _isLoadingResults = true;
+        try
+        {
+            SelectedChannelFilter = "All Channels";
+            SelectedStatusFilter = "All Statuses";
+            SelectedGroupFilter = "All Groups";
 
-        UpdateSelectedDiagnostic();
-        ApplyFilters();
+            UpdateSelectedDiagnostic();
+            ApplyFilters();
 
-        SelectedItem = FilteredResults.FirstOrDefault() ?? AllResults.FirstOrDefault();
+            SelectedItem = FilteredResults.FirstOrDefault() ?? AllResults.FirstOrDefault();
+        }
+        finally
+        {
+            _isLoadingResults = false;
+        }
 
         if (ShowOverlaysInInventor)
         {
@@ -552,6 +562,11 @@ public class ChannelResultsViewModel : ViewModelBase
         if (SelectedItem != null && !FilteredResults.Contains(SelectedItem))
         {
             SelectedItem = FilteredResults.FirstOrDefault();
+        }
+
+        if (!_isLoadingResults && _hasResults && _showOverlaysInInventor)
+        {
+            ExecuteRenderOverlays();
         }
     }
 

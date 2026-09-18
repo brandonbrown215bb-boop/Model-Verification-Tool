@@ -19,9 +19,14 @@ public class InventorVisualOverlayService
     private dynamic? _activeHighlightSet;
 
     /// <summary>
-    /// Renders 3D visual markers for all validated channel holes directly inside Autodesk Inventor's graphics pipeline.
+    /// Renders 3D visual markers for validated channel holes directly inside Autodesk Inventor's graphics pipeline.
     /// </summary>
-    public bool RenderOverlays(dynamic inventorApp, dynamic asmDoc, GeometryValidationResult result)
+    public bool RenderOverlays(
+        dynamic inventorApp,
+        dynamic asmDoc,
+        GeometryValidationResult result,
+        IEnumerable<HoleMatchResult>? holesToRender = null,
+        bool includeExtraHoles = false)
     {
         if (inventorApp == null || asmDoc == null || result == null)
             return false;
@@ -30,6 +35,28 @@ public class InventorVisualOverlayService
         {
             // 1. Clear any existing graphics first
             ClearOverlays(asmDoc);
+
+            var items = (holesToRender ?? result.Results)
+                .Where(m =>
+                {
+                    // Never render unrelated "Extra CAD" assembly holes (coils, brackets, fan skids, etc.)
+                    if (string.Equals(m.ChannelGroup, "Extra CAD", StringComparison.OrdinalIgnoreCase))
+                        return false;
+
+                    // Only render extra holes if explicitly requested AND associated with a real channel
+                    if (m.Status == HoleMatchStatus.ExtraActual && !includeExtraHoles)
+                        return false;
+
+                    return true;
+                })
+                .ToList();
+
+            if (items.Count == 0)
+            {
+                try { asmDoc.Dirty = false; } catch { }
+                DiagnosticsLogger.Instance.Info("No channel hole markers to render with current filter.");
+                return true;
+            }
 
             dynamic compDef = asmDoc.ComponentDefinition;
             dynamic transGeom = inventorApp.TransientGeometry;
@@ -44,6 +71,7 @@ public class InventorVisualOverlayService
             // Create coordinate sets and color sets
             int nextDataId = 1;
             int nextNodeId = 1;
+            int renderedMarkerCount = 0;
 
             var groupNodes = new Dictionary<string, dynamic>(StringComparer.OrdinalIgnoreCase);
 
@@ -55,7 +83,7 @@ public class InventorVisualOverlayService
             // Missing: Dark Red (207, 34, 46)
             // Extra: Purple (163, 113, 247)
 
-            foreach (var match in result.Results)
+            foreach (var match in items)
             {
                 string group = string.IsNullOrWhiteSpace(match.ChannelGroup) ? "General" : match.ChannelGroup;
                 if (!groupNodes.TryGetValue(group, out dynamic? groupNode))
@@ -88,6 +116,7 @@ public class InventorVisualOverlayService
                         expPoints.BurnThrough = true;
                     }
                     catch { }
+                    renderedMarkerCount++;
                 }
 
                 // 2. Actual hole marker (if actual coordinate exists)
@@ -129,6 +158,7 @@ public class InventorVisualOverlayService
                         actPoints.BurnThrough = true;
                     }
                     catch { }
+                    renderedMarkerCount++;
 
                     // 3. If there is a discrepancy between expected and actual, draw a connecting line
                     if (match.Expected != null && match.Status is HoleMatchStatus.Mislocated or HoleMatchStatus.Warning)
@@ -161,13 +191,21 @@ public class InventorVisualOverlayService
                 {
                     activeView.Update();
                 }
+                else if (asmDoc != null)
+                {
+                    dynamic views = asmDoc.Views;
+                    if (views != null && views.Count > 0)
+                    {
+                        views[1].Update();
+                    }
+                }
             }
             catch { }
 
             // Guarantee that transient client graphics do not dirty the CAD document
             try { asmDoc.Dirty = false; } catch { }
 
-            DiagnosticsLogger.Instance.Success($"Rendered {result.Results.Count} 3D overlay markers across {groupNodes.Count} channel groups in Inventor.");
+            DiagnosticsLogger.Instance.Success($"Rendered {renderedMarkerCount} 3D overlay markers across {groupNodes.Count} channel groups in Inventor.");
             return true;
         }
         catch (Exception ex)
@@ -209,6 +247,18 @@ public class InventorVisualOverlayService
 
             dynamic transGeom = inventorApp.TransientGeometry;
             dynamic activeView = inventorApp.ActiveView;
+            if (activeView == null && asmDoc != null)
+            {
+                try
+                {
+                    dynamic views = asmDoc.Views;
+                    if (views != null && views.Count > 0)
+                    {
+                        activeView = views[1];
+                    }
+                }
+                catch { }
+            }
 
             if (activeView != null)
             {

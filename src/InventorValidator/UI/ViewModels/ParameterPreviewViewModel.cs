@@ -45,7 +45,8 @@ public class DataInputItemViewModel : ViewModelBase
 
 public class ParameterPreviewViewModel : ViewModelBase
 {
-    private const string SkipRuleOption = "None (Skip Rule Execution)";
+    public const string SkipRuleOption = "None (Skip Rule Execution)";
+    public const string AllRulesOption = "All Rules (Execute All in Sequence)";
 
     private string _statusMessage = "Review planned parameter updates and select an iLogic rule before applying to the model copy.";
     private bool _isApplying;
@@ -226,18 +227,31 @@ public class ParameterPreviewViewModel : ViewModelBase
 
         // 2. Populate Available iLogic Rules (Dynamic discovery - never assume hardcoded names)
         AvailableRules.Clear();
-        AvailableRules.Add(SkipRuleOption);
 
         if (inventoryResult.AvailableRules.Count > 0)
         {
+            if (inventoryResult.AvailableRules.Count > 1)
+            {
+                AvailableRules.Add(AllRulesOption);
+            }
+
             foreach (var rule in inventoryResult.AvailableRules)
             {
                 AvailableRules.Add(rule);
             }
-            SelectedRule = inventoryResult.AvailableRules[0];
+
+            AvailableRules.Add(SkipRuleOption);
+
+            // Prioritize selecting a rule containing "Suppression" or "Part"
+            var suppressionRule = inventoryResult.AvailableRules
+                .FirstOrDefault(r => r.IndexOf("suppress", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                                     r.IndexOf("part", StringComparison.OrdinalIgnoreCase) >= 0);
+
+            SelectedRule = suppressionRule ?? (inventoryResult.AvailableRules.Count > 1 ? AllRulesOption : inventoryResult.AvailableRules[0]);
         }
         else
         {
+            AvailableRules.Add(SkipRuleOption);
             SelectedRule = SkipRuleOption;
         }
 

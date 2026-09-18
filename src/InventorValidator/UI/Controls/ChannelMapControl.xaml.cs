@@ -135,11 +135,13 @@ public partial class ChannelMapControl : UserControl
             return;
         }
 
-        // Filter by group if needed
-        IEnumerable<HoleMatchResultItemViewModel> displayItems = items;
+        // Filter out unrelated "Extra CAD" holes from the visual map
+        IEnumerable<HoleMatchResultItemViewModel> displayItems = items
+            .Where(i => !string.Equals(i.ChannelGroup, "Extra CAD", StringComparison.OrdinalIgnoreCase));
+
         if (!string.IsNullOrWhiteSpace(SelectedGroup) && !SelectedGroup.Equals("All Groups", StringComparison.OrdinalIgnoreCase))
         {
-            displayItems = items.Where(i => i.ChannelGroup.IndexOf(SelectedGroup.Replace(" Channels", ""), StringComparison.OrdinalIgnoreCase) >= 0);
+            displayItems = displayItems.Where(i => i.ChannelGroup.IndexOf(SelectedGroup.Replace(" Channels", ""), StringComparison.OrdinalIgnoreCase) >= 0);
         }
 
         var groups = displayItems

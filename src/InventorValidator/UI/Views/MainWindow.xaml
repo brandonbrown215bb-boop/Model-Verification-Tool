@@ -1741,7 +1741,7 @@
                                         BorderThickness="1"
                                         CornerRadius="3"
                                         ClipToBounds="True">
-                                    <controls:ChannelMapControl ItemsSource="{Binding AllResults}"
+                                    <controls:ChannelMapControl ItemsSource="{Binding FilteredResults}"
                                                                 SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                                                                 SelectedGroup="{Binding SelectedGroupFilter, Mode=TwoWay}"/>
                                 </Border>

@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using InventorValidator.Excel;
 using InventorValidator.Geometry;
 using InventorValidator.Geometry.Models;
@@ -16,6 +17,15 @@ namespace InventorValidator.Inventor;
 /// </summary>
 public sealed class InventorAutomationSession : IDisposable
 {
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    private const int SW_RESTORE = 9;
+    private const int WindowsSizeMaximize = 32514;
+
     private readonly InventorProcessLauncher _launcher;
     private readonly InventorModelInventoryService _inventoryService;
     private readonly InventorVisualOverlayService _overlayService = new();
@@ -213,13 +223,64 @@ public sealed class InventorAutomationSession : IDisposable
         }
 
         dynamic documents = _sessionScope.Track<object>(_inventorApp.Documents);
-        dynamic asmDoc = _sessionScope.Track<object>(documents.Open(iamPath, isVisible));
+        dynamic? asmDoc = null;
+
+        // Attempt to open with "iLogic" LevelOfDetail or ModelState representation via OpenWithOptions if present
+        try
+        {
+            dynamic fm = _inventorApp.FileManager;
+            bool hasILogicRep = false;
+            string repKey = "LevelOfDetailRepresentation";
+
+            try
+            {
+                object lodsObj = fm.GetLevelOfDetailRepresentations(iamPath);
+                if (lodsObj is string[] lodArr && lodArr.Any(l => string.Equals(l, "iLogic", StringComparison.OrdinalIgnoreCase)))
+                {
+                    hasILogicRep = true;
+                    repKey = "LevelOfDetailRepresentation";
+                }
+            }
+            catch { }
+
+            if (hasILogicRep)
+            {
+                dynamic options = _inventorApp.TransientObjects.CreateNameValueMap();
+                options.Add(repKey, "iLogic");
+                asmDoc = _sessionScope.Track<object>(documents.OpenWithOptions(iamPath, options, isVisible));
+                DiagnosticsLogger.Instance.Info($"Opened assembly in '{repKey}=iLogic' representation.");
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not open assembly with representation options: {ex.Message}; falling back to standard Open...");
+        }
+
+        if (asmDoc == null)
+        {
+            asmDoc = _sessionScope.Track<object>(documents.Open(iamPath, isVisible));
+        }
 
         if (asmDoc == null)
         {
             throw new InvalidOperationException($"Inventor failed to open assembly: {iamPath}");
         }
         _activeAssemblyDoc = asmDoc;
+
+        // Ensure document has an active view and is activated so ThisApplication.ActiveDocument & ActiveView are valid for rules and automation
+        try
+        {
+            dynamic views = asmDoc.Views;
+            if (views != null && views.Count == 0)
+            {
+                views.Add();
+            }
+            asmDoc.Activate();
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not ensure document view and activation: {ex.Message}");
+        }
 
         // Repoint linked OLE Excel spreadsheets if a calculator workbook is specified
         if (!string.IsNullOrEmpty(repointCalculatorPath))
@@ -248,6 +309,23 @@ public sealed class InventorAutomationSession : IDisposable
         if (isVisible)
         {
             progress?.Report("Waiting for document graphics and model readiness...");
+            try
+            {
+                _inventorApp.SilentOperation = false;
+            }
+            catch { }
+
+            try
+            {
+                dynamic views = asmDoc.Views;
+                if (views != null && views.Count > 0)
+                {
+                    try { views[1].WindowState = WindowsSizeMaximize; } catch { }
+                    try { views[1].Fit(); } catch { }
+                }
+            }
+            catch { }
+
             try
             {
                 // Activate view fit to verify viewport readiness
@@ -280,6 +358,8 @@ public sealed class InventorAutomationSession : IDisposable
 
     /// <summary>
     /// Updates the visibility of the dedicated Inventor window on demand.
+    /// When making Inventor visible, ensures that the assembly document has an active, maximized view
+    /// and that SilentOperation is disabled so the user can see and interact with the 3D model.
     /// </summary>
     public Task<bool> SetVisibleAsync(bool visible)
     {
@@ -293,19 +373,105 @@ public sealed class InventorAutomationSession : IDisposable
                 dynamic? app = _inventorApp;
                 if (app != null)
                 {
-                    app.Visible = visible;
                     if (visible)
                     {
+                        // 1. Disable SilentOperation so user can interact with Inventor
+                        try
+                        {
+                            app.SilentOperation = false;
+                        }
+                        catch { }
+
+                        // 2. Make the main Inventor application window visible
+                        app.Visible = true;
+
+                        // 3. Ensure the active assembly document has an open, maximized view window
+                        if (_activeAssemblyDoc != null)
+                        {
+                            try
+                            {
+                                dynamic views = _activeAssemblyDoc.Views;
+                                dynamic? view = null;
+                                if (views != null)
+                                {
+                                    if (views.Count == 0)
+                                    {
+                                        view = views.Add();
+                                    }
+                                    else
+                                    {
+                                        view = views[1];
+                                    }
+                                }
+
+                                try
+                                {
+                                    _activeAssemblyDoc.Activate();
+                                }
+                                catch { }
+
+                                if (view != null)
+                                {
+                                    try
+                                    {
+                                        view.WindowState = WindowsSizeMaximize;
+                                    }
+                                    catch { }
+
+                                    try
+                                    {
+                                        view.Fit();
+                                    }
+                                    catch { }
+
+                                    try
+                                    {
+                                        view.Update();
+                                    }
+                                    catch { }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                DiagnosticsLogger.Instance.Warn($"Could not create or activate document view in Inventor: {ex.Message}");
+                            }
+                        }
+
+                        // 4. Best-effort active view fit & update
                         try
                         {
                             dynamic activeView = app.ActiveView;
                             if (activeView != null)
                             {
                                 activeView.Fit();
+                                activeView.Update();
+                            }
+                        }
+                        catch { }
+
+                        // 5. Bring Inventor window to foreground and restore if minimized
+                        try
+                        {
+                            long mainHwnd = Convert.ToInt64(app.MainFrameHWND);
+                            if (mainHwnd != 0)
+                            {
+                                IntPtr hWnd = new IntPtr(mainHwnd);
+                                ShowWindow(hWnd, SW_RESTORE);
+                                SetForegroundWindow(hWnd);
                             }
                         }
                         catch { }
                     }
+                    else
+                    {
+                        app.Visible = false;
+                        try
+                        {
+                            app.SilentOperation = true;
+                        }
+                        catch { }
+                    }
+
                     return true;
                 }
                 return false;
@@ -487,15 +653,22 @@ public sealed class InventorAutomationSession : IDisposable
         if (!string.IsNullOrWhiteSpace(selectedRuleName) &&
             !selectedRuleName.StartsWith("None", StringComparison.OrdinalIgnoreCase))
         {
-            progress?.Report($"Executing iLogic rule '{selectedRuleName}'...");
             var ruleService = new ILogicRuleService();
-            bool ruleSuccess = ruleService.RunRule(_activeAssemblyDoc, selectedRuleName, out string? ruleError);
+            bool isAllRules = selectedRuleName.StartsWith("All Rules", StringComparison.OrdinalIgnoreCase);
+
+            progress?.Report(isAllRules ? "Executing all iLogic rules in sequence..." : $"Executing iLogic rule '{selectedRuleName}'...");
+
+            string? ruleError = null;
+            bool ruleSuccess = isAllRules
+                ? ruleService.RunAllRules(_activeAssemblyDoc, out ruleError)
+                : ruleService.RunRule(_activeAssemblyDoc, selectedRuleName, out ruleError);
+
             result.RuleExecutedSuccessfully = ruleSuccess;
-            result.RuleMessage = ruleError ?? "Rule executed successfully.";
+            result.RuleMessage = ruleError ?? (isAllRules ? "All rules executed successfully." : $"Rule '{selectedRuleName}' executed successfully.");
 
             if (!ruleSuccess)
             {
-                DiagnosticsLogger.Instance.Warn($"iLogic rule '{selectedRuleName}' encountered an issue: {ruleError}");
+                DiagnosticsLogger.Instance.Warn($"iLogic rule execution encountered an issue: {ruleError}");
             }
         }
         else
@@ -744,14 +917,17 @@ public sealed class InventorAutomationSession : IDisposable
     /// <summary>
     /// Renders transient 3D ClientGraphics markers in Autodesk Inventor for the validated channel geometry.
     /// </summary>
-    public Task<bool> RenderOverlaysAsync(GeometryValidationResult result)
+    public Task<bool> RenderOverlaysAsync(
+        GeometryValidationResult result,
+        IEnumerable<HoleMatchResult>? holesToRender = null,
+        bool includeExtraHoles = false)
     {
         if (_activeAssemblyDoc == null || _inventorApp == null || _isDisposed)
             return Task.FromResult(false);
 
         return ExecuteOnStaAsync<bool>(() =>
         {
-            return _overlayService.RenderOverlays(_inventorApp, _activeAssemblyDoc, result);
+            return _overlayService.RenderOverlays(_inventorApp, _activeAssemblyDoc, result, holesToRender, includeExtraHoles);
         });
     }
 
