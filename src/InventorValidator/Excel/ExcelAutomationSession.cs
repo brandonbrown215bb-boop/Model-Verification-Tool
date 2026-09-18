@@ -252,26 +252,52 @@ public sealed class ExcelAutomationSession
 
             // Poll for calculation completion
             DateTime deadline = DateTime.UtcNow + timeout;
+            bool calculationCompleted = false;
+            string lastRecordedState = "Unknown";
+
             while (DateTime.UtcNow < deadline)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                int calcState;
+                int calcState = -1;
                 try
                 {
                     calcState = (int)excelApp.CalculationState;
                 }
-                catch
+                catch (Exception ex)
                 {
-                    calcState = XlDone;
+                    DiagnosticsLogger.Instance.Warn($"Could not query Excel CalculationState: {ex.Message}");
+                    calcState = -1;
                 }
 
                 if (calcState == XlDone)
                 {
+                    calculationCompleted = true;
+                    lastRecordedState = "xlDone";
                     break;
+                }
+                else if (calcState == 1)
+                {
+                    lastRecordedState = "xlCalculating";
+                }
+                else if (calcState == 2)
+                {
+                    lastRecordedState = "xlPending";
+                }
+                else
+                {
+                    lastRecordedState = "Unknown";
                 }
 
                 Thread.Sleep(100);
+            }
+
+            if (!calculationCompleted)
+            {
+                sw.Stop();
+                throw new TimeoutException(
+                    $"Excel recalculation timed out after {timeout.TotalSeconds:F0} seconds without reaching xlDone (last state: '{lastRecordedState}'). " +
+                    "Aborting session to prevent false-positive validation against stale or uncalculated workbook formulas.");
             }
 
             sw.Stop();
@@ -316,7 +342,7 @@ public sealed class ExcelAutomationSession
             {
                 WorkbookPath = workbookPath,
                 RecalculationDuration = sw.Elapsed,
-                CalculationState = "xlDone",
+                CalculationState = lastRecordedState,
                 WorkbookErrorCheckValue = errVal,
                 WorkbookErrorCheckRaw = errRaw,
                 IsErrorCheckPassed = isPassed,

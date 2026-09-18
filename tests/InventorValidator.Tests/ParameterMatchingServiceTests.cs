@@ -441,6 +441,41 @@ public class ParameterMatchingServiceTests
     }
 
     [Fact]
+    public void SuppressionParam_HeuristicPartNumberFallback_DemotedToRequiresILogic()
+    {
+        // Arrange: Parameter without suffix Part_091_30102_458, but only instance :99 exists in CAD
+        var sheet1Params = new List<Sheet1ParameterItem>
+        {
+            new() { ParameterName = "Part_091_30102_458", DisplayedValue = "1", Unit = "ul", Category = ParameterCategory.SuppressionControl }
+        };
+
+        var inventory = new AssemblyInventoryResult
+        {
+            AssemblyName = "TestAssembly.iam",
+            Occurrences = new List<OccurrenceInventoryItem>
+            {
+                new()
+                {
+                    OccurrenceName = "091-30102-458:99",
+                    PartNumber = "091-30102-458",
+                    IsSuppressed = false
+                }
+            }
+        };
+
+        // Act
+        var result = _service.CompareParameters(sheet1Params, inventory);
+
+        // Assert
+        Assert.Single(result.Rows);
+        var row = result.Rows[0];
+        Assert.Equal(MatchClassification.RequiresILogicVerification, row.MatchType);
+        Assert.Equal(ComparisonStatus.RequiresILogicVerification, row.Status);
+        Assert.Equal("091-30102-458:99", row.TargetOccurrenceName);
+        Assert.Contains("Not verified—requires iLogic", row.Notes);
+    }
+
+    [Fact]
     public void FeatureControl_MissingInModel_IsClassifiedAsNotApplicableWithFeatureNotes()
     {
         // Arrange

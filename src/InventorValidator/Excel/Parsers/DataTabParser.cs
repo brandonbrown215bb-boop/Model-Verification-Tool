@@ -158,7 +158,8 @@ public static class DataTabParser
         else
         {
             overallErrorCheckRaw = "N/A";
-            passed = true;
+            // When no workbook Error_Check summary cell exists, pass unless individual inputs report cell formula errors (#REF!, #VALUE!, etc.)
+            passed = !inputs.Any(i => i.HasError);
         }
 
         return (inputs, overallErrorCheck, overallErrorCheckRaw, passed);

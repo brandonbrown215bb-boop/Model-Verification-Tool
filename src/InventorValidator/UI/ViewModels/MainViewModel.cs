@@ -388,7 +388,19 @@ public class MainViewModel : ViewModelBase
                 _activeInventorSession.CloseSession();
                 _activeInventorSession = null;
             }
-            ActiveManifest = null;
+
+            if (ActiveManifest != null)
+            {
+                try
+                {
+                    _workspaceManager.CleanupWorkspace(ActiveManifest);
+                }
+                catch (Exception cleanupEx)
+                {
+                    DiagnosticsLogger.Instance.Warn($"Could not clean up temporary workspace after cancellation: {cleanupEx.Message}");
+                }
+                ActiveManifest = null;
+            }
         }
         catch (Exception ex)
         {
@@ -399,7 +411,19 @@ public class MainViewModel : ViewModelBase
                 _activeInventorSession.CloseSession();
                 _activeInventorSession = null;
             }
-            ActiveManifest = null;
+
+            if (ActiveManifest != null)
+            {
+                try
+                {
+                    _workspaceManager.CleanupWorkspace(ActiveManifest);
+                }
+                catch (Exception cleanupEx)
+                {
+                    DiagnosticsLogger.Instance.Warn($"Could not clean up temporary workspace after failure: {cleanupEx.Message}");
+                }
+                ActiveManifest = null;
+            }
         }
         finally
         {
@@ -422,6 +446,16 @@ public class MainViewModel : ViewModelBase
         {
             _activeInventorSession.CloseSession();
             _activeInventorSession = null;
+        }
+
+        if (ActiveManifest != null)
+        {
+            try
+            {
+                _workspaceManager.CleanupWorkspace(ActiveManifest);
+            }
+            catch { }
+            ActiveManifest = null;
         }
     }
 

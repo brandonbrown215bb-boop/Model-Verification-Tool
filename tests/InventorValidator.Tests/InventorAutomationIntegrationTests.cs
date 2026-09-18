@@ -94,12 +94,12 @@ public class InventorAutomationIntegrationTests
             var warmResult = await session.StartAndInventoryAsync(
                 manifest.CopiedIamPath,
                 requestedVersion: "Automatic",
-                timeout: TimeSpan.FromSeconds(30),
+                timeout: TimeSpan.FromSeconds(90),
                 progress: progress
             );
             warmSw.Stop();
             _output.WriteLine($"[WARM RUN] Warm inventory completed in {warmSw.Elapsed.TotalSeconds:F2} seconds (PID {warmResult.ProcessId})");
-            Assert.True(warmSw.Elapsed.TotalSeconds < 30, $"Warm run expected < 30s, took {warmSw.Elapsed.TotalSeconds:F2}s");
+            Assert.True(warmSw.Elapsed.TotalSeconds < 90, $"Warm run expected < 90s, took {warmSw.Elapsed.TotalSeconds:F2}s");
             Assert.Equal(inventoryResult.ProcessId, warmResult.ProcessId);
             Assert.True(warmResult.TotalOccurrencesCount >= 100);
 

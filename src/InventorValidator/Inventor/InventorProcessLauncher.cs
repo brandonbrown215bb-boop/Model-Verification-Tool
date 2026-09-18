@@ -136,6 +136,13 @@ public class InventorProcessLauncher
 
         // Retrieve process ID
         int pid = ResolveInventorPid(app, initialPids);
+        if (pid <= 0)
+        {
+            try { app.Quit(); } catch { }
+            throw new InvalidOperationException("Failed to determine a distinct Process ID for the launched Inventor 2020 session. Aborting to protect existing user sessions.");
+        }
+
+        ValidateInventorVersion(app, 2020);
         DiagnosticsLogger.Instance.Info($"Dedicated Inventor 2020 instantiated with PID {pid}");
 
         string softwareVersion = GetSoftwareVersion(app);
@@ -188,6 +195,13 @@ public class InventorProcessLauncher
                 }
 
                 int directPid = ResolveInventorPid(directApp, initialPids);
+                if (directPid <= 0)
+                {
+                    try { directApp.Quit(); } catch { }
+                    throw new InvalidOperationException("Failed to determine a distinct Process ID for the launched Inventor 2024 session. Aborting to protect existing user sessions.");
+                }
+
+                ValidateInventorVersion(directApp, 2024);
                 string ver = GetSoftwareVersion(directApp);
                 DiagnosticsLogger.Instance.Info($"Dedicated Inventor 2024 instantiated via ProgID with PID {directPid} ({ver})");
                 return (directApp, new InventorProcessInfo(directPid, ver, 2024, true, DateTime.UtcNow));
@@ -260,6 +274,7 @@ public class InventorProcessLauncher
             DiagnosticsLogger.Instance.Warn($"Could not set Inventor 2024 Visible = {isVisible}: {ex.Message}");
         }
 
+        ValidateInventorVersion(boundApp, 2024);
         string fullVer = GetSoftwareVersion(boundApp);
         DiagnosticsLogger.Instance.Info($"Bound to dedicated Inventor 2024 process PID {launchedPid} ({fullVer})");
 
@@ -349,7 +364,37 @@ public class InventorProcessLauncher
             return newPids[0];
         }
 
-        return currentPids.FirstOrDefault();
+        // Fail-closed: Never guess ownership of pre-existing user sessions
+        DiagnosticsLogger.Instance.Error($"Failed to uniquely resolve launched Inventor PID (initial: {initialPids.Count}, current: {currentPids.Count}, new: {newPids.Count}).");
+        return -1;
+    }
+
+    internal static void ValidateInventorVersion(dynamic app, int expectedYear)
+    {
+        int expectedMajor = expectedYear == 2020 ? 24 : (expectedYear == 2024 ? 28 : -1);
+        int actualMajor = -1;
+        string displayName = string.Empty;
+
+        try
+        {
+            dynamic softwareVer = app.SoftwareVersion;
+            actualMajor = (int)softwareVer.Major;
+            displayName = (string)softwareVer.DisplayName;
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not read Inventor SoftwareVersion details: {ex.Message}");
+        }
+
+        bool matches = (actualMajor != -1 && actualMajor == expectedMajor) ||
+                       (!string.IsNullOrEmpty(displayName) && displayName.Contains(expectedYear.ToString()));
+
+        if (!matches)
+        {
+            throw new InvalidOperationException(
+                $"Launched Inventor instance does not match requested version {expectedYear}. " +
+                $"(Detected major version: {actualMajor}, Display: '{displayName}'). Aborting to protect model integrity.");
+        }
     }
 
     private static string GetSoftwareVersion(dynamic app)

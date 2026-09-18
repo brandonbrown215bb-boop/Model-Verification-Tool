@@ -16,4 +16,8 @@
     <AssemblyName>InventorValidator</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="InventorValidator.Tests" />
+  </ItemGroup>
+
 </Project>

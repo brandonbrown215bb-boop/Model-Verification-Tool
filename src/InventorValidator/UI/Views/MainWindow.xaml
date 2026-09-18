@@ -1149,6 +1149,9 @@
                                                                     <Trigger Property="Text" Value="MissingInModel">
                                                                         <Setter Property="Foreground" Value="{DynamicResource FgMutedBrush}"/>
                                                                     </Trigger>
+                                                                    <Trigger Property="Text" Value="RequiresILogicVerification">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource InfoBrush}"/>
+                                                                    </Trigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </DataGridTextColumn.ElementStyle>

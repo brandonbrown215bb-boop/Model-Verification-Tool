@@ -9,6 +9,7 @@ public enum MatchClassification
     ReadOnlyMatch,
     ExpressionDrivenMatch,
     SuppressionMatch,
+    RequiresILogicVerification,
     InformationalOnly
 }
 
@@ -17,6 +18,7 @@ public enum ComparisonStatus
     Match,
     Discrepancy,
     MissingInModel,
+    RequiresILogicVerification,
     NotApplicable
 }
 
@@ -74,6 +76,7 @@ public class ParameterComparisonResult
     public int MatchedCount => Rows.Count(r => r.Status == ComparisonStatus.Match);
     public int DiscrepancyCount => Rows.Count(r => r.Status == ComparisonStatus.Discrepancy);
     public int MissingInModelCount => Rows.Count(r => r.Status == ComparisonStatus.MissingInModel);
+    public int RequiresILogicCount => Rows.Count(r => r.Status == ComparisonStatus.RequiresILogicVerification);
     public int LinkedTableCount => Rows.Count(r => r.LinkageStatus == ParameterLinkageClassification.LinkedTableParameter);
     public int EquationCount => Rows.Count(r => r.LinkageStatus == ParameterLinkageClassification.ParametricEquation);
     public int SafeToWriteCount => Rows.Count(r => r.WritePolicy == SafeWriteClassification.SafeToWrite);

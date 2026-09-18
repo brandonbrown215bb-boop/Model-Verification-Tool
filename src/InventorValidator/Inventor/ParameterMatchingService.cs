@@ -159,10 +159,9 @@ public class ParameterMatchingService
         }
 
         // Tier 5: Direct Part Suppression Verification (e.g. Part_091_30102_466_1 or Part_091_30102_458)
-        var occItem = FindOccurrenceByPartParameter(excelParam.ParameterName, occurrencesByName.Values, out string partNum, out string mappedOccName);
+        var occItem = FindOccurrenceByPartParameter(excelParam.ParameterName, occurrencesByName.Values, out string partNum, out string mappedOccName, out bool isExactOccMatch);
         if (occItem != null || !string.IsNullOrEmpty(mappedOccName))
         {
-            row.MatchType = MatchClassification.SuppressionMatch;
             row.LinkageStatus = ParameterLinkageClassification.SuppressionControl;
             row.TargetDocument = topDocName;
             row.TargetOccurrenceName = occItem != null ? occItem.OccurrenceName : mappedOccName;
@@ -173,19 +172,29 @@ public class ParameterMatchingService
                 row.ModelSuppressionState = occItem.IsActive;
                 bool expectedActive = row.ExcelNumericValue.HasValue && Math.Abs(row.ExcelNumericValue.Value - 1.0) < 0.001;
 
-                if (expectedActive == occItem.IsActive)
+                if (!isExactOccMatch)
                 {
+                    // Demote heuristic / prefix / part-number fallback mappings
+                    row.MatchType = MatchClassification.RequiresILogicVerification;
+                    row.Status = ComparisonStatus.RequiresILogicVerification;
+                    row.Notes = $"Not verified—requires iLogic: Heuristic mapping to '{occItem.OccurrenceName}'. Authoritative occurrence state must be evaluated by iLogic.";
+                }
+                else if (expectedActive == occItem.IsActive)
+                {
+                    row.MatchType = MatchClassification.SuppressionMatch;
                     row.Status = ComparisonStatus.Match;
                     row.Notes = $"Occurrence '{occItem.OccurrenceName}' suppression agrees ({(occItem.IsActive ? "Active" : "Suppressed")}).";
                 }
                 else
                 {
+                    row.MatchType = MatchClassification.SuppressionMatch;
                     row.Status = ComparisonStatus.Discrepancy;
                     row.Notes = $"Suppression discrepancy: Excel expects {(expectedActive ? "1 (Active)" : "0 (Suppressed)")}, but CAD occurrence is {(occItem.IsActive ? "Active" : "Suppressed")}.";
                 }
             }
             else
             {
+                row.MatchType = MatchClassification.NoMatch;
                 row.Status = ComparisonStatus.MissingInModel;
                 row.Notes = $"Referenced suppression occurrence '{mappedOccName}' not found in assembly hierarchy.";
             }
@@ -324,14 +333,20 @@ public class ParameterMatchingService
         if (row.ExcelParameterName.StartsWith("Part_", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(row.ExcelCategory, "SuppressionControl", StringComparison.OrdinalIgnoreCase))
         {
-            var occItem = FindOccurrenceByPartParameter(row.ExcelParameterName, allOccurrences, out _, out string mappedOccName);
+            var occItem = FindOccurrenceByPartParameter(row.ExcelParameterName, allOccurrences, out _, out string mappedOccName, out bool isExactOccMatch);
             if (occItem != null)
             {
                 row.TargetOccurrenceName = occItem.OccurrenceName;
                 row.ModelSuppressionState = occItem.IsActive;
                 bool expectedActive = row.ExcelNumericValue.HasValue && Math.Abs(row.ExcelNumericValue.Value - 1.0) < 0.001;
 
-                if (expectedActive != occItem.IsActive)
+                if (!isExactOccMatch)
+                {
+                    row.Status = ComparisonStatus.RequiresILogicVerification;
+                    string suppNote = $"Not verified—requires iLogic: Heuristic mapping to occurrence '{occItem.OccurrenceName}'. Authoritative state determined by iLogic.";
+                    row.Notes = string.IsNullOrEmpty(row.Notes) ? suppNote : $"{row.Notes} | {suppNote}";
+                }
+                else if (expectedActive != occItem.IsActive)
                 {
                     row.Status = ComparisonStatus.Discrepancy;
                     string suppNote = $"Suppression discrepancy: CAD occurrence '{occItem.OccurrenceName}' is {(occItem.IsActive ? "Active" : "Suppressed")}.";
@@ -416,10 +431,12 @@ public class ParameterMatchingService
         string paramName,
         IEnumerable<OccurrenceInventoryItem> allOccurrences,
         out string resolvedPartNum,
-        out string targetOccName)
+        out string targetOccName,
+        out bool isExactNameMatch)
     {
         resolvedPartNum = string.Empty;
         targetOccName = string.Empty;
+        isExactNameMatch = false;
 
         var m = SuppressionParamRegex.Match(paramName);
         if (!m.Success)
@@ -434,24 +451,23 @@ public class ParameterMatchingService
         string hyphenatedNum = rawNum.Replace('_', '-');
         resolvedPartNum = hyphenatedNum;
 
-        // 1. If suffix is present (e.g. Part_091_30102_466_1), check exact occurrence name first
-        if (suffix != null)
+        // 1. Check exact occurrence name (defaulting to instance ":1" if no suffix specified)
+        string targetSuffix = suffix ?? "1";
+        string expectedOccName1 = $"{hyphenatedNum}:{targetSuffix}";
+        string expectedOccName2 = $"{rawNum}:{targetSuffix}";
+
+        var occExact = allOccurrences.FirstOrDefault(o =>
+            string.Equals(o.OccurrenceName, expectedOccName1, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(o.OccurrenceName, expectedOccName2, StringComparison.OrdinalIgnoreCase));
+
+        if (occExact != null)
         {
-            string expectedOccName1 = $"{hyphenatedNum}:{suffix}";
-            string expectedOccName2 = $"{rawNum}:{suffix}";
-
-            var occExact = allOccurrences.FirstOrDefault(o =>
-                string.Equals(o.OccurrenceName, expectedOccName1, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(o.OccurrenceName, expectedOccName2, StringComparison.OrdinalIgnoreCase));
-
-            if (occExact != null)
-            {
-                targetOccName = occExact.OccurrenceName;
-                return occExact;
-            }
+            targetOccName = occExact.OccurrenceName;
+            isExactNameMatch = true;
+            return occExact;
         }
 
-        // 2. Match by occurrence PartNumber
+        // 2. Match by occurrence PartNumber (heuristic fallback)
         var occByPn = allOccurrences.FirstOrDefault(o =>
             string.Equals(o.PartNumber, hyphenatedNum, StringComparison.OrdinalIgnoreCase) ||
             string.Equals(o.PartNumber, rawNum, StringComparison.OrdinalIgnoreCase));
@@ -459,10 +475,11 @@ public class ParameterMatchingService
         if (occByPn != null)
         {
             targetOccName = occByPn.OccurrenceName;
+            isExactNameMatch = false;
             return occByPn;
         }
 
-        // 3. Match by occurrence name prefix (e.g. 091-30102-466:...)
+        // 3. Match by occurrence name prefix (e.g. 091-30102-466:...) (heuristic fallback)
         var occByPrefix = allOccurrences.FirstOrDefault(o =>
             o.OccurrenceName.StartsWith($"{hyphenatedNum}:", StringComparison.OrdinalIgnoreCase) ||
             o.OccurrenceName.StartsWith($"{rawNum}:", StringComparison.OrdinalIgnoreCase));
@@ -470,10 +487,12 @@ public class ParameterMatchingService
         if (occByPrefix != null)
         {
             targetOccName = occByPrefix.OccurrenceName;
+            isExactNameMatch = false;
             return occByPrefix;
         }
 
         targetOccName = suffix != null ? $"{hyphenatedNum}:{suffix}" : hyphenatedNum;
+        isExactNameMatch = false;
         return null;
     }
 
