@@ -94,10 +94,17 @@ public class ChannelResultsViewModel : ViewModelBase
     private PatternDiagnosticResult? _selectedDiagnostic;
     private bool _hasSelectedDiagnostic;
 
+    private HoleMatchResultItemViewModel? _selectedItem;
+    private bool _showOverlaysInInventor = true;
+    private bool _autoZoomInInventor = true;
+
     public ObservableCollection<HoleMatchResultItemViewModel> AllResults { get; } = new();
     public ObservableCollection<HoleMatchResultItemViewModel> FilteredResults { get; } = new();
     public ObservableCollection<PatternDiagnosticResult> ChannelDiagnostics { get; } = new();
     public ObservableCollection<string> AvailableChannelNames { get; } = new();
+
+    public Func<Inventor.InventorAutomationSession?>? InventorSessionProvider { get; set; }
+    public ICommand? ViewInInventorCommand { get; set; }
 
     public IReadOnlyList<string> GroupFilterOptions { get; } = new[]
     {
@@ -148,6 +155,43 @@ public class ChannelResultsViewModel : ViewModelBase
     public int FailureCount => _validationResult?.FailureCount ?? 0;
     public int MissingCount => _validationResult?.MissingCount ?? 0;
     public int ExtraCount => _validationResult?.ExtraCount ?? 0;
+
+    public HoleMatchResultItemViewModel? SelectedItem
+    {
+        get => _selectedItem;
+        set
+        {
+            if (SetProperty(ref _selectedItem, value))
+            {
+                OnSelectedItemChanged(value);
+            }
+        }
+    }
+
+    public bool ShowOverlaysInInventor
+    {
+        get => _showOverlaysInInventor;
+        set
+        {
+            if (SetProperty(ref _showOverlaysInInventor, value))
+            {
+                if (value && _validationResult != null)
+                {
+                    ExecuteRenderOverlays();
+                }
+                else if (!value)
+                {
+                    ExecuteClearOverlays();
+                }
+            }
+        }
+    }
+
+    public bool AutoZoomInInventor
+    {
+        get => _autoZoomInInventor;
+        set => SetProperty(ref _autoZoomInInventor, value);
+    }
 
     public string SelectedGroupFilter
     {
@@ -224,6 +268,10 @@ public class ChannelResultsViewModel : ViewModelBase
 
     public ICommand ClearFiltersCommand { get; }
     public ICommand ExportCsvCommand { get; }
+    public ICommand RenderOverlaysCommand { get; }
+    public ICommand ClearOverlaysCommand { get; }
+    public ICommand SetStatusFilterCommand { get; }
+    public ICommand SetGroupFilterCommand { get; }
 
     public ChannelResultsViewModel()
     {
@@ -244,6 +292,81 @@ public class ChannelResultsViewModel : ViewModelBase
         });
 
         ExportCsvCommand = new RelayCommand(ExecuteExportCsv, () => HasResults && FilteredResults.Count > 0);
+        RenderOverlaysCommand = new RelayCommand(ExecuteRenderOverlays, () => HasResults);
+        ClearOverlaysCommand = new RelayCommand(ExecuteClearOverlays);
+
+        SetStatusFilterCommand = new RelayCommand(param =>
+        {
+            if (param is string s)
+            {
+                SelectedStatusFilter = s;
+            }
+        });
+
+        SetGroupFilterCommand = new RelayCommand(param =>
+        {
+            if (param is string g)
+            {
+                SelectedGroupFilter = g;
+            }
+        });
+    }
+
+    private void OnSelectedItemChanged(HoleMatchResultItemViewModel? item)
+    {
+        if (item?.Model == null) return;
+
+        if (_autoZoomInInventor)
+        {
+            try
+            {
+                var session = InventorSessionProvider?.Invoke();
+                if (session != null && session.IsActive)
+                {
+                    _ = session.ZoomAndHighlightHoleAsync(item.Model);
+                }
+            }
+            catch (Exception ex)
+            {
+                DiagnosticsLogger.Instance.Warn($"Could not trigger Inventor camera zoom: {ex.Message}");
+            }
+        }
+    }
+
+    public void ExecuteRenderOverlays()
+    {
+        if (_validationResult == null) return;
+
+        try
+        {
+            var session = InventorSessionProvider?.Invoke();
+            if (session != null && session.IsActive)
+            {
+                DiagnosticsLogger.Instance.Info("Rendering 3D visual markers in Autodesk Inventor...");
+                _ = session.RenderOverlaysAsync(_validationResult);
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not render 3D overlays in Inventor: {ex.Message}");
+        }
+    }
+
+    public void ExecuteClearOverlays()
+    {
+        try
+        {
+            var session = InventorSessionProvider?.Invoke();
+            if (session != null && session.IsActive)
+            {
+                DiagnosticsLogger.Instance.Info("Clearing 3D visual markers in Autodesk Inventor...");
+                _ = session.ClearOverlaysAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not clear 3D overlays in Inventor: {ex.Message}");
+        }
     }
 
     public void Reset(string? statusMessage = null)
@@ -258,6 +381,7 @@ public class ChannelResultsViewModel : ViewModelBase
         AvailableChannelNames.Clear();
         SelectedDiagnostic = null;
         HasSelectedDiagnostic = false;
+        SelectedItem = null;
 
         _selectedGroupFilter = "All Groups";
         _selectedStatusFilter = "All Statuses";
@@ -283,6 +407,9 @@ public class ChannelResultsViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedChannelFilter));
         OnPropertyChanged(nameof(SearchText));
         OnPropertyChanged(nameof(ShowExtraHoles));
+        OnPropertyChanged(nameof(SelectedItem));
+
+        ExecuteClearOverlays();
     }
 
     public void LoadResults(GeometryValidationResult result)
@@ -330,15 +457,24 @@ public class ChannelResultsViewModel : ViewModelBase
         OnPropertyChanged(nameof(ExtraCount));
 
         SelectedChannelFilter = "All Channels";
+        SelectedStatusFilter = "All Statuses";
+        SelectedGroupFilter = "All Groups";
+
         UpdateSelectedDiagnostic();
         ApplyFilters();
+
+        SelectedItem = FilteredResults.FirstOrDefault() ?? AllResults.FirstOrDefault();
+
+        if (ShowOverlaysInInventor)
+        {
+            ExecuteRenderOverlays();
+        }
     }
 
     private void UpdateSelectedDiagnostic()
     {
         if (_selectedChannelFilter == "All Channels" || string.IsNullOrEmpty(_selectedChannelFilter))
         {
-            // Pick first systematic shift diagnostic if available, or null
             SelectedDiagnostic = ChannelDiagnostics.FirstOrDefault(d => d.IsSystematicShift) ??
                                  ChannelDiagnostics.FirstOrDefault(d => d.MissingCount > 0) ??
                                  ChannelDiagnostics.FirstOrDefault();
@@ -411,6 +547,11 @@ public class ChannelResultsViewModel : ViewModelBase
         foreach (var item in query)
         {
             FilteredResults.Add(item);
+        }
+
+        if (SelectedItem != null && !FilteredResults.Contains(SelectedItem))
+        {
+            SelectedItem = FilteredResults.FirstOrDefault();
         }
     }
 

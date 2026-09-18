@@ -115,10 +115,16 @@ public class MainViewModel : ViewModelBase
             {
                 DiagnosticsLogger.Instance.Info("Displaying dedicated Autodesk Inventor window on user request...");
                 await _activeInventorSession.SetVisibleAsync(true);
+                if (ChannelResultsVM.HasResults && ChannelResultsVM.ShowOverlaysInInventor)
+                {
+                    ChannelResultsVM.ExecuteRenderOverlays();
+                }
             }
         });
         ModelInventoryVM.ViewInInventorCommand = ShowInInventorCommand;
         ParameterPreviewVM.ViewInInventorCommand = ShowInInventorCommand;
+        ChannelResultsVM.ViewInInventorCommand = ShowInInventorCommand;
+        ChannelResultsVM.InventorSessionProvider = () => _activeInventorSession;
         ParameterPreviewVM.OnGeometryValidated = geomResult =>
         {
             ChannelResultsVM.LoadResults(geomResult);

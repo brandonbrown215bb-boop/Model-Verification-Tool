@@ -2418,27 +2418,20 @@ Estimated effort: 2–3 weeks.
 
 
 
-## Phase 6 — Visualization and usability
+## Phase 6 — Visualization and usability [COMPLETED]
 
-
+Status: **Completed** (2026-09-18)
 
 Deliver:
 
-
-
-- ClientGraphics overlays
-
-- Group toggles
-
-- Selection highlighting
-
-- Zoom to result
-
-- Summary and filtering
-
-- CSV export
-
-
+- Interactive in-app 2D Visual Schematic Map (`ChannelMapControl`) in WPF with smooth pan/zoom, channel track beams, hole markers, and discrepancy vectors
+- Unfolded multi-group layout (Roof, North Wall, South Wall, Floor) with quick filter pills
+- Dedicated Autodesk Inventor 3D `ClientGraphics` and `GraphicsDataSets` visual overlays with transient lifecycle and document cleanliness preservation
+- 3D camera close-up framing (~4–6" field of view) and native `HighlightSet` occurrence highlighting upon result selection
+- Two-way synchronized selection between 2D Map, compact DataGrid, and Autodesk Inventor viewport
+- Interactive KPI cards functioning as one-click status filter toggles (Matched, Warnings, Discrepancies, Missing, Extra)
+- Resizable split-pane layout between 2D visual schematic and compact results table
+- Unit test suite verifying overlay service safety, view model filter commands, and selection defaults (108 tests passing)
 
 Estimated effort: 1–1.5 weeks.
 

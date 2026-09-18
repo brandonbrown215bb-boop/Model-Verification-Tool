@@ -221,5 +221,62 @@ public class ChannelResultsViewModelTests
         Assert.Equal(0, vm.ExtraCount);
         Assert.Equal("Assembly Z=0", vm.SegmentStartReference);
         Assert.Equal("0.0000\"", vm.SegmentStartZOffset);
+        Assert.Null(vm.SelectedItem);
+    }
+
+    [Fact]
+    public void SelectedItem_WhenResultsLoaded_DefaultsToFirstItem()
+    {
+        var vm = new ChannelResultsViewModel();
+        vm.LoadResults(CreateSampleValidationResult());
+
+        Assert.NotNull(vm.SelectedItem);
+        Assert.Equal(vm.FilteredResults[0], vm.SelectedItem);
+    }
+
+    [Fact]
+    public void SetStatusFilterCommand_UpdatesSelectedStatusFilterAndFilteredResults()
+    {
+        var vm = new ChannelResultsViewModel();
+        vm.LoadResults(CreateSampleValidationResult());
+
+        vm.SetStatusFilterCommand.Execute("Failures/Discrepancies");
+
+        Assert.Equal("Failures/Discrepancies", vm.SelectedStatusFilter);
+        Assert.Equal(2, vm.FilteredResults.Count);
+        Assert.All(vm.FilteredResults, r => Assert.Equal(HoleMatchStatus.Mislocated, r.Status));
+    }
+
+    [Fact]
+    public void SetGroupFilterCommand_UpdatesSelectedGroupFilter()
+    {
+        var vm = new ChannelResultsViewModel();
+        vm.LoadResults(CreateSampleValidationResult());
+
+        vm.SetGroupFilterCommand.Execute("Roof Channels");
+
+        Assert.Equal("Roof Channels", vm.SelectedGroupFilter);
+        Assert.Equal(1, vm.FilteredResults.Count);
+        Assert.Equal(HoleMatchStatus.MissingExpected, vm.FilteredResults[0].Status);
+    }
+
+    [Fact]
+    public void ShowOverlaysInInventor_TogglesStateCorrectly()
+    {
+        var vm = new ChannelResultsViewModel();
+        Assert.True(vm.ShowOverlaysInInventor);
+
+        vm.ShowOverlaysInInventor = false;
+        Assert.False(vm.ShowOverlaysInInventor);
+
+        vm.ShowOverlaysInInventor = true;
+        Assert.True(vm.ShowOverlaysInInventor);
+    }
+
+    [Fact]
+    public void ClearOverlaysCommand_CanExecuteSafelyWithoutSession()
+    {
+        var vm = new ChannelResultsViewModel();
+        vm.ClearOverlaysCommand.Execute(null); // Should not throw
     }
 }

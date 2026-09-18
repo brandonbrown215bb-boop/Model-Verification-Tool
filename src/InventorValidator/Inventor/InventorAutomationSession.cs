@@ -18,6 +18,7 @@ public sealed class InventorAutomationSession : IDisposable
 {
     private readonly InventorProcessLauncher _launcher;
     private readonly InventorModelInventoryService _inventoryService;
+    private readonly InventorVisualOverlayService _overlayService = new();
     private readonly ComReleaseScope _sessionScope = new();
 
     private readonly BlockingCollection<Action> _staWorkQueue = new();
@@ -741,6 +742,49 @@ public sealed class InventorAutomationSession : IDisposable
     }
 
     /// <summary>
+    /// Renders transient 3D ClientGraphics markers in Autodesk Inventor for the validated channel geometry.
+    /// </summary>
+    public Task<bool> RenderOverlaysAsync(GeometryValidationResult result)
+    {
+        if (_activeAssemblyDoc == null || _inventorApp == null || _isDisposed)
+            return Task.FromResult(false);
+
+        return ExecuteOnStaAsync<bool>(() =>
+        {
+            return _overlayService.RenderOverlays(_inventorApp, _activeAssemblyDoc, result);
+        });
+    }
+
+    /// <summary>
+    /// Centers the Inventor 3D camera close-up on the selected hole and highlights its occurrence.
+    /// </summary>
+    public Task<bool> ZoomAndHighlightHoleAsync(HoleMatchResult hole)
+    {
+        if (_activeAssemblyDoc == null || _inventorApp == null || _isDisposed)
+            return Task.FromResult(false);
+
+        return ExecuteOnStaAsync<bool>(() =>
+        {
+            return _overlayService.ZoomAndHighlightHole(_inventorApp, _activeAssemblyDoc, hole);
+        });
+    }
+
+    /// <summary>
+    /// Clears all transient 3D ClientGraphics overlays and occurrence highlights in Inventor.
+    /// </summary>
+    public Task ClearOverlaysAsync()
+    {
+        if (_activeAssemblyDoc == null || _isDisposed)
+            return Task.CompletedTask;
+
+        return ExecuteOnStaAsync<bool>(() =>
+        {
+            _overlayService.ClearOverlays(_activeAssemblyDoc);
+            return true;
+        });
+    }
+
+    /// <summary>
     /// Closes the active assembly document without saving and cleanly terminates
     /// the application-owned Inventor process on its native STA thread.
     /// </summary>
@@ -803,6 +847,7 @@ public sealed class InventorAutomationSession : IDisposable
         {
             if (_activeAssemblyDoc != null)
             {
+                try { _overlayService.ClearOverlays(_activeAssemblyDoc); } catch { }
                 try
                 {
                     _activeAssemblyDoc.Close(true);
