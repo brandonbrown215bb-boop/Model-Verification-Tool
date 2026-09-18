@@ -1,8 +1,8 @@
-\# Final Implementation Plan
+# Final Implementation Plan
 
 
 
-\## 1. Product definition
+## 1. Product definition
 
 
 
@@ -14,47 +14,47 @@ The application will support two workflows:
 
 
 
-\### Mode A — Inspect Current Model
+### Mode A — Inspect Current Model
 
 
 
-\- Open a disposable copy of the current IAM.
+- Open a disposable copy of the current IAM.
 
-\- Recalculate the selected calculator.
+- Recalculate the selected calculator.
 
-\- Do not apply calculator values to Inventor.
+- Do not apply calculator values to Inventor.
 
-\- Compare current model geometry against `Channel Loc`.
+- Compare current model geometry against `Channel Loc`.
 
-\- Show parameter, suppression, and geometry discrepancies.
-
-
-
-This should be the default because it answers: \*\*“Does the existing model match the calculator?”\*\*
+- Show parameter, suppression, and geometry discrepancies.
 
 
 
-\### Mode B — Apply Calculator to Copy, Then Inspect
+This should be the default because it answers: **“Does the existing model match the calculator?”**
 
 
 
-\- Create a disposable assembly/calculator workspace.
-
-\- Recalculate Excel.
-
-\- Preview mapped parameter changes.
-
-\- Apply only safe, approved values.
-
-\- Run the assembly’s master iLogic rule.
-
-\- Update/rebuild.
-
-\- Compare the resulting geometry against `Channel Loc`.
+### Mode B — Apply Calculator to Copy, Then Inspect
 
 
 
-This answers: \*\*“If the calculator is applied, does the resulting model match its outputs?”\*\*
+- Create a disposable assembly/calculator workspace.
+
+- Recalculate and save the disposable Excel workbook.
+
+- Repoint assembly and child part OLE spreadsheet references (`FileDescriptor.ReplaceReference`) to the disposable Excel workbook copy.
+
+- Trigger Inventor to refresh linked `TableParameters`, natively driving sketch dimensions, feature parameters (hole diameters, pattern spacings), and plane offsets across the model.
+
+- Run the assembly’s master iLogic rule (`Name1`) to update component suppressions.
+
+- Update/rebuild assembly.
+
+- Compare the resulting geometry against `Channel Loc`.
+
+
+
+This answers: **“If the calculator is applied, does the resulting model match its outputs?”**
 
 
 
@@ -62,39 +62,39 @@ Neither mode modifies the source Vault workspace.
 
 
 
-\---
+---
 
 
 
-\# 2. Confirmed target environment
+# 2. Confirmed target environment
 
 
 
-\- Windows 11 x64
+- Windows 11 x64
 
-\- Autodesk Inventor 2020 and 2024
+- Autodesk Inventor 2020 and 2024
 
-\- Microsoft Excel 2016/365
+- Microsoft Excel 2016/365
 
-\- Calculator formats:
+- Calculator formats:
 
 &#x20; - `.xls`
 
 &#x20; - `.xlsx`
 
-\- Models are selected from an already-downloaded local Vault workspace.
+- Models are selected from an already-downloaded local Vault workspace.
 
-\- No Vault SDK, checkout, check-in, or Vault authentication
+- No Vault SDK, checkout, check-in, or Vault authentication
 
-\- Approximately 5–10 users
+- Approximately 5–10 users
 
-\- One assembly/session at a time
+- One assembly/session at a time
 
-\- English-only UI
+- English-only UI
 
-\- Portable deployment
+- Portable deployment
 
-\- One self-contained executable, with no installer or admin rights
+- One self-contained executable, with no installer or admin rights
 
 
 
@@ -102,11 +102,11 @@ The executable will still require locally installed Excel and Inventor. “Singl
 
 
 
-\---
+---
 
 
 
-\# 3. Important corrections to the investigation conclusions
+# 3. Important corrections to the investigation conclusions
 
 
 
@@ -114,7 +114,7 @@ The local investigation is sufficient to proceed, but two findings should not be
 
 
 
-\## 3.1 Do not infer suppression mappings from suffixes
+## 3.1 Do not infer suppression mappings from suffixes
 
 
 
@@ -124,7 +124,7 @@ The report suggests:
 
 ```text
 
-Part\_<PartNum>\_<Suffix> → <PartNum>:<Suffix>
+Part_<PartNum>_<Suffix> → <PartNum>:<Suffix>
 
 ```
 
@@ -140,7 +140,7 @@ Examples include:
 
 ```vb
 
-Part\_091\_30102\_459
+Part_091_30102_459
 
 &#x20;   → 091-30102-459:1
 
@@ -160,7 +160,7 @@ and:
 
 ```vb
 
-Part\_091\_30102\_496\_2
+Part_091_30102_496_2
 
 &#x20;   → 091-30102-517:1
 
@@ -172,13 +172,13 @@ Therefore, the application must:
 
 
 
-1\. Apply suppression control values to existing Inventor parameters when safe.
+1. Apply suppression control values to existing Inventor parameters when safe.
 
-2\. Run the existing `Name1` iLogic rule.
+2. Run the existing `Name1` iLogic rule.
 
-3\. Read the resulting occurrence states.
+3. Read the resulting occurrence states.
 
-4\. Never recreate the suppression map with a general regex.
+4. Never recreate the suppression map with a general regex.
 
 
 
@@ -186,7 +186,7 @@ The iLogic rule remains the source of truth.
 
 
 
-\## 3.2 Do not use ±0.030 in as the primary hole-diameter tolerance
+## 3.2 Do not use ±0.030 in as the primary hole-diameter tolerance
 
 
 
@@ -194,11 +194,11 @@ The investigated parts contain hole diameters such as:
 
 
 
-\- `0.203 in`
+- `0.203 in`
 
-\- `0.218 in`
+- `0.218 in`
 
-\- `0.312 in`
+- `0.312 in`
 
 
 
@@ -210,11 +210,11 @@ Use:
 
 
 
-\- Default diameter tolerance: ±`0.002 in`
+- Default diameter tolerance: ±`0.002 in`
 
-\- Expand to ±`0.005 in` only if model precision requires it
+- Expand to ±`0.005 in` only if model precision requires it
 
-\- If expected diameter cannot be established, match by:
+- If expected diameter cannot be established, match by:
 
 &#x20; - Referenced occurrence
 
@@ -234,7 +234,7 @@ Diameter should be a candidate filter, not the sole matching key.
 
 
 
-\## 3.3 Validate only worksheet-defined dimensions
+## 3.3 Validate only worksheet-defined dimensions
 
 
 
@@ -242,9 +242,9 @@ Diameter should be a candidate filter, not the sole matching key.
 
 
 
-\- Floor/roof: X array position and Z location
+- Floor/roof: X array position and Z location
 
-\- South/north wall: Y array position and Z location
+- South/north wall: Y array position and Z location
 
 
 
@@ -256,11 +256,11 @@ Therefore:
 
 
 
-\- Classification should use the dimensions actually defined by the worksheet.
+- Classification should use the dimensions actually defined by the worksheet.
 
-\- Full `ΔX`, `ΔY`, `ΔZ`, and 3D distance may still be shown as diagnostics.
+- Full `ΔX`, `ΔY`, `ΔZ`, and 3D distance may still be shown as diagnostics.
 
-\- An undefined transverse-axis offset must not cause an otherwise valid row to fail.
+- An undefined transverse-axis offset must not cause an otherwise valid row to fail.
 
 
 
@@ -268,29 +268,77 @@ For example, a wall-channel row should normally be classified using `ΔY` and `�
 
 
 
-\---
+## 3.4 Native OLE spreadsheet links vs manual COM parameter injection
 
 
 
-\# 4. Recommended technology
+The assembly and detail part models in production do not rely on an external automation script writing CAD parameters one-by-one (`Parameter.Expression = value`).
+
+Empirical investigation proved that:
+
+- The top assembly (`391-10006-023.iam`) and child IPT files contain native **OLE link descriptors** (`ReferencedOLEFileDescriptors`, type 3331) pointing directly to the calculator workbook (`Calc_...xls`).
+
+- All 618 driving parameters in `Sheet1` enter Inventor natively as **`TableParameters`** (`kTableParameterObject`, COM type `50349312`).
+
+- Sketch dimensions (e.g. `Thickness = BtmBhdThk`, `d0 = T1BHD_Width`), feature parameters, and plane offsets (`d14 = IW`, `d8 = Side_BH_to_Shell_Clearance`) are parametric equations referencing these `TableParameters`.
+
+- Attempting to write directly to `TableParameters` via COM is either blocked as read-only or risks corrupting the live table link.
+
+- In disposable workspaces (`C:Temp...`), copied CAD files retain internal absolute OLE paths pointing to the source Vault workbook. The application must repoint these OLE references to the copied workbook using `FileDescriptor.ReplaceReference(...)`.
+
+- Once repointed and refreshed, Inventor’s native constraint solver updates all sketch dimensions, hole arrays, and plane offsets across the entire assembly hierarchy without fragile manual injection.
 
 
 
-\## Application
+## 3.5 Dynamic multi-archetype parsing across 56+ workbooks
 
 
 
-\- C#
+An automated audit of all 56 engineering workbooks in `Calc_Sheet_Inventory` across 21 product families (`391-10002` through `391-10033`) established the following universal requirements:
 
-\- .NET 8
+- **100% Tab Presence:** All 56 workbooks contain `Sheet1`, `Channel Loc`, and `Data`.
 
-\- WPF
+- **Two `Sheet1` Archetypes:**
 
-\- x64
+  1. *Archetype 1 (Standard 4-Column Table, ~84%):* Columns `Parameter`, `Value`, `UM`, `Comments`. (Occasional variations: headerless or title in cell A1).
 
-\- MVVM-lite without a large framework
+  2. *Archetype 2 (Multi-Table Fan/Base Skids, ~16% — e.g. `391-10004-xxx`):* `Sheet1` contains side-by-side tables: Columns A–I are hole schedules (`HOLE`, `XDIM`, `YDIM`, `DESCRIPTION`), while Columns K–M hold the actual driving parameters (`NAME`, `VALUE`, `COMMENT`), and Columns O–R contain the cut list BOM.
 
-\- Self-contained, single-file publish
+  - *Rule:* The parser must dynamically locate the parameter table signature (`Parameter/Value` or `NAME/VALUE`) across the sheet rather than assuming Columns A–D.
+
+- **`Channel Loc` Dynamic Group & Column Resolution:**
+
+  - All 56 workbooks define the 4 primary groups: `FLOOR CHANNELS`, `ROOF CHANNELS`, `SOUTH WALL CHANNELS`, `NORTH WALL CHANNELS`.
+
+  - Column positions vary across workbooks (Column A is frequently blank, group headers appear in Column F/G, extra description columns exist).
+
+  - The parser must locate group anchors dynamically and map columns by header text (`Z_LOC*`, `OFFSET*`, `QTY*`, `SPAC*`), filtering out inactive template rows (`Qty <= 0`, `Z <= 0`) and legacy `#REF!` rows.
+
+
+
+---
+
+
+
+# 4. Recommended technology
+
+
+
+## Application
+
+
+
+- C#
+
+- .NET 8
+
+- WPF
+
+- x64
+
+- MVVM-lite without a large framework
+
+- Self-contained, single-file publish
 
 
 
@@ -326,7 +374,7 @@ Do not enable trimming because reflection, COM, and dynamic automation can break
 
 
 
-\## COM strategy
+## COM strategy
 
 
 
@@ -342,13 +390,13 @@ Create:
 
 
 
-\- `ExcelAutomationSession`
+- `ExcelAutomationSession`
 
-\- `InventorAutomationSession`
+- `InventorAutomationSession`
 
-\- `ILogicAutomationService`
+- `ILogicAutomationService`
 
-\- `ComReleaseScope`
+- `ComReleaseScope`
 
 
 
@@ -356,13 +404,13 @@ All Excel and Inventor COM calls must remain on dedicated STA threads. Do not pa
 
 
 
-\## Theme
+## Theme
 
 
 
-\- Detect the current Windows application theme at startup.
+- Detect the current Windows application theme at startup.
 
-\- Provide:
+- Provide:
 
 &#x20; - System
 
@@ -370,9 +418,9 @@ All Excel and Inventor COM calls must remain on dedicated STA threads. Do not pa
 
 &#x20; - Dark
 
-\- Store the override under `%LocalAppData%`.
+- Store the override under `%LocalAppData%`.
 
-\- Use WPF resource dictionaries for colors and controls.
+- Use WPF resource dictionaries for colors and controls.
 
 
 
@@ -380,11 +428,11 @@ WPF does not automatically provide a complete Windows dark theme, so this must b
 
 
 
-\---
+---
 
 
 
-\# 5. High-level architecture
+# 5. High-level architecture
 
 
 
@@ -484,15 +532,15 @@ No database, web service, authentication, or background server is needed.
 
 
 
-\---
+---
 
 
 
-\# 6. Session workflow
+# 6. Session workflow
 
 
 
-\## Step 1 — Select files
+## Step 1 — Select files
 
 
 
@@ -500,17 +548,17 @@ The main window asks for:
 
 
 
-\- IAM path
+- IAM path
 
-\- Calculator path
+- Calculator path
 
-\- Mode:
+- Mode:
 
 &#x20; - Inspect Current Model
 
 &#x20; - Apply Calculator to Copy, Then Inspect
 
-\- Inventor version:
+- Inventor version:
 
 &#x20; - Automatic
 
@@ -524,7 +572,7 @@ Remember recent folders, not necessarily full proprietary filenames unless desir
 
 
 
-\## Step 2 — Preflight validation
+## Step 2 — Preflight validation
 
 
 
@@ -532,19 +580,19 @@ Check:
 
 
 
-\- IAM exists and has `.iam` extension.
+- IAM exists and has `.iam` extension.
 
-\- Calculator exists and is `.xls` or `.xlsx`.
+- Calculator exists and is `.xls` or `.xlsx`.
 
-\- Selected Inventor version is installed.
+- Selected Inventor version is installed.
 
-\- Excel is installed.
+- Excel is installed.
 
-\- Source folder is readable.
+- Source folder is readable.
 
-\- At least 1–2 GB of temporary disk space is available.
+- At least 1–2 GB of temporary disk space is available.
 
-\- Workbook contains:
+- Workbook contains:
 
 &#x20; - `Data`
 
@@ -552,9 +600,9 @@ Check:
 
 &#x20; - `Channel Loc`
 
-\- IAM is not already inside the application’s temporary workspace.
+- IAM is not already inside the application’s temporary workspace.
 
-\- Source calculator and IAM are not modified by the application.
+- Source calculator and IAM are not modified by the application.
 
 
 
@@ -562,7 +610,7 @@ Warnings should not stop the workflow unless a required engine or top-level file
 
 
 
-\## Step 3 — Create disposable workspace
+## Step 3 — Create disposable workspace
 
 
 
@@ -572,7 +620,7 @@ Create:
 
 ```text
 
-C:\\Temp\\InventorValidator\\<SessionId>\\
+C:TempInventorValidator<SessionId>
 
 ```
 
@@ -586,17 +634,17 @@ After copying:
 
 
 
-\- Clear `ReadOnly` on copied files only.
+- Clear `ReadOnly` on copied files only.
 
-\- Preserve original source attributes.
+- Preserve original source attributes.
 
-\- Record source-to-copy paths in a session manifest.
+- Record source-to-copy paths in a session manifest.
 
-\- Detect and avoid junction/reparse-point loops.
+- Detect and avoid junction/reparse-point loops.
 
-\- Verify the copied IAM and calculator exist.
+- Verify the copied IAM and calculator exist.
 
-\- Never modify source files.
+- Never modify source files.
 
 
 
@@ -604,7 +652,7 @@ The investigated reference package is approximately 95 MB, so a directory-level 
 
 
 
-\## Step 4 — Recalculate the calculator
+## Step 4 — Recalculate the calculator
 
 
 
@@ -638,11 +686,11 @@ Run:
 
 
 
-1\. `Calculate`
+1. `Calculate`
 
-2\. `CalculateFull`
+2. `CalculateFull`
 
-3\. `CalculateFullRebuild`
+3. `CalculateFullRebuild`
 
 
 
@@ -670,19 +718,19 @@ Capture:
 
 
 
-\- Cell values
+- Cell values
 
-\- Formulas
+- Formulas
 
-\- Excel error values
+- Excel error values
 
-\- Named ranges
+- Named ranges
 
-\- Data validation descriptions
+- Data validation descriptions
 
-\- `Error\_Check`
+- `Error_Check`
 
-\- Calculation completion state
+- Calculation completion state
 
 
 
@@ -690,11 +738,11 @@ Close only the workbook and Excel process created by the application.
 
 
 
-\## Step 5 — Parse calculator data
+## Step 5 — Parse calculator data
 
 
 
-\### `Data`
+### `Data`
 
 
 
@@ -706,21 +754,21 @@ Extract:
 
 
 
-\- Input parameter
+- Input parameter
 
-\- Current value
+- Current value
 
-\- Description
+- Description
 
-\- Allowed values from column D
+- Allowed values from column D
 
-\- Error-check value from column E
+- Error-check value from column E
 
-\- Workbook-level `Error\_Check`
+- Workbook-level `Error_Check`
 
 
 
-\### `Sheet1`
+### `Sheet1`
 
 
 
@@ -746,17 +794,17 @@ For each row:
 
 
 
-\- Preserve original parameter name.
+- Preserve original parameter name.
 
-\- Create a trimmed normalized name.
+- Create a trimmed normalized name.
 
-\- Record raw value and displayed value.
+- Record raw value and displayed value.
 
-\- Record unit.
+- Record unit.
 
-\- Record formula error.
+- Record formula error.
 
-\- Classify the row.
+- Classify the row.
 
 
 
@@ -788,7 +836,7 @@ Classification rules should be conservative. A row being named does not mean it 
 
 
 
-\### `Channel Loc`
+### `Channel Loc`
 
 
 
@@ -796,13 +844,13 @@ Locate groups by normalized header text:
 
 
 
-\- Floor Channels
+- Floor Channels
 
-\- Roof Channels
+- Roof Channels
 
-\- South Wall Channels
+- South Wall Channels
 
-\- North Wall Channels
+- North Wall Channels
 
 
 
@@ -814,21 +862,21 @@ Parse:
 
 
 
-\- Channel name
+- Channel name
 
-\- Z location
+- Z location
 
-\- Array axis
+- Array axis
 
-\- Array offset
+- Array offset
 
-\- Quantity
+- Quantity
 
-\- Spacing
+- Spacing
 
-\- Referenced part
+- Referenced part
 
-\- Formula-error status
+- Formula-error status
 
 
 
@@ -848,7 +896,7 @@ The rest of the sheet continues processing.
 
 
 
-\## Step 6 — Launch dedicated Inventor
+## Step 6 — Launch dedicated Inventor
 
 
 
@@ -856,7 +904,7 @@ Use a visible, application-owned Inventor process.
 
 
 
-\### Inventor 2020
+### Inventor 2020
 
 
 
@@ -864,7 +912,7 @@ The registered ProgID points to Inventor 2020, so `Activator.CreateInstance` can
 
 
 
-\### Inventor 2024
+### Inventor 2024
 
 
 
@@ -876,11 +924,11 @@ At runtime:
 
 
 
-1\. Inspect versioned Inventor ProgIDs in the registry.
+1. Inspect versioned Inventor ProgIDs in the registry.
 
-2\. Prefer a confirmed version-specific ProgID if available.
+2. Prefer a confirmed version-specific ProgID if available.
 
-3\. Otherwise launch:
+3. Otherwise launch:
 
 &#x20;  ```text
 
@@ -888,9 +936,9 @@ At runtime:
 
 &#x20;  ```
 
-4\. Bind to the new process’s ROT object.
+4. Bind to the new process’s ROT object.
 
-5\. Verify the returned application version and process ID before opening files.
+5. Verify the returned application version and process ID before opening files.
 
 
 
@@ -902,13 +950,13 @@ Track:
 
 
 
-\- Process ID
+- Process ID
 
-\- Inventor version
+- Inventor version
 
-\- Documents opened by this session
+- Documents opened by this session
 
-\- Whether the process was created by the application
+- Whether the process was created by the application
 
 
 
@@ -916,7 +964,7 @@ Never call `Quit()` on an Inventor process not created by the application.
 
 
 
-\## Step 7 — Open copied IAM and inventory model
+## Step 7 — Open copied IAM and inventory model
 
 
 
@@ -928,39 +976,39 @@ Recursively inventory:
 
 
 
-\- Documents
+- Documents
 
-\- Occurrence paths
+- Occurrence paths
 
-\- Occurrence names
+- Occurrence names
 
-\- Part numbers
+- Part numbers
 
-\- Suppression states
+- Suppression states
 
-\- Model states/LOD representations
+- Model states/LOD representations
 
-\- User parameters
+- User parameters
 
-\- Model parameters
+- Model parameters
 
-\- Reference parameters
+- Reference parameters
 
-\- Parameter expressions
+- Parameter expressions
 
-\- Evaluated values
+- Evaluated values
 
-\- Units
+- Units
 
-\- iProperties
+- iProperties
 
-\- Work planes
+- Work planes
 
-\- Features
+- Features
 
-\- Hole features
+- Hole features
 
-\- Pattern features
+- Pattern features
 
 
 
@@ -968,7 +1016,7 @@ The representative assembly has no top-level user parameters and approximately 4
 
 
 
-\## Step 8 — Match calculator outputs
+## Step 8 — Match calculator outputs
 
 
 
@@ -976,13 +1024,13 @@ Build candidate matches using:
 
 
 
-1\. Exact case-sensitive parameter name
+1. Exact case-sensitive parameter name
 
-2\. Exact case-insensitive parameter name
+2. Exact case-insensitive parameter name
 
-3\. Trimmed name
+3. Trimmed name
 
-4\. Hyphen/underscore normalization
+4. Hyphen/underscore normalization
 
 
 
@@ -1014,7 +1062,7 @@ Informational Only
 
 
 
-\### Safe-write policy
+### Safe-write policy
 
 
 
@@ -1022,15 +1070,15 @@ Automatically writable:
 
 
 
-\- User parameter with a literal expression
+- User parameter with a literal expression
 
-\- Model parameter with a literal numeric expression
+- Model parameter with a literal numeric expression
 
-\- Compatible units
+- Compatible units
 
-\- Unique match
+- Unique match
 
-\- Not driven or reference-only
+- Not driven or reference-only
 
 
 
@@ -1038,19 +1086,19 @@ Not automatically writable:
 
 
 
-\- Reference parameters
+- Reference parameters
 
-\- Formula-driven model parameters
+- Formula-driven model parameters
 
-\- Ambiguous matches
+- Ambiguous matches
 
-\- Normalized-only matches without approval
+- Normalized-only matches without approval
 
-\- Parameters with incompatible units
+- Parameters with incompatible units
 
-\- Informational outputs
+- Informational outputs
 
-\- Occurrence properties without a demonstrated write path
+- Occurrence properties without a demonstrated write path
 
 
 
@@ -1072,7 +1120,7 @@ This avoids mistakes caused by Inventor’s internal length unit representation.
 
 
 
-\## Step 9 — Show preview
+## Step 9 — Show preview
 
 
 
@@ -1086,9 +1134,9 @@ For Apply mode, show:
 
 | `IH` | 118 | in | Top IAM | `IH` | `118 in` | 118 | Apply |
 
-| `d69` | 41.413 | in | Child IPT | `d69` | `Support\_Loc4` | 41.413 | Compare only |
+| `d69` | 41.413 | in | Child IPT | `d69` | `Support_Loc4` | 41.413 | Compare only |
 
-| `Part\_...` | 1 | ul | Top IAM | Control parameter | `0 ul` | 0 | Apply, then iLogic |
+| `Part_...` | 1 | ul | Top IAM | Control parameter | `0 ul` | 0 | Apply, then iLogic |
 
 | `Unknown` | 4.25 | in | — | — | — | — | Warning |
 
@@ -1102,19 +1150,19 @@ An override must:
 
 
 
-\- Be visually marked.
+- Be visually marked.
 
-\- Retain the original Excel value in the table.
+- Retain the original Excel value in the table.
 
-\- Be included in validation results.
+- Be included in validation results.
 
-\- Not write back to the original calculator.
+- Not write back to the original calculator.
 
-\- Require confirmation before Apply.
+- Require confirmation before Apply.
 
 
 
-\## Step 10 — Apply, iLogic, and rebuild
+## Step 10 — Apply, iLogic, and rebuild
 
 
 
@@ -1122,29 +1170,31 @@ Apply mode sequence:
 
 
 
-1\. Capture before-state snapshot.
+1. Capture before-state snapshot of parameters and suppressions.
 
-2\. Apply approved safe parameters.
+2. Recalculate and save the disposable Excel workbook copy.
 
-3\. Update the assembly.
+3. Repoint all OLE spreadsheet links in copied IAM and child IPTs (`FileDescriptor.ReplaceReference`) to the disposable Excel workbook copy.
 
-4\. Verify the required `iLogic` representation.
+4. Trigger Inventor to refresh linked `TableParameters`, automatically propagating updated values to sketch dimensions, feature parameters, and plane offsets.
 
-5\. Run `Name1`.
+5. Verify the required `iLogic` representation.
 
-6\. Update/rebuild again.
+6. Run `Name1`.
 
-7\. Wait for Inventor to finish.
+7. Update/rebuild assembly (`asmDoc.Update2(true)`).
 
-8\. Capture after-state snapshot.
+8. Wait for Inventor to finish.
 
-9\. Read actual suppression states.
+9. Capture after-state snapshot.
 
-10\. Continue to geometry extraction.
+10. Read actual suppression states.
+
+11. Continue to geometry extraction.
 
 
 
-\### Inventor 2020 representation
+### Inventor 2020 representation
 
 
 
@@ -1164,7 +1214,7 @@ exists.
 
 
 
-\### Inventor 2024 representation
+### Inventor 2024 representation
 
 
 
@@ -1172,9 +1222,9 @@ Check whether migration exposes it as:
 
 
 
-\- A compatibility LOD
+- A compatibility LOD
 
-\- A Model State named `iLogic`
+- A Model State named `iLogic`
 
 
 
@@ -1182,7 +1232,7 @@ If `Name1` itself successfully activates it, continue. If not, stop Apply mode w
 
 
 
-\### iLogic invocation
+### iLogic invocation
 
 
 
@@ -1202,11 +1252,11 @@ If `Name1` does not exist:
 
 
 
-\- List available top-level rules.
+- List available top-level rules.
 
-\- Let the user select one for that session.
+- Let the user select one for that session.
 
-\- Remember selection by assembly family only if desired.
+- Remember selection by assembly family only if desired.
 
 
 
@@ -1214,15 +1264,15 @@ If `Name1` does not exist:
 
 
 
-\---
+---
 
 
 
-\# 7. Geometry extraction design
+# 7. Geometry extraction design
 
 
 
-\## 7.1 Expected arrays
+## 7.1 Expected arrays
 
 
 
@@ -1232,7 +1282,7 @@ Generate expected positions using:
 
 ```text
 
-Position\[i] = Offset + i × Spacing
+Position[i] = Offset + i × Spacing
 
 i = 0 ... Quantity - 1
 
@@ -1244,21 +1294,21 @@ Reject or skip rows where:
 
 
 
-\- Quantity is not a positive integer.
+- Quantity is not a positive integer.
 
-\- Spacing is invalid.
+- Spacing is invalid.
 
-\- Offset is invalid.
+- Offset is invalid.
 
-\- Z is invalid.
+- Z is invalid.
 
-\- Referenced part is missing.
+- Referenced part is missing.
 
-\- Any required cell is an Excel error.
+- Any required cell is an Excel error.
 
 
 
-\## 7.2 Expected coordinate adapters
+## 7.2 Expected coordinate adapters
 
 
 
@@ -1266,7 +1316,7 @@ Use a separate adapter for each group.
 
 
 
-\### Floor
+### Floor
 
 
 
@@ -1274,9 +1324,9 @@ Authoritative dimensions:
 
 
 
-\- X = array position
+- X = array position
 
-\- Z = `Z\_LOCATION`
+- Z = `Z_LOCATION`
 
 
 
@@ -1284,7 +1334,7 @@ Y is derived only for visualization and candidate filtering.
 
 
 
-\### Roof
+### Roof
 
 
 
@@ -1292,9 +1342,9 @@ Authoritative dimensions:
 
 
 
-\- X = array position
+- X = array position
 
-\- Z = `Z\_LOCATION`
+- Z = `Z_LOCATION`
 
 
 
@@ -1302,7 +1352,7 @@ Use roof occurrence/face orientation for candidate filtering.
 
 
 
-\### South wall
+### South wall
 
 
 
@@ -1310,9 +1360,9 @@ Authoritative dimensions:
 
 
 
-\- Y = array position
+- Y = array position
 
-\- Z = `Z\_LOCATION`
+- Z = `Z_LOCATION`
 
 
 
@@ -1320,7 +1370,7 @@ X is derived from the wall occurrence or assembly width only for display.
 
 
 
-\### North wall
+### North wall
 
 
 
@@ -1328,9 +1378,9 @@ Authoritative dimensions:
 
 
 
-\- Y = array position
+- Y = array position
 
-\- Z = `Z\_LOCATION`
+- Z = `Z_LOCATION`
 
 
 
@@ -1352,7 +1402,7 @@ DiagnosticAxes
 
 
 
-\## 7.3 Actual-hole extraction
+## 7.3 Actual-hole extraction
 
 
 
@@ -1360,13 +1410,13 @@ For active referenced occurrences:
 
 
 
-1\. Inspect `HoleFeature` objects.
+1. Inspect `HoleFeature` objects.
 
-2\. Inspect `RectangularPatternFeature` elements.
+2. Inspect `RectangularPatternFeature` elements.
 
-3\. Fall back to cylindrical B-Rep faces.
+3. Fall back to cylindrical B-Rep faces.
 
-4\. Extract:
+4. Extract:
 
 &#x20;  - Axis
 
@@ -1378,9 +1428,9 @@ For active referenced occurrences:
 
 &#x20;  - Feature name where available
 
-5\. Deduplicate coaxial faces representing the two sides of one through-hole.
+5. Deduplicate coaxial faces representing the two sides of one through-hole.
 
-6\. Transform local centers through the complete occurrence transform chain into top-level assembly coordinates.
+6. Transform local centers through the complete occurrence transform chain into top-level assembly coordinates.
 
 
 
@@ -1388,17 +1438,17 @@ A deduplication key can use:
 
 
 
-\- Collinear axis within angular tolerance
+- Collinear axis within angular tolerance
 
-\- Same radius within diameter tolerance
+- Same radius within diameter tolerance
 
-\- Projected centers within position tolerance
+- Projected centers within position tolerance
 
-\- Overlapping axial ranges
+- Overlapping axial ranges
 
 
 
-\## 7.4 Expected diameter resolution
+## 7.4 Expected diameter resolution
 
 
 
@@ -1406,13 +1456,13 @@ Resolve expected diameter in this order:
 
 
 
-1\. Known corresponding Excel parameter for the referenced channel/feature
+1. Known corresponding Excel parameter for the referenced channel/feature
 
-2\. Matching named Inventor feature or pattern diameter
+2. Matching named Inventor feature or pattern diameter
 
-3\. Dominant repeated diameter among holes near expected positions
+3. Dominant repeated diameter among holes near expected positions
 
-4\. No diameter constraint, with reduced confidence
+4. No diameter constraint, with reduced confidence
 
 
 
@@ -1432,7 +1482,7 @@ Unavailable
 
 
 
-\## 7.5 Matching
+## 7.5 Matching
 
 
 
@@ -1440,15 +1490,15 @@ Candidate filtering:
 
 
 
-\- Correct active occurrence or referenced part number
+- Correct active occurrence or referenced part number
 
-\- Compatible array direction
+- Compatible array direction
 
-\- Near expected Z
+- Near expected Z
 
-\- Compatible diameter, if known
+- Compatible diameter, if known
 
-\- Reasonable search radius
+- Reasonable search radius
 
 
 
@@ -1460,15 +1510,15 @@ The match cost should prioritize:
 
 
 
-1\. Error on authoritative array axis
+1. Error on authoritative array axis
 
-2\. Error in Z
+2. Error in Z
 
-3\. Diameter mismatch
+3. Diameter mismatch
 
-4\. Transverse-axis distance
+4. Transverse-axis distance
 
-5\. Feature confidence
+5. Feature confidence
 
 
 
@@ -1476,7 +1526,7 @@ An actual hole may match only one expected hole.
 
 
 
-\## 7.6 Classification
+## 7.6 Classification
 
 
 
@@ -1504,19 +1554,19 @@ Also record:
 
 
 
-\- `ΔX`
+- `ΔX`
 
-\- `ΔY`
+- `ΔY`
 
-\- `ΔZ`
+- `ΔZ`
 
-\- Authoritative error
+- Authoritative error
 
-\- Full 3D distance
+- Full 3D distance
 
-\- Diameter difference
+- Diameter difference
 
-\- Match confidence
+- Match confidence
 
 
 
@@ -1562,7 +1612,7 @@ Extra holes appear in a separate informational section by default.
 
 
 
-\## 7.7 Pattern-level diagnostics
+## 7.7 Pattern-level diagnostics
 
 
 
@@ -1570,19 +1620,19 @@ After point matching, calculate:
 
 
 
-\- Expected count versus actual count
+- Expected count versus actual count
 
-\- Average spacing
+- Average spacing
 
-\- Maximum spacing deviation
+- Maximum spacing deviation
 
-\- First-hole offset
+- First-hole offset
 
-\- Last-hole offset
+- Last-hole offset
 
-\- Mean signed error
+- Mean signed error
 
-\- Standard deviation of signed error
+- Standard deviation of signed error
 
 
 
@@ -1602,11 +1652,11 @@ rather than displaying only 22 nearly identical failures.
 
 
 
-\---
+---
 
 
 
-\# 8. Inventor visual overlays
+# 8. Inventor visual overlays
 
 
 
@@ -1618,19 +1668,19 @@ Suggested colors:
 
 
 
-\- Expected center: cyan
+- Expected center: cyan
 
-\- Matched actual center: green
+- Matched actual center: green
 
-\- Warning: amber
+- Warning: amber
 
-\- Failure/mislocated: red
+- Failure/mislocated: red
 
-\- Missing expected hole: red cross/ring
+- Missing expected hole: red cross/ring
 
-\- Extra actual hole: purple
+- Extra actual hole: purple
 
-\- Expected-to-actual connector: red or amber line
+- Expected-to-actual connector: red or amber line
 
 
 
@@ -1662,17 +1712,17 @@ When a result is selected:
 
 
 
-1\. Clear the previous selection overlay.
+1. Clear the previous selection overlay.
 
-2\. Highlight the occurrence and actual face if available.
+2. Highlight the occurrence and actual face if available.
 
-3\. Show expected and actual markers.
+3. Show expected and actual markers.
 
-4\. Draw a connecting line.
+4. Draw a connecting line.
 
-5\. Show an offset label where practical.
+5. Show an offset label where practical.
 
-6\. Move the camera to frame the selected geometry.
+6. Move the camera to frame the selected geometry.
 
 
 
@@ -1680,13 +1730,13 @@ All graphics must remain transient and be deleted:
 
 
 
-\- When the model changes
+- When the model changes
 
-\- When a new session begins
+- When a new session begins
 
-\- When the user clicks Clear
+- When the user clicks Clear
 
-\- Before closing Inventor
+- Before closing Inventor
 
 
 
@@ -1694,55 +1744,55 @@ The overlays must not dirty the document.
 
 
 
-\---
+---
 
 
 
-\# 9. User interface plan
+# 9. User interface plan
 
 
 
-\## Main layout
+## Main layout
 
 
 
-\### Top toolbar
+### Top toolbar
 
 
 
-\- Select IAM
+- Select IAM
 
-\- Select calculator
+- Select calculator
 
-\- Inventor version
+- Inventor version
 
-\- Validation mode
+- Validation mode
 
-\- Start
+- Start
 
-\- Cancel
+- Cancel
 
-\- Theme selector
-
-
-
-\### Left navigation
+- Theme selector
 
 
 
-1\. Setup
-
-2\. Calculator
-
-3\. Parameter Preview
-
-4\. Channel Results
-
-5\. Diagnostics
+### Left navigation
 
 
 
-\### Main results view
+1. Setup
+
+2. Calculator
+
+3. Parameter Preview
+
+4. Channel Results
+
+5. Diagnostics
+
+
+
+### Main results view
 
 
 
@@ -1772,19 +1822,19 @@ Filter controls:
 
 
 
-\- Channel group
+- Channel group
 
-\- Status
+- Status
 
-\- Part number
+- Part number
 
-\- Channel name
+- Channel name
 
-\- Text search
+- Text search
 
-\- Show extra holes
+- Show extra holes
 
-\- Overlay category toggles
+- Overlay category toggles
 
 
 
@@ -1802,7 +1852,7 @@ Double-click or selection zooms to geometry.
 
 
 
-\## Progress display
+## Progress display
 
 
 
@@ -1842,47 +1892,47 @@ Do not display the UI as frozen during 30–45 second inventory operations.
 
 
 
-\## Severity behavior
+## Severity behavior
 
 
 
-\### Continue with warning
+### Continue with warning
 
 
 
-\- Missing individual parameter
+- Missing individual parameter
 
-\- Ambiguous parameter
+- Ambiguous parameter
 
-\- `#REF!` in an orphaned channel row
+- `#REF!` in an orphaned channel row
 
-\- Missing optional occurrence
+- Missing optional occurrence
 
-\- Unsupported individual geometry
+- Unsupported individual geometry
 
-\- Extra holes
-
-
-
-\### Block Apply mode
+- Extra holes
 
 
 
-\- Excel calculation does not complete
+### Block Apply mode
 
-\- Workbook-wide `Error\_Check` indicates invalid calculation
 
-\- Top-level IAM cannot open
 
-\- Required `Name1` rule fails
+- Excel calculation does not complete
 
-\- Required representation cannot activate
+- Workbook-wide `Error_Check` indicates invalid calculation
 
-\- Copied references cannot resolve
+- Top-level IAM cannot open
 
-\- Inventor version mismatch
+- Required `Name1` rule fails
 
-\- No safe parameter targets are available
+- Required representation cannot activate
+
+- Copied references cannot resolve
+
+- Inventor version mismatch
+
+- No safe parameter targets are available
 
 
 
@@ -1890,11 +1940,11 @@ Inspect mode may still continue where useful.
 
 
 
-\---
+---
 
 
 
-\# 10. Settings and diagnostics
+# 10. Settings and diagnostics
 
 
 
@@ -1904,7 +1954,7 @@ Store preferences in:
 
 ```text
 
-%LocalAppData%\\CompanyName\\InventorValidator\\settings.json
+%LocalAppData%CompanyNameInventorValidatorsettings.json
 
 ```
 
@@ -1914,17 +1964,17 @@ Include only:
 
 
 
-\- Theme
+- Theme
 
-\- Last-used folders
+- Last-used folders
 
-\- Preferred Inventor version
+- Preferred Inventor version
 
-\- Default validation mode
+- Default validation mode
 
-\- Tolerance overrides
+- Tolerance overrides
 
-\- Whether to show extra holes
+- Whether to show extra holes
 
 
 
@@ -1950,35 +2000,35 @@ On an unhandled crash, optionally save a small technical error report without mo
 
 
 
-\---
+---
 
 
 
-\# 11. Temporary workspace lifecycle
+# 11. Temporary workspace lifecycle
 
 
 
-\## Normal close
+## Normal close
 
 
 
-1\. Delete ClientGraphics.
+1. Delete ClientGraphics.
 
-2\. Close application-opened Inventor documents without saving further.
+2. Close application-opened Inventor documents without saving further.
 
-3\. Quit only the application-owned Inventor process.
+3. Quit only the application-owned Inventor process.
 
-4\. Release COM references.
+4. Release COM references.
 
-5\. Close application-owned Excel process if still running.
+5. Close application-owned Excel process if still running.
 
-6\. Delete the temporary workspace.
+6. Delete the temporary workspace.
 
-7\. If deletion fails, mark it for cleanup on the next application start.
+7. If deletion fails, mark it for cleanup on the next application start.
 
 
 
-\## Export Validated Copy
+## Export Validated Copy
 
 
 
@@ -1986,17 +2036,17 @@ If selected:
 
 
 
-\- Prompt for an explicit destination outside the Vault source folder.
+- Prompt for an explicit destination outside the Vault source folder.
 
-\- Copy the session workspace there.
+- Copy the session workspace there.
 
-\- Warn that the exported copy is not checked into Vault.
+- Warn that the exported copy is not checked into Vault.
 
-\- Do not overwrite existing files without confirmation.
+- Do not overwrite existing files without confirmation.
 
 
 
-\## Crash recovery
+## Crash recovery
 
 
 
@@ -2004,43 +2054,43 @@ On startup, inspect only the application’s own temp root for stale session fol
 
 
 
-\- Delete stale sessions
+- Delete stale sessions
 
-\- Open folder
+- Open folder
 
-\- Ignore
-
-
-
-Never delete arbitrary folders from `C:\\Temp`.
+- Ignore
 
 
 
-\---
+Never delete arbitrary folders from `C:Temp`.
 
 
 
-\# 12. COM reliability requirements
+---
 
 
 
-\- Use dedicated STA automation threads.
+# 12. COM reliability requirements
 
-\- Wrap each COM call in contextual error handling.
 
-\- Release child COM objects before parent objects.
 
-\- Avoid `foreach` over COM collections where it creates hidden RCWs; use indexed loops.
+- Use dedicated STA automation threads.
 
-\- Call `Marshal.FinalReleaseComObject` only for objects owned by the session.
+- Wrap each COM call in contextual error handling.
 
-\- Never kill Excel or Inventor processes by executable name.
+- Release child COM objects before parent objects.
 
-\- Kill by tracked PID only as a last-resort cleanup action and only after confirming ownership.
+- Avoid `foreach` over COM collections where it creates hidden RCWs; use indexed loops.
 
-\- Add cancellation between phases, not during unsafe mid-COM mutations.
+- Call `Marshal.FinalReleaseComObject` only for objects owned by the session.
 
-\- Set operation timeouts for:
+- Never kill Excel or Inventor processes by executable name.
+
+- Kill by tracked PID only as a last-resort cleanup action and only after confirming ownership.
+
+- Add cancellation between phases, not during unsafe mid-COM mutations.
+
+- Set operation timeouts for:
 
 &#x20; - Excel calculation
 
@@ -2058,15 +2108,15 @@ If cancellation occurs during Apply mode, finish the current safe COM call, then
 
 
 
-\---
+---
 
 
 
-\# 13. Testing strategy
+# 13. Testing strategy
 
 
 
-\## Unit tests
+## Unit tests
 
 
 
@@ -2074,87 +2124,87 @@ Test without Excel or Inventor:
 
 
 
-\- Header normalization
+- Header normalization
 
-\- `Sheet1` row classification
+- `Sheet1` row classification
 
-\- `Channel Loc` parser
+- `Channel Loc` parser
 
-\- Excel error handling
+- Excel error handling
 
-\- Array generation
+- Array generation
 
-\- Unit parsing
+- Unit parsing
 
-\- Parameter-name matching
+- Parameter-name matching
 
-\- Coaxial-hole deduplication
+- Coaxial-hole deduplication
 
-\- Coordinate transforms
+- Coordinate transforms
 
-\- One-to-one matching
+- One-to-one matching
 
-\- Tolerance classification
+- Tolerance classification
 
-\- Systematic-offset detection
+- Systematic-offset detection
 
-\- Session manifest and cleanup rules
-
-
-
-\## Integration tests
+- Session manifest and cleanup rules
 
 
 
-\### Excel
+## Integration tests
 
 
 
-\- `.xls`
-
-\- `.xlsx`
-
-\- Automatic calculation
-
-\- Full rebuild
-
-\- `#REF!`
-
-\- Invalid `Error\_Check`
-
-\- Missing sheet
-
-\- Dedicated process isolation
-
-\- User Excel already running
+### Excel
 
 
 
-\### Inventor 2020
+- `.xls`
+
+- `.xlsx`
+
+- Automatic calculation
+
+- Full rebuild
+
+- `#REF!`
+
+- Invalid `Error_Check`
+
+- Missing sheet
+
+- Dedicated process isolation
+
+- User Excel already running
 
 
 
-\- Dedicated process
-
-\- Open copied sample
-
-\- Inventory
-
-\- LOD `iLogic`
-
-\- Run `Name1`
-
-\- Rebuild
-
-\- Extract geometry
-
-\- Render/delete ClientGraphics
-
-\- Existing user Inventor remains untouched
+### Inventor 2020
 
 
 
-\### Inventor 2024
+- Dedicated process
+
+- Open copied sample
+
+- Inventory
+
+- LOD `iLogic`
+
+- Run `Name1`
+
+- Rebuild
+
+- Extract geometry
+
+- Render/delete ClientGraphics
+
+- Existing user Inventor remains untouched
+
+
+
+### Inventor 2024
 
 
 
@@ -2162,23 +2212,23 @@ Repeat the same tests, specifically verifying:
 
 
 
-\- Correct process/ROT binding
+- Correct process/ROT binding
 
-\- File migration occurs only on copies
+- File migration occurs only on copies
 
-\- `iLogic` LOD/Model State compatibility
+- `iLogic` LOD/Model State compatibility
 
-\- `Name1` execution
+- `Name1` execution
 
-\- Clean shutdown independent of another running session
-
-
-
-\## Regression fixtures
+- Clean shutdown independent of another running session
 
 
 
-Use `391-10006-023.iam` and `Calc\_10006\_023.xls`.
+## Regression fixtures
+
+
+
+Use `391-10006-023.iam` and `Calc_10006_023.xls`.
 
 
 
@@ -2186,19 +2236,19 @@ Expected regression results should include:
 
 
 
-\- `FLOOR\_CHAN\_4`: match
+- `FLOOR_CHAN_4`: match
 
-\- `FLOOR\_CHAN\_5`: match
+- `FLOOR_CHAN_5`: match
 
-\- South wall: approximately `+0.0087 in`, classified as match
+- South wall: approximately `+0.0087 in`, classified as match
 
-\- North wall: approximately `+0.105 in` Y discrepancy, classified as failure
+- North wall: approximately `+0.105 in` Y discrepancy, classified as failure
 
-\- `FLOOR\_CHAN\_1`: missing/mismatched 16-hole array
+- `FLOOR_CHAN_1`: missing/mismatched 16-hole array
 
-\- `ROOF\_CHAN\_3`: skipped `#REF!`
+- `ROOF_CHAN_3`: skipped `#REF!`
 
-\- `ROOF\_CHAN\_8`: skipped `#REF!`
+- `ROOF_CHAN_8`: skipped `#REF!`
 
 
 
@@ -2206,15 +2256,15 @@ Also test the second calculator family to ensure the parser is based on headers,
 
 
 
-\---
+---
 
 
 
-\# 14. Implementation phases
+# 14. Implementation phases
 
 
 
-\## Phase 1 — Foundation and session management
+## Phase 1 — Foundation and session management
 
 
 
@@ -2222,21 +2272,21 @@ Deliver:
 
 
 
-\- WPF shell
+- WPF shell
 
-\- Theme support
+- Theme support
 
-\- File selection
+- File selection
 
-\- Settings
+- Settings
 
-\- Temporary workspace copy
+- Temporary workspace copy
 
-\- Read-only attribute clearing
+- Read-only attribute clearing
 
-\- Session cleanup
+- Session cleanup
 
-\- Progress and cancellation framework
+- Progress and cancellation framework
 
 
 
@@ -2244,7 +2294,7 @@ Estimated effort: 1 week.
 
 
 
-\## Phase 2 — Excel automation and parsing
+## Phase 2 — Excel automation and parsing
 
 
 
@@ -2252,17 +2302,25 @@ Deliver:
 
 
 
-\- Dedicated Excel process
+- Dedicated Excel process
 
-\- `.xls` and `.xlsx` opening
+- `.xls` and `.xlsx` opening
 
-\- Full recalculation
+- Full recalculation
 
-\- `Data`, `Sheet1`, and `Channel Loc` parsers
+- `Data`, `Sheet1`, and `Channel Loc` parsers
 
-\- Error-cell handling
+- Error-cell handling
 
-\- Calculator preview
+- Calculator preview
+
+
+
+### Phase 2 Cleanup & Retrofit Items (from 56-sheet audit):
+
+- *`Sheet1TabParser`:* Upgrade from hardcoded 4-column layout to dynamic archetype detection. Must handle Archetype 2 (multi-table layout on `391-10004` fan skids with hole schedules in Cols A–I and driving parameters in Cols K–M) and headerless sheets (e.g. `391_10006_021.xls`).
+
+- *`ChannelLocTabParser`:* Upgrade to dynamic header column mapping. Must handle blank Column A, group headers placed in Columns F/G, extra description columns, and filter out inactive template rows (`Qty <= 0`, `Z <= 0`).
 
 
 
@@ -2270,7 +2328,7 @@ Estimated effort: 1–1.5 weeks.
 
 
 
-\## Phase 3 — Inventor startup and inventory
+## Phase 3 — Inventor startup and inventory
 
 
 
@@ -2278,19 +2336,29 @@ Deliver:
 
 
 
-\- 2020 process launch
+- 2020 process launch
 
-\- 2024 version selection and ROT binding
+- 2024 version selection and ROT binding
 
-\- Dedicated process lifecycle
+- Dedicated process lifecycle
 
-\- IAM opening
+- IAM opening
 
-\- Recursive document/occurrence inventory
+- Recursive document/occurrence inventory
 
-\- Parameter and feature inventory
+- Parameter and feature inventory
 
-\- Read-only Inspect mode
+- Read-only Inspect mode
+
+
+
+### Phase 3 Cleanup & Retrofit Items:
+
+- *`WorkspaceManager`:* Add OLE spreadsheet reference repointing (`FileDescriptor.ReplaceReference`) during workspace creation so copied assemblies point to the local disposable calculator rather than source Vault paths.
+
+- *`InventorModelInventoryService`:* Ensure complete enumeration of `TableParameters` (`kTableParameterObject`, COM type `50349312`), which represent the 618 driving parameters originating from the linked calculator.
+
+- *`ParameterMatchingService`:* Remove obsolete regex-based suppression guessing (`TryMatchSuppression`). Refactor comparison logic to report differences between calculator values and current CAD state without assuming a direct COM parameter write path.
 
 
 
@@ -2298,67 +2366,59 @@ Estimated effort: 1.5–2 weeks.
 
 
 
-\## Phase 4 — Parameter preview and Apply mode
+## Phase 4 — Native OLE repointing, calculator refresh, and Apply mode [COMPLETED]
 
-
-
-Deliver:
-
-
-
-\- Parameter matching
-
-\- Safe-write policy
-
-\- Manual approval/overrides
-
-\- Expression protection
-
-\- `Name1` invocation
-
-\- LOD/Model State preflight
-
-\- Update/rebuild
-
-\- Before/after state display
-
-
-
-Estimated effort: 1.5–2 weeks.
-
-
-
-\## Phase 5 — Geometry comparison
-
-
+Status: **Completed** (2026-09-15)
 
 Deliver:
 
 
 
-\- Expected-array generation
+- Disposable calculator update and recalculation
 
-\- B-Rep hole extraction
+- Assembly and child IPT OLE spreadsheet link repointing (`ReplaceReference`)
 
-\- Coaxial deduplication
+- Native Inventor link refresh (`TableParameters`), propagating sketch dimensions, features, and plane offsets
 
-\- Occurrence transforms
+- `Name1` master iLogic rule execution
 
-\- Diameter clustering/filtering
+- LOD/Model State preflight verification
 
-\- One-to-one matching
+- Assembly update/rebuild (`asmDoc.Update2(true)`)
 
-\- Point and pattern diagnostics
+- Before/after snapshot delta display (parameters, suppressions, and geometry changes)
 
-\- All four channel groups
+- Interactive preview and confirmation gate in UI
 
 
+
+Estimated effort: 1–1.5 weeks.
+
+
+
+## Phase 5 — Geometry comparison [COMPLETED]
+
+Status: **Completed** (2026-09-16)
+
+Deliver:
+
+- Pure C# geometry calculation and matching engine (`InventorValidator.Geometry`) with zero COM dependencies for testability
+- Expected-array generation from Channel Loc parameters (`ExpectedHoleGenerator`) with Segment Start Z offset
+- Assembly-wide B-Rep cylinder face extraction (`InventorHoleExtractionService`) transformed into top-level coordinates
+- Coaxial deduplication (`CoaxialHoleDeduplicator`) merging dual surface faces of through-holes into 1 physical hole count
+- Segment Start reference datum detection (work plane `Bhd Loc from Seg Start` / `Segment Start` or Z=0 origin)
+- Authoritative 2D grading (Floor/Roof: X & Z; South/North: Y & Z) with diagnostic transverse depth
+- Dominant repeated diameter clustering and inference
+- Globally optimal 1-to-1 hole pairing using Kuhn-Munkres (Hungarian algorithm)
+- Pattern diagnostics (`PatternDiagnosticAnalyzer`) reporting count, spacing consistency, and systematic shifts (e.g. +0.105" Y shift)
+- Complete desktop UI Channel Results tab (`ChannelResultsViewModel` + `MainWindow.xaml`) with summary KPI cards, filter toolbar, diagnostic banner, and CSV export
+- Unit test suite verifying benchmark matches, tolerances, deduplication, and Hungarian matching
 
 Estimated effort: 2–3 weeks.
 
 
 
-\## Phase 6 — Visualization and usability
+## Phase 6 — Visualization and usability
 
 
 
@@ -2366,17 +2426,17 @@ Deliver:
 
 
 
-\- ClientGraphics overlays
+- ClientGraphics overlays
 
-\- Group toggles
+- Group toggles
 
-\- Selection highlighting
+- Selection highlighting
 
-\- Zoom to result
+- Zoom to result
 
-\- Summary and filtering
+- Summary and filtering
 
-\- CSV export
+- CSV export
 
 
 
@@ -2384,7 +2444,7 @@ Estimated effort: 1–1.5 weeks.
 
 
 
-\## Phase 7 — Hardening and deployment
+## Phase 7 — Hardening and deployment
 
 
 
@@ -2392,19 +2452,19 @@ Deliver:
 
 
 
-\- 2020/2024 regression testing
+- 2020/2024 regression testing
 
-\- Existing-session isolation tests
+- Existing-session isolation tests
 
-\- Error recovery
+- Error recovery
 
-\- Stale workspace cleanup
+- Stale workspace cleanup
 
-\- Single-file publish
+- Single-file publish
 
-\- User documentation
+- User documentation
 
-\- Pilot release for 2–3 designers
+- Pilot release for 2–3 designers
 
 
 
@@ -2412,7 +2472,7 @@ Estimated effort: 1–2 weeks.
 
 
 
-\### Overall estimate
+### Overall estimate
 
 
 
@@ -2432,11 +2492,11 @@ The geometry and multi-version Inventor integration are the highest-risk portion
 
 
 
-\---
+---
 
 
 
-\# 15. First-release acceptance criteria
+# 15. First-release acceptance criteria
 
 
 
@@ -2444,59 +2504,59 @@ The first release is acceptable when it can:
 
 
 
-1\. Run from one self-contained executable on Windows 11.
+1. Run from one self-contained executable on Windows 11.
 
-2\. Follow Windows light/dark theme and allow an override.
+2. Follow Windows light/dark theme and allow an override.
 
-3\. Open `.xls` and `.xlsx` through a dedicated Excel process.
+3. Open `.xls` and `.xlsx` through a dedicated Excel process.
 
-4\. Recalculate the workbook without affecting the user’s Excel session.
+4. Recalculate the workbook without affecting the user’s Excel session.
 
-5\. Copy the selected model folder to a disposable workspace.
+5. Copy the selected model folder to a disposable workspace.
 
-6\. Leave source and Vault files unchanged.
+6. Leave source and Vault files unchanged.
 
-7\. Start the selected Inventor version in a dedicated process.
+7. Start the selected Inventor version in a dedicated process.
 
-8\. Leave an existing user Inventor session untouched.
+8. Leave an existing user Inventor session untouched.
 
-9\. Parse `Data`, `Sheet1`, and all four `Channel Loc` groups by headers.
+9. Parse `Data`, `Sheet1`, and all four `Channel Loc` groups by headers.
 
-10\. Show a safe parameter preview.
+10. Show a safe parameter preview.
 
-11\. Never overwrite formula-driven or reference parameters automatically.
+11. Never overwrite formula-driven or reference parameters automatically.
 
-12\. Run `Name1` successfully in Apply mode.
+12. Run `Name1` successfully in Apply mode.
 
-13\. Rebuild the copied assembly.
+13. Rebuild the copied assembly.
 
-14\. Extract and deduplicate physical holes.
+14. Extract and deduplicate physical holes.
 
-15\. Transform hole centers into top-level assembly coordinates.
+15. Transform hole centers into top-level assembly coordinates.
 
-16\. Match expected and actual holes one-to-one.
+16. Match expected and actual holes one-to-one.
 
-17\. Report axis deviations and authoritative validation error.
+17. Report axis deviations and authoritative validation error.
 
-18\. Detect the known sample defects.
+18. Detect the known sample defects.
 
-19\. Skip orphaned `#REF!` rows without terminating validation.
+19. Skip orphaned `#REF!` rows without terminating validation.
 
-20\. Render and remove temporary overlays without dirtying the IAM.
+20. Render and remove temporary overlays without dirtying the IAM.
 
-21\. Export results to CSV.
+21. Export results to CSV.
 
-22\. Cleanly close only application-owned Excel and Inventor processes.
+22. Cleanly close only application-owned Excel and Inventor processes.
 
-23\. Remove the temporary workspace or clearly report why cleanup failed.
-
-
-
-\---
+23. Remove the temporary workspace or clearly report why cleanup failed.
 
 
 
-\# 16. Recommended delivery boundary
+---
+
+
+
+# 16. Recommended delivery boundary
 
 
 
@@ -2504,33 +2564,33 @@ The first release should deliberately exclude:
 
 
 
-\- Vault SDK integration
+- Vault SDK integration
 
-\- Checkout/check-in
+- Checkout/check-in
 
-\- Batch processing
+- Batch processing
 
-\- Command-line mode
+- Command-line mode
 
-\- Database or central server
+- Database or central server
 
-\- User accounts
+- User accounts
 
-\- Drawing updates
+- Drawing updates
 
-\- PDF/DXF/STEP export
+- PDF/DXF/STEP export
 
-\- Permanent Inventor annotations
+- Permanent Inventor annotations
 
-\- Automatic modification of formula-driven parameters
+- Automatic modification of formula-driven parameters
 
-\- Automatic rewriting of iLogic
+- Automatic rewriting of iLogic
 
-\- Generic validation of arbitrary workbook layouts
+- Generic validation of arbitrary workbook layouts
 
-\- A separate embedded 3D viewer
+- A separate embedded 3D viewer
 
 
 
-This keeps the application focused on its primary purpose: \*\*showing designers whether calculator-defined channel locations agree with live Inventor geometry, without risking their production model or current Inventor session.\*\*
+This keeps the application focused on its primary purpose: **showing designers whether calculator-defined channel locations agree with live Inventor geometry, without risking their production model or current Inventor session.**
 

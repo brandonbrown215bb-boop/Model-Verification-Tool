@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using InventorValidator.Infrastructure;
+using InventorValidator.Inventor.ILogic;
 using InventorValidator.Inventor.Models;
 
 namespace InventorValidator.Inventor;
@@ -52,17 +53,35 @@ public class InventorModelInventoryService
 
         cancellationToken.ThrowIfCancellationRequested();
 
-        // 3. Occurrences & Features (Recursive traversal with unique document caching)
+        // 2b. Available iLogic Rules (Dynamic discovery without hardcoded names)
+        try
+        {
+            var ruleService = new ILogicRuleService();
+            result.AvailableRules = ruleService.GetAssemblyRules((object)asmDoc).ToList();
+            if (result.AvailableRules.Count > 0)
+            {
+                DiagnosticsLogger.Instance.Info($"Discovered {result.AvailableRules.Count} iLogic rule(s) in assembly: {string.Join(", ", result.AvailableRules)}");
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not inventory iLogic rules: {ex.Message}");
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // 3. Occurrences, Features & Deep Parameters (Recursive traversal with unique document caching)
         progress?.Report("Inventorying component occurrences and features...");
         var uniqueDocs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var partDocFeatureCache = new Dictionary<string, List<InventorFeatureItem>>(StringComparer.OrdinalIgnoreCase);
         var partNumberCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var occurrenceMetadataCache = new Dictionary<string, (string DocPath, string PartNumber, bool IsAssembly, List<InventorFeatureItem> Features)>(StringComparer.OrdinalIgnoreCase);
 
         uniqueDocs.Add(result.TopAssemblyPath);
 
+        var timings = new InventoryTimings();
         dynamic occurrences = scope.Track<object>(compDef.Occurrences);
         int occCount = occurrences.Count;
-        result.TotalOccurrencesCount = occCount;
 
         for (int i = 1; i <= occCount; i++)
         {
@@ -75,21 +94,25 @@ public class InventorModelInventoryService
                 uniqueDocs, 
                 partDocFeatureCache, 
                 partNumberCache,
+                occurrenceMetadataCache,
                 result, 
                 scope, 
+                timings,
                 cancellationToken);
 
             result.Occurrences.Add(occItem);
         }
 
         result.TotalDocumentsCount = uniqueDocs.Count;
-        result.ActiveOccurrencesCount = CountOccurrences(result.Occurrences, activeOnly: true);
-        result.SuppressedOccurrencesCount = CountOccurrences(result.Occurrences, activeOnly: false);
+        result.TotalOccurrencesCount = result.ActiveOccurrencesCount + result.SuppressedOccurrencesCount;
         result.ExtractionDuration = sw.Elapsed;
+
+        progress?.Report($"[TIMING BREAKDOWN] PartNumbers: {timings.PnMs}ms, Features: {timings.FeatMs}ms, OccLookup: {timings.OccLookupMs}ms");
 
         DiagnosticsLogger.Instance.Success(
             $"Assembly inventory complete: {result.Occurrences.Count} top occurrences ({result.TotalOccurrencesCount} total, {result.ActiveOccurrencesCount} active), " +
-            $"{result.Parameters.Count} parameters, {result.Features.Count} features, {result.TotalDocumentsCount} unique documents in {sw.Elapsed.TotalSeconds:F2}s");
+            $"{result.Parameters.Count} parameters, {result.Features.Count} features, {result.TotalDocumentsCount} unique documents in {sw.Elapsed.TotalSeconds:F2}s " +
+            $"(PartNumbers: {timings.PnMs}ms, Features: {timings.FeatMs}ms, OccLookup: {timings.OccLookupMs}ms)");
 
         return result;
     }
@@ -232,12 +255,18 @@ public class InventorModelInventoryService
             // Table Parameters (e.g. linked Excel spreadsheets)
             try
             {
-                dynamic tableParams = scope.Track<object>(parameters.TableParameters);
-                int tCount = tableParams.Count;
-                for (int i = 1; i <= tCount; i++)
+                dynamic paramTables = scope.Track<object>(parameters.ParameterTables);
+                int tCount = paramTables.Count;
+                for (int t = 1; t <= tCount; t++)
                 {
-                    dynamic p = scope.Track<object>(tableParams.Item[i]);
-                    result.Parameters.Add(ExtractParameter(p, "Table", result.TopAssemblyPath, result.AssemblyName));
+                    dynamic table = scope.Track<object>(paramTables.Item[t]);
+                    dynamic tableParams = scope.Track<object>(table.TableParameters);
+                    int pCount = tableParams.Count;
+                    for (int i = 1; i <= pCount; i++)
+                    {
+                        dynamic p = scope.Track<object>(tableParams.Item[i]);
+                        result.Parameters.Add(ExtractParameter(p, "Table", result.TopAssemblyPath, result.AssemblyName));
+                    }
                 }
             }
             catch (Exception ex)
@@ -248,12 +277,18 @@ public class InventorModelInventoryService
             // Derived Parameters
             try
             {
-                dynamic derivedParams = scope.Track<object>(parameters.DerivedParameters);
-                int dCount = derivedParams.Count;
-                for (int i = 1; i <= dCount; i++)
+                dynamic derivedTables = scope.Track<object>(parameters.DerivedParameterTables);
+                int dtCount = derivedTables.Count;
+                for (int dt = 1; dt <= dtCount; dt++)
                 {
-                    dynamic p = scope.Track<object>(derivedParams.Item[i]);
-                    result.Parameters.Add(ExtractParameter(p, "Derived", result.TopAssemblyPath, result.AssemblyName));
+                    dynamic derivedTable = scope.Track<object>(derivedTables.Item[dt]);
+                    dynamic derivedParams = scope.Track<object>(derivedTable.DerivedParameters);
+                    int pCount = derivedParams.Count;
+                    for (int i = 1; i <= pCount; i++)
+                    {
+                        dynamic p = scope.Track<object>(derivedParams.Item[i]);
+                        result.Parameters.Add(ExtractParameter(p, "Derived", result.TopAssemblyPath, result.AssemblyName));
+                    }
                 }
             }
             catch (Exception ex)
@@ -270,13 +305,18 @@ public class InventorModelInventoryService
     private static InventorParameterItem ExtractParameter(dynamic p, string paramType, string docPath, string docName)
     {
         string name = (string)p.Name;
-        string expression = (string)p.Expression;
-        double val = (double)p.Value;
+        string expression = string.Empty;
+        try { expression = (string)p.Expression; } catch { try { expression = p.Value?.ToString() ?? string.Empty; } catch { } }
+        double val = 0.0;
+        try { val = (double)p.Value; } catch { }
         string units = string.Empty;
         string? comment = null;
 
         try { units = (string)p.Units; } catch { }
-        try { comment = (string)p.Comment; } catch { }
+        if (string.Equals(paramType, "User", StringComparison.OrdinalIgnoreCase))
+        {
+            try { comment = (string)p.Comment; } catch { }
+        }
 
         bool isReference = string.Equals(paramType, "Reference", StringComparison.OrdinalIgnoreCase);
         bool isFormulaDriven = !isReference && !IsLiteralNumericExpression(expression);
@@ -310,10 +350,13 @@ public class InventorModelInventoryService
         HashSet<string> uniqueDocs,
         Dictionary<string, List<InventorFeatureItem>> partDocFeatureCache,
         Dictionary<string, string> partNumberCache,
+        Dictionary<string, (string DocPath, string PartNumber, bool IsAssembly, List<InventorFeatureItem> Features)> occurrenceMetadataCache,
         AssemblyInventoryResult result,
         ComReleaseScope scope,
+        InventoryTimings timings,
         CancellationToken cancellationToken)
     {
+        var swOcc = Stopwatch.StartNew();
         string occName = (string)occ.Name;
         string fullPath = string.IsNullOrEmpty(parentPath) ? occName : $"{parentPath}/{occName}";
         bool isSuppressed = false;
@@ -326,6 +369,7 @@ public class InventorModelInventoryService
         {
             // Some occurrences may report suppression via error or alternate property
         }
+        timings.OccLookupMs += swOcc.ElapsedMilliseconds;
 
         var item = new OccurrenceInventoryItem
         {
@@ -337,47 +381,122 @@ public class InventorModelInventoryService
 
         if (isSuppressed)
         {
+            result.SuppressedOccurrencesCount++;
             // Suppressed occurrences do not have active document or definition handles
             item.PartNumber = ExtractPartNumberFromOccurrenceName(occName);
             return item;
         }
 
+        result.ActiveOccurrencesCount++;
+
+        string occPrefix = ExtractPartNumberFromOccurrenceName(occName);
+
+        // Check if we have already inventoried this occurrence definition
+        if (occurrenceMetadataCache.TryGetValue(occPrefix, out var cachedMeta))
+        {
+            item.DocumentPath = cachedMeta.DocPath;
+            item.PartNumber = cachedMeta.PartNumber;
+
+            if (cachedMeta.Features != null && cachedMeta.Features.Count > 0)
+            {
+                foreach (var f in cachedMeta.Features)
+                {
+                    result.Features.Add(new InventorFeatureItem
+                    {
+                        FeatureName = f.FeatureName,
+                        FeatureType = f.FeatureType,
+                        ContainingOccurrence = occName,
+                        DocumentPath = cachedMeta.DocPath,
+                        ElementCount = f.ElementCount,
+                        HoleDiameter = f.HoleDiameter,
+                        IsSuppressed = f.IsSuppressed
+                    });
+                }
+            }
+
+            // Only subassemblies can have sub-occurrences
+            if (cachedMeta.IsAssembly)
+            {
+                try
+                {
+                    dynamic subOccs = scope.Track<object>(occ.SubOccurrences);
+                    int subCount = subOccs.Count;
+
+                    for (int s = 1; s <= subCount; s++)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        dynamic subOcc = scope.Track<object>(subOccs.Item[s]);
+                        var subItem = InventoryOccurrenceRecursive(
+                            subOcc,
+                            depth + 1,
+                            fullPath,
+                            uniqueDocs,
+                            partDocFeatureCache,
+                            partNumberCache,
+                            occurrenceMetadataCache,
+                            result,
+                            scope,
+                            timings,
+                            cancellationToken);
+
+                        item.Children.Add(subItem);
+                    }
+                }
+                catch { }
+            }
+
+            return item;
+        }
+
         string docPath = string.Empty;
+        bool isAssembly = false;
+        List<InventorFeatureItem>? extractedFeatures = null;
+
         try
         {
+            int docType = 0;
+            try { docType = (int)occ.DefinitionDocumentType; } catch { }
+            isAssembly = docType == 12291; // kAssemblyDocumentObject
+
             dynamic def = scope.Track<object>(occ.Definition);
             dynamic doc = scope.Track<object>(def.Document);
             docPath = (string)doc.FullFileName;
 
+            string pn = string.Empty;
             if (!string.IsNullOrEmpty(docPath))
             {
                 uniqueDocs.Add(docPath);
                 item.DocumentPath = docPath;
 
                 // Cached Part Number extraction
-                if (!partNumberCache.TryGetValue(docPath, out var pn))
+                var swPn = Stopwatch.StartNew();
+                if (!partNumberCache.TryGetValue(docPath, out pn!))
                 {
                     pn = ExtractPartNumber(doc, occName, scope);
                     partNumberCache[docPath] = pn;
                 }
                 item.PartNumber = pn;
+                timings.PnMs += swPn.ElapsedMilliseconds;
             }
             else
             {
-                item.PartNumber = ExtractPartNumber(doc, occName, scope);
+                pn = ExtractPartNumber(doc, occName, scope);
+                item.PartNumber = pn;
             }
 
             // Feature extraction for channel parts
-            if (!string.IsNullOrEmpty(docPath))
+            if (!string.IsNullOrEmpty(docPath) && IsPotentialChannelComponent(occName, docPath))
             {
-                if (!partDocFeatureCache.TryGetValue(docPath, out var features))
+                var swFeat = Stopwatch.StartNew();
+                if (!partDocFeatureCache.TryGetValue(docPath, out extractedFeatures!))
                 {
-                    features = ExtractPartFeatures(def, docPath, scope);
-                    partDocFeatureCache[docPath] = features;
+                    extractedFeatures = isAssembly ? new List<InventorFeatureItem>() : ExtractPartFeatures(def, docPath, scope);
+                    partDocFeatureCache[docPath] = extractedFeatures;
                 }
+                timings.FeatMs += swFeat.ElapsedMilliseconds;
 
                 // Associate feature occurrences with results
-                foreach (var f in features)
+                foreach (var f in extractedFeatures)
                 {
                     result.Features.Add(new InventorFeatureItem
                     {
@@ -392,34 +511,38 @@ public class InventorModelInventoryService
                 }
             }
 
-            // Sub-occurrences
-            try
-            {
-                dynamic subOccs = scope.Track<object>(occ.SubOccurrences);
-                int subCount = subOccs.Count;
-                result.TotalOccurrencesCount += subCount;
+            // Record in metadata cache
+            occurrenceMetadataCache[occPrefix] = (docPath, item.PartNumber, isAssembly, extractedFeatures ?? new List<InventorFeatureItem>());
 
-                for (int s = 1; s <= subCount; s++)
+            // Sub-occurrences (only for assemblies)
+            if (isAssembly)
+            {
+                try
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    dynamic subOcc = scope.Track<object>(subOccs.Item[s]);
-                    var subItem = InventoryOccurrenceRecursive(
-                        subOcc,
-                        depth + 1,
-                        fullPath,
-                        uniqueDocs,
-                        partDocFeatureCache,
-                        partNumberCache,
-                        result,
-                        scope,
-                        cancellationToken);
+                    dynamic subOccs = scope.Track<object>(occ.SubOccurrences);
+                    int subCount = subOccs.Count;
 
-                    item.Children.Add(subItem);
+                    for (int s = 1; s <= subCount; s++)
+                    {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        dynamic subOcc = scope.Track<object>(subOccs.Item[s]);
+                        var subItem = InventoryOccurrenceRecursive(
+                            subOcc,
+                            depth + 1,
+                            fullPath,
+                            uniqueDocs,
+                            partDocFeatureCache,
+                            partNumberCache,
+                            occurrenceMetadataCache,
+                            result,
+                            scope,
+                            timings,
+                            cancellationToken);
+
+                        item.Children.Add(subItem);
+                    }
                 }
-            }
-            catch
-            {
-                // Not an assembly component or has no sub-occurrences
+                catch { }
             }
         }
         catch (Exception ex)
@@ -463,6 +586,12 @@ public class InventorModelInventoryService
         return occName.Trim();
     }
 
+    private static bool IsPotentialChannelComponent(string occName, string docPath)
+    {
+        return occName.Contains("chan", StringComparison.OrdinalIgnoreCase) ||
+               docPath.Contains("chan", StringComparison.OrdinalIgnoreCase);
+    }
+
     private List<InventorFeatureItem> ExtractPartFeatures(dynamic partDef, string docPath, ComReleaseScope scope)
     {
         var list = new List<InventorFeatureItem>();
@@ -486,10 +615,16 @@ public class InventorModelInventoryService
                     double? diameter = null;
                     try
                     {
-                        dynamic holeParam = scope.Track<object>(hf.HoleDiameter);
-                        diameter = (double)holeParam.Value; // database unit cm
-                        // Convert cm to in for diagnostics: 1 in = 2.54 cm
-                        diameter = diameter.Value / 2.54;
+                        bool isTapped = false;
+                        try { isTapped = (bool)hf.Tapped; } catch { }
+                        if (!isTapped)
+                        {
+                            dynamic holeParam = hf.HoleDiameter;
+                            if (holeParam != null)
+                            {
+                                diameter = ((double)holeParam.Value) / 2.54;
+                            }
+                        }
                     }
                     catch { }
 
@@ -521,7 +656,7 @@ public class InventorModelInventoryService
                     int elementCount = 1;
                     try
                     {
-                        dynamic elements = scope.Track<object>(pf.PatternElements);
+                        dynamic elements = pf.PatternElements;
                         elementCount = elements.Count;
                     }
                     catch { }
@@ -546,14 +681,11 @@ public class InventorModelInventoryService
         return list;
     }
 
-    private static int CountOccurrences(IEnumerable<OccurrenceInventoryItem> items, bool activeOnly)
+    private class InventoryTimings
     {
-        int count = 0;
-        foreach (var item in items)
-        {
-            if (!activeOnly || item.IsActive) count++;
-            count += CountOccurrences(item.Children, activeOnly);
-        }
-        return count;
+        public long PnMs;
+        public long FeatMs;
+        public long OccLookupMs;
     }
 }
+

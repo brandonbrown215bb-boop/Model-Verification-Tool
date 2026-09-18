@@ -463,5 +463,178 @@ public class ParameterMatchingServiceTests
         Assert.Equal(ComparisonStatus.NotApplicable, row.Status);
         Assert.Contains("Feature suppression control", row.Notes);
     }
+
+    [Fact]
+    public void LinkedTableParameter_ClassifiesAsLinkedTableParameter()
+    {
+        // Arrange
+        var sheet1Params = new List<Sheet1ParameterItem>
+        {
+            new() { ParameterName = "IH", DisplayedValue = "118.000", Unit = "in", Category = ParameterCategory.Dimension }
+        };
+
+        var inventory = new AssemblyInventoryResult
+        {
+            AssemblyName = "TestAssembly.iam",
+            Parameters = new List<InventorParameterItem>
+            {
+                new()
+                {
+                    Name = "IH",
+                    Expression = "118.000 in",
+                    Value = 299.72,
+                    Units = "in",
+                    ParameterType = "Table", // Linked from Excel!
+                    IsFormulaDriven = false
+                }
+            }
+        };
+
+        // Act
+        var result = _service.CompareParameters(sheet1Params, inventory);
+
+        // Assert
+        Assert.Single(result.Rows);
+        var row = result.Rows[0];
+        Assert.Equal(ParameterLinkageClassification.LinkedTableParameter, row.LinkageStatus);
+        Assert.Equal(ComparisonStatus.Match, row.Status);
+        Assert.Equal(1, result.LinkedTableCount);
+    }
+
+    [Fact]
+    public void ChildPartParametricEquation_ClassifiesAsParametricEquation()
+    {
+        // Arrange
+        var sheet1Params = new List<Sheet1ParameterItem>
+        {
+            new() { ParameterName = "Support_Loc4", DisplayedValue = "41.413", Unit = "in", Category = ParameterCategory.Dimension }
+        };
+
+        var inventory = new AssemblyInventoryResult
+        {
+            AssemblyName = "TestAssembly.iam",
+            Parameters = new List<InventorParameterItem>
+            {
+                new()
+                {
+                    Name = "d69",
+                    DocumentName = "child_part.ipt",
+                    Expression = "Support_Loc4", // Child part equation referencing Excel parameter
+                    Value = 105.189,
+                    Units = "in",
+                    ParameterType = "Model",
+                    IsFormulaDriven = true
+                }
+            }
+        };
+
+        // Act
+        var result = _service.CompareParameters(sheet1Params, inventory);
+
+        // Assert
+        Assert.Single(result.Rows);
+        var row = result.Rows[0];
+        Assert.Equal(MatchClassification.ExpressionDrivenMatch, row.MatchType);
+        Assert.Equal(ParameterLinkageClassification.ParametricEquation, row.LinkageStatus);
+        Assert.Equal(ComparisonStatus.Match, row.Status);
+        Assert.Equal(1, result.EquationCount);
+    }
+
+    [Fact]
+    public void PartParameter_MatchesBothCadTableParamAndOccurrenceSuppression()
+    {
+        // Arrange
+        var sheet1Params = new List<Sheet1ParameterItem>
+        {
+            new() { ParameterName = "Part_091_30102_466", DisplayedValue = "1", Unit = "ul", Category = ParameterCategory.SuppressionControl }
+        };
+
+        var inventory = new AssemblyInventoryResult
+        {
+            AssemblyName = "TestAssembly.iam",
+            Parameters = new List<InventorParameterItem>
+            {
+                new()
+                {
+                    Name = "Part_091_30102_466",
+                    Expression = "1",
+                    Value = 1.0,
+                    Units = "ul",
+                    ParameterType = "Table",
+                    IsFormulaDriven = false
+                }
+            },
+            Occurrences = new List<OccurrenceInventoryItem>
+            {
+                new()
+                {
+                    OccurrenceName = "091-30102-466:1",
+                    PartNumber = "091-30102-466",
+                    IsSuppressed = false // Active in CAD
+                }
+            }
+        };
+
+        // Act
+        var result = _service.CompareParameters(sheet1Params, inventory);
+
+        // Assert
+        Assert.Single(result.Rows);
+        var row = result.Rows[0];
+        Assert.Equal(MatchClassification.UniqueExactMatch, row.MatchType);
+        Assert.Equal(ParameterLinkageClassification.SuppressionControl, row.LinkageStatus);
+        Assert.Equal(ComparisonStatus.Match, row.Status);
+        Assert.Equal("091-30102-466:1", row.TargetOccurrenceName);
+        Assert.True(row.ModelSuppressionState);
+        Assert.Contains("suppression agrees", row.Notes);
+    }
+
+    [Fact]
+    public void PartParameter_DiscrepancyWhenCadOccurrenceSuppressed()
+    {
+        // Arrange
+        var sheet1Params = new List<Sheet1ParameterItem>
+        {
+            new() { ParameterName = "Part_091_30102_466", DisplayedValue = "1", Unit = "ul", Category = ParameterCategory.SuppressionControl }
+        };
+
+        var inventory = new AssemblyInventoryResult
+        {
+            AssemblyName = "TestAssembly.iam",
+            Parameters = new List<InventorParameterItem>
+            {
+                new()
+                {
+                    Name = "Part_091_30102_466",
+                    Expression = "1",
+                    Value = 1.0,
+                    Units = "ul",
+                    ParameterType = "Table",
+                    IsFormulaDriven = false
+                }
+            },
+            Occurrences = new List<OccurrenceInventoryItem>
+            {
+                new()
+                {
+                    OccurrenceName = "091-30102-466:1",
+                    PartNumber = "091-30102-466",
+                    IsSuppressed = true // Suppressed in CAD! Discrepancy!
+                }
+            }
+        };
+
+        // Act
+        var result = _service.CompareParameters(sheet1Params, inventory);
+
+        // Assert
+        Assert.Single(result.Rows);
+        var row = result.Rows[0];
+        Assert.Equal(MatchClassification.UniqueExactMatch, row.MatchType);
+        Assert.Equal(ParameterLinkageClassification.SuppressionControl, row.LinkageStatus);
+        Assert.Equal(ComparisonStatus.Discrepancy, row.Status);
+        Assert.False(row.ModelSuppressionState);
+        Assert.Contains("Suppression discrepancy", row.Notes);
+    }
 }
 

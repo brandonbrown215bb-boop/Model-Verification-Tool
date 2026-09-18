@@ -1,5 +1,22 @@
 namespace InventorValidator.Excel;
 
+public enum Sheet1Archetype
+{
+    Standard4Column,
+    MultiTableFanSkid,
+    Headerless
+}
+
+public class HoleScheduleItem
+{
+    public int RowIndex { get; set; }
+    public string ScheduleName { get; set; } = string.Empty;
+    public string HoleIdentifier { get; set; } = string.Empty;
+    public double? XDim { get; set; }
+    public double? YDim { get; set; }
+    public string Description { get; set; } = string.Empty;
+}
+
 public enum ParameterCategory
 {
     Dimension,
@@ -105,6 +122,8 @@ public class CalculatorSessionResult
     public List<Sheet1ParameterItem> Sheet1Parameters { get; set; } = new();
     public List<ChannelLocationItem> ChannelLocations { get; set; } = new();
     public List<UnifiedChannel> UnifiedChannels { get; set; } = new();
+    public Sheet1Archetype DetectedArchetype { get; set; } = Sheet1Archetype.Standard4Column;
+    public List<HoleScheduleItem> HoleSchedules { get; set; } = new();
 
     // Summary counters
     public int TotalDataInputs => DataInputs.Count;
@@ -122,4 +141,46 @@ public class CalculatorSessionResult
     public int UnitlessCount => Sheet1Parameters.Count(p => p.Category == ParameterCategory.UnitlessCount);
     public int FeatureControlCount => Sheet1Parameters.Count(p => p.Category == ParameterCategory.FeatureControl);
     public int OtherCount => Sheet1Parameters.Count(p => p.Category is ParameterCategory.Property or ParameterCategory.Informational or ParameterCategory.Unknown);
+
+    /// <summary>
+    /// Retrieves the unit Inside Width (IW) prioritizing raw inputs on the 'Data' tab
+    /// before falling back to calculated parameters on 'Sheet1'.
+    /// </summary>
+    public double GetUnitWidth()
+    {
+        var dataIw = DataInputs.FirstOrDefault(d => string.Equals(d.ParameterName, "IW", StringComparison.OrdinalIgnoreCase));
+        if (dataIw != null && double.TryParse(dataIw.DisplayedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double w) && w > 0)
+        {
+            return w;
+        }
+
+        var s1Iw = Sheet1Parameters.FirstOrDefault(p => string.Equals(p.ParameterName, "IW", StringComparison.OrdinalIgnoreCase));
+        if (s1Iw != null && double.TryParse(s1Iw.DisplayedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double sw) && sw > 0)
+        {
+            return sw;
+        }
+
+        return 0.0;
+    }
+
+    /// <summary>
+    /// Retrieves the unit Inside Height (IH) prioritizing raw inputs on the 'Data' tab
+    /// before falling back to calculated parameters on 'Sheet1'.
+    /// </summary>
+    public double GetRoofHeight()
+    {
+        var dataIh = DataInputs.FirstOrDefault(d => string.Equals(d.ParameterName, "IH", StringComparison.OrdinalIgnoreCase));
+        if (dataIh != null && double.TryParse(dataIh.DisplayedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double h) && h > 0)
+        {
+            return h;
+        }
+
+        var s1Ih = Sheet1Parameters.FirstOrDefault(p => string.Equals(p.ParameterName, "IH", StringComparison.OrdinalIgnoreCase));
+        if (s1Ih != null && double.TryParse(s1Ih.DisplayedValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double sh) && sh > 0)
+        {
+            return sh;
+        }
+
+        return 0.0;
+    }
 }

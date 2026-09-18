@@ -72,5 +72,6 @@ public class AssemblyInventoryResult
     public List<InventorParameterItem> Parameters { get; set; } = new();
     public List<InventorFeatureItem> Features { get; set; } = new();
     public List<InventorRepresentationItem> Representations { get; set; } = new();
+    public List<string> AvailableRules { get; set; } = new();
     public TimeSpan ExtractionDuration { get; set; }
 }

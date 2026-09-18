@@ -82,7 +82,8 @@ public class ParameterMatchingService
         DiagnosticsLogger.Instance.Info(
             $"Parameter matching complete: {result.TotalRows} rows evaluated. " +
             $"Matched: {result.MatchedCount}, Discrepancies: {result.DiscrepancyCount}, " +
-            $"Missing in CAD: {result.MissingInModelCount}, Safe to Write: {result.SafeToWriteCount}, " +
+            $"Missing in CAD: {result.MissingInModelCount}, Linked Tables: {result.LinkedTableCount}, " +
+            $"Equations: {result.EquationCount}, Safe to Write: {result.SafeToWriteCount}, " +
             $"Protected Equations: {result.ProtectedFormulaCount}");
 
         return result;
@@ -112,10 +113,57 @@ public class ParameterMatchingService
             row.ExcelNumericValue = dVal;
         }
 
-        // Tier 4 check: Suppression parameter mapping (e.g. Part_091_30102_466_1 or Part_091_30102_458)
-        if (TryMatchSuppression(excelParam, occurrencesByName, out var occItem, out string mappedOccName))
+        // Tier 1: Exact Case-Sensitive Match by Parameter Name
+        if (exactMap.TryGetValue(excelParam.ParameterName, out var exactMatches))
+        {
+            if (exactMatches.Count == 1)
+            {
+                return EvaluateParameterMatch(row, exactMatches[0], MatchClassification.UniqueExactMatch, occurrencesByName.Values);
+            }
+            return CreateAmbiguousMatch(row, exactMatches);
+        }
+
+        // Tier 2: Exact Case-Insensitive Match by Parameter Name
+        if (ignoreCaseMap.TryGetValue(excelParam.ParameterName, out var icMatches))
+        {
+            if (icMatches.Count == 1)
+            {
+                return EvaluateParameterMatch(row, icMatches[0], MatchClassification.UniqueExactMatch, occurrencesByName.Values);
+            }
+            return CreateAmbiguousMatch(row, icMatches);
+        }
+
+        // Tier 3: Trimmed & Normalized Match by Parameter Name
+        string normName = NormalizeName(excelParam.ParameterName);
+        if (normMap.TryGetValue(normName, out var normMatches))
+        {
+            if (normMatches.Count == 1)
+            {
+                return EvaluateParameterMatch(row, normMatches[0], MatchClassification.UniqueNormalizedMatch, occurrencesByName.Values);
+            }
+            return CreateAmbiguousMatch(row, normMatches);
+        }
+
+        // Tier 4: Expression-Driven Match (CAD parameter expression references Excel parameter name, e.g. d14 = IW, d69 = Support_Loc4)
+        if (exprExactMap.TryGetValue(excelParam.ParameterName, out var exprExactMatches))
+        {
+            return EvaluateExpressionMatch(row, exprExactMatches, excelParam);
+        }
+        if (exprIgnoreCaseMap.TryGetValue(excelParam.ParameterName, out var exprIcMatches))
+        {
+            return EvaluateExpressionMatch(row, exprIcMatches, excelParam);
+        }
+        if (exprNormMap.TryGetValue(normName, out var exprNormMatches))
+        {
+            return EvaluateExpressionMatch(row, exprNormMatches, excelParam);
+        }
+
+        // Tier 5: Direct Part Suppression Verification (e.g. Part_091_30102_466_1 or Part_091_30102_458)
+        var occItem = FindOccurrenceByPartParameter(excelParam.ParameterName, occurrencesByName.Values, out string partNum, out string mappedOccName);
+        if (occItem != null || !string.IsNullOrEmpty(mappedOccName))
         {
             row.MatchType = MatchClassification.SuppressionMatch;
+            row.LinkageStatus = ParameterLinkageClassification.SuppressionControl;
             row.TargetDocument = topDocName;
             row.TargetOccurrenceName = occItem != null ? occItem.OccurrenceName : mappedOccName;
             row.WritePolicy = SafeWriteClassification.SafeToWrite;
@@ -145,73 +193,32 @@ public class ParameterMatchingService
             return row;
         }
 
-        // Tier 1: Exact Case-Sensitive Match by Parameter Name
-        if (exactMap.TryGetValue(excelParam.ParameterName, out var exactMatches))
-        {
-            if (exactMatches.Count == 1)
-            {
-                return EvaluateParameterMatch(row, exactMatches[0], MatchClassification.UniqueExactMatch);
-            }
-            return CreateAmbiguousMatch(row, exactMatches);
-        }
-
-        // Tier 2: Exact Case-Insensitive Match by Parameter Name
-        if (ignoreCaseMap.TryGetValue(excelParam.ParameterName, out var icMatches))
-        {
-            if (icMatches.Count == 1)
-            {
-                return EvaluateParameterMatch(row, icMatches[0], MatchClassification.UniqueExactMatch);
-            }
-            return CreateAmbiguousMatch(row, icMatches);
-        }
-
-        // Tier 3: Trimmed & Normalized Match by Parameter Name
-        string normName = NormalizeName(excelParam.ParameterName);
-        if (normMap.TryGetValue(normName, out var normMatches))
-        {
-            if (normMatches.Count == 1)
-            {
-                return EvaluateParameterMatch(row, normMatches[0], MatchClassification.UniqueNormalizedMatch);
-            }
-            return CreateAmbiguousMatch(row, normMatches);
-        }
-
-        // Tier 5: Expression-Driven Match (CAD parameter expression references Excel parameter name, e.g. d14 = IW)
-        if (exprExactMap.TryGetValue(excelParam.ParameterName, out var exprExactMatches))
-        {
-            return EvaluateExpressionMatch(row, exprExactMatches, excelParam);
-        }
-        if (exprIgnoreCaseMap.TryGetValue(excelParam.ParameterName, out var exprIcMatches))
-        {
-            return EvaluateExpressionMatch(row, exprIcMatches, excelParam);
-        }
-        if (exprNormMap.TryGetValue(normName, out var exprNormMatches))
-        {
-            return EvaluateExpressionMatch(row, exprNormMatches, excelParam);
-        }
-
-        // No match found in model parameters
+        // No match found in model parameters or assembly occurrences
         row.MatchType = MatchClassification.NoMatch;
         row.WritePolicy = SafeWriteClassification.NotApplicable;
 
         if (excelParam.Category == ParameterCategory.FeatureControl)
         {
             row.Status = ComparisonStatus.NotApplicable;
+            row.LinkageStatus = ParameterLinkageClassification.NotApplicable;
             row.Notes = "Feature suppression control; evaluated by iLogic rules.";
         }
         else if (excelParam.Category == ParameterCategory.Informational || excelParam.Category == ParameterCategory.Unknown)
         {
             row.Status = ComparisonStatus.NotApplicable;
+            row.LinkageStatus = ParameterLinkageClassification.InformationalOnly;
             row.Notes = "Informational calculator output; no CAD parameter target expected.";
         }
         else if (excelParam.Category == ParameterCategory.SuppressionControl)
         {
             row.Status = ComparisonStatus.MissingInModel;
+            row.LinkageStatus = ParameterLinkageClassification.SuppressionControl;
             row.Notes = "Suppression flag in Sheet1; no matching component occurrence in assembly hierarchy.";
         }
         else
         {
             row.Status = ComparisonStatus.MissingInModel;
+            row.LinkageStatus = ParameterLinkageClassification.MissingInModel;
             row.Notes = "Parameter defined in Sheet1 does not exist in top-level assembly parameters.";
         }
 
@@ -221,13 +228,33 @@ public class ParameterMatchingService
     private ParameterComparisonRow EvaluateParameterMatch(
         ParameterComparisonRow row,
         InventorParameterItem invParam,
-        MatchClassification matchType)
+        MatchClassification matchType,
+        IEnumerable<OccurrenceInventoryItem> allOccurrences)
     {
         row.MatchType = matchType;
         row.TargetDocument = invParam.DocumentName;
         row.TargetParameterName = invParam.Name;
         row.ModelExpression = invParam.Expression;
         row.ModelUnits = invParam.Units;
+
+        // Classify Linkage Status
+        if (row.ExcelParameterName.StartsWith("Part_", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(row.ExcelCategory, "SuppressionControl", StringComparison.OrdinalIgnoreCase))
+        {
+            row.LinkageStatus = ParameterLinkageClassification.SuppressionControl;
+        }
+        else if (string.Equals(invParam.ParameterType, "Table", StringComparison.OrdinalIgnoreCase))
+        {
+            row.LinkageStatus = ParameterLinkageClassification.LinkedTableParameter;
+        }
+        else if (invParam.IsFormulaDriven)
+        {
+            row.LinkageStatus = ParameterLinkageClassification.ParametricEquation;
+        }
+        else
+        {
+            row.LinkageStatus = ParameterLinkageClassification.DirectModelParameter;
+        }
 
         // Parse numerical value from expression or value
         if (TryParseDoubleFromExpression(invParam.Expression, out double parsedVal))
@@ -293,6 +320,31 @@ public class ParameterMatchingService
             }
         }
 
+        // Check occurrence suppression if this parameter is a Part_ suppression flag
+        if (row.ExcelParameterName.StartsWith("Part_", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(row.ExcelCategory, "SuppressionControl", StringComparison.OrdinalIgnoreCase))
+        {
+            var occItem = FindOccurrenceByPartParameter(row.ExcelParameterName, allOccurrences, out _, out string mappedOccName);
+            if (occItem != null)
+            {
+                row.TargetOccurrenceName = occItem.OccurrenceName;
+                row.ModelSuppressionState = occItem.IsActive;
+                bool expectedActive = row.ExcelNumericValue.HasValue && Math.Abs(row.ExcelNumericValue.Value - 1.0) < 0.001;
+
+                if (expectedActive != occItem.IsActive)
+                {
+                    row.Status = ComparisonStatus.Discrepancy;
+                    string suppNote = $"Suppression discrepancy: CAD occurrence '{occItem.OccurrenceName}' is {(occItem.IsActive ? "Active" : "Suppressed")}.";
+                    row.Notes = string.IsNullOrEmpty(row.Notes) ? suppNote : $"{row.Notes} | {suppNote}";
+                }
+                else
+                {
+                    string suppNote = $"Occurrence '{occItem.OccurrenceName}' suppression agrees.";
+                    row.Notes = string.IsNullOrEmpty(row.Notes) ? suppNote : $"{row.Notes} | {suppNote}";
+                }
+            }
+        }
+
         return row;
     }
 
@@ -303,6 +355,7 @@ public class ParameterMatchingService
     {
         var primary = candidates[0];
         row.MatchType = MatchClassification.ExpressionDrivenMatch;
+        row.LinkageStatus = ParameterLinkageClassification.ParametricEquation;
         row.TargetDocument = primary.DocumentName;
         row.TargetParameterName = primary.Name;
         row.ModelExpression = primary.Expression;
@@ -352,62 +405,76 @@ public class ParameterMatchingService
         List<InventorParameterItem> candidates)
     {
         row.MatchType = MatchClassification.AmbiguousMatch;
+        row.LinkageStatus = ParameterLinkageClassification.DirectModelParameter;
         row.WritePolicy = SafeWriteClassification.AmbiguousTarget;
         row.Status = ComparisonStatus.Discrepancy;
         row.Notes = $"Ambiguous match: Found {candidates.Count} candidate parameters in model ({string.Join(", ", candidates.Select(c => c.Name))}).";
         return row;
     }
 
-    private static bool TryMatchSuppression(
-        Sheet1ParameterItem excelParam,
-        Dictionary<string, OccurrenceInventoryItem> occurrencesByName,
-        out OccurrenceInventoryItem? matchedOcc,
-        out string mappedOccName)
+    private static OccurrenceInventoryItem? FindOccurrenceByPartParameter(
+        string paramName,
+        IEnumerable<OccurrenceInventoryItem> allOccurrences,
+        out string resolvedPartNum,
+        out string targetOccName)
     {
-        matchedOcc = null;
-        mappedOccName = string.Empty;
+        resolvedPartNum = string.Empty;
+        targetOccName = string.Empty;
 
-        var m = SuppressionParamRegex.Match(excelParam.ParameterName);
+        var m = SuppressionParamRegex.Match(paramName);
         if (!m.Success)
         {
-            m = GeneralSuppressionParamRegex.Match(excelParam.ParameterName);
-            if (!m.Success) return false;
+            m = GeneralSuppressionParamRegex.Match(paramName);
+            if (!m.Success) return null;
         }
 
         string rawNum = m.Groups["num"].Value;
-        string suffix = m.Groups["suffix"].Success ? m.Groups["suffix"].Value : "1";
+        string? suffix = m.Groups["suffix"].Success ? m.Groups["suffix"].Value : null;
 
-        // Convert Part_091_30102_466_1 -> 091-30102-466:1
-        // Replace underscores in number with hyphens
-        string partNum = rawNum.Replace('_', '-');
-        mappedOccName = $"{partNum}:{suffix}";
+        string hyphenatedNum = rawNum.Replace('_', '-');
+        resolvedPartNum = hyphenatedNum;
 
-        if (occurrencesByName.TryGetValue(mappedOccName, out matchedOcc))
+        // 1. If suffix is present (e.g. Part_091_30102_466_1), check exact occurrence name first
+        if (suffix != null)
         {
-            return true;
+            string expectedOccName1 = $"{hyphenatedNum}:{suffix}";
+            string expectedOccName2 = $"{rawNum}:{suffix}";
+
+            var occExact = allOccurrences.FirstOrDefault(o =>
+                string.Equals(o.OccurrenceName, expectedOccName1, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(o.OccurrenceName, expectedOccName2, StringComparison.OrdinalIgnoreCase));
+
+            if (occExact != null)
+            {
+                targetOccName = occExact.OccurrenceName;
+                return occExact;
+            }
         }
 
-        // Try direct name match without hyphen conversion
-        string altName = $"{rawNum}:{suffix}";
-        if (occurrencesByName.TryGetValue(altName, out matchedOcc))
+        // 2. Match by occurrence PartNumber
+        var occByPn = allOccurrences.FirstOrDefault(o =>
+            string.Equals(o.PartNumber, hyphenatedNum, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(o.PartNumber, rawNum, StringComparison.OrdinalIgnoreCase));
+
+        if (occByPn != null)
         {
-            mappedOccName = altName;
-            return true;
+            targetOccName = occByPn.OccurrenceName;
+            return occByPn;
         }
 
-        // Try finding any occurrence starting with partNum: or matching PartNumber
-        var prefixMatch = occurrencesByName.Values.FirstOrDefault(o =>
-            o.OccurrenceName.StartsWith($"{partNum}:", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(o.PartNumber, partNum, StringComparison.OrdinalIgnoreCase));
+        // 3. Match by occurrence name prefix (e.g. 091-30102-466:...)
+        var occByPrefix = allOccurrences.FirstOrDefault(o =>
+            o.OccurrenceName.StartsWith($"{hyphenatedNum}:", StringComparison.OrdinalIgnoreCase) ||
+            o.OccurrenceName.StartsWith($"{rawNum}:", StringComparison.OrdinalIgnoreCase));
 
-        if (prefixMatch != null)
+        if (occByPrefix != null)
         {
-            matchedOcc = prefixMatch;
-            mappedOccName = prefixMatch.OccurrenceName;
-            return true;
+            targetOccName = occByPrefix.OccurrenceName;
+            return occByPrefix;
         }
 
-        return true; // Recognizable suppression pattern, even if occurrence is not found in assembly
+        targetOccName = suffix != null ? $"{hyphenatedNum}:{suffix}" : hyphenatedNum;
+        return null;
     }
 
     private static string NormalizeName(string name)

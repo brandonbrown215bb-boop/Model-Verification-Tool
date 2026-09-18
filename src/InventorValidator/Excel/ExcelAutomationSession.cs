@@ -20,9 +20,11 @@ public sealed class ExcelAutomationSession
 
     /// <summary>
     /// Recalculates and parses the workbook on a dedicated STA thread.
+    /// Optionally applies input overrides to the Data worksheet before recalculating and saving.
     /// </summary>
     public Task<CalculatorSessionResult> RecalculateAndParseAsync(
         string workbookPath,
+        IDictionary<string, string>? inputOverrides = null,
         TimeSpan? timeout = null,
         IProgress<string>? progress = null,
         CancellationToken cancellationToken = default)
@@ -34,7 +36,7 @@ public sealed class ExcelAutomationSession
         {
             try
             {
-                var result = RunInternal(workbookPath, effectiveTimeout, progress, cancellationToken);
+                var result = RunInternal(workbookPath, inputOverrides, effectiveTimeout, progress, cancellationToken);
                 tcs.SetResult(result);
             }
             catch (OperationCanceledException)
@@ -56,6 +58,7 @@ public sealed class ExcelAutomationSession
 
     private CalculatorSessionResult RunInternal(
         string workbookPath,
+        IDictionary<string, string>? inputOverrides,
         TimeSpan timeout,
         IProgress<string>? progress,
         CancellationToken cancellationToken)
@@ -73,7 +76,8 @@ public sealed class ExcelAutomationSession
 
         dynamic? excelApp = null;
         int? excelPid = null;
-        var scope = new ComReleaseScope();
+        var appScope = new ComReleaseScope();
+        var workbookScope = new ComReleaseScope();
 
         try
         {
@@ -82,7 +86,7 @@ public sealed class ExcelAutomationSession
             {
                 throw new InvalidOperationException("Failed to instantiate Excel.Application COM object.");
             }
-            scope.Track<object>(excelApp);
+            appScope.Track<object>(excelApp);
 
             // Configure isolated Excel settings
             excelApp.Visible = false;
@@ -119,23 +123,24 @@ public sealed class ExcelAutomationSession
             progress?.Report("Opening calculator workbook...");
             DiagnosticsLogger.Instance.Info($"Opening workbook: {workbookPath}");
 
-            dynamic workbooks = scope.Track<object>(excelApp.Workbooks);
-            dynamic wb = scope.Track<object>(workbooks.Open(
+            bool hasOverrides = inputOverrides != null && inputOverrides.Count > 0;
+            dynamic workbooks = workbookScope.Track<object>(excelApp.Workbooks);
+            dynamic wb = workbookScope.Track<object>(workbooks.Open(
                 workbookPath,
                 UpdateLinks: 0,
-                ReadOnly: true
+                ReadOnly: !hasOverrides
             ));
 
             cancellationToken.ThrowIfCancellationRequested();
 
             // Preflight worksheets
-            dynamic sheets = scope.Track<object>(wb.Worksheets);
+            dynamic sheets = workbookScope.Track<object>(wb.Worksheets);
             int sheetCount = sheets.Count;
             var sheetNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             for (int i = 1; i <= sheetCount; i++)
             {
-                dynamic ws = scope.Track<object>(sheets.Item[i]);
+                dynamic ws = workbookScope.Track<object>(sheets.Item[i]);
                 sheetNames.Add((string)ws.Name);
             }
 
@@ -150,24 +155,99 @@ public sealed class ExcelAutomationSession
                     $"Workbook is missing required worksheet(s): {string.Join(", ", missing)}. Found worksheets: {string.Join(", ", sheetNames)}.");
             }
 
+            if (hasOverrides)
+            {
+                progress?.Report("Applying parameter overrides to Data worksheet...");
+                dynamic dataWs = workbookScope.Track<object>(sheets.Item["Data"]);
+                dynamic usedRange = workbookScope.Track<object>(dataWs.UsedRange);
+                object[,] dataValues = (object[,])usedRange.Value2;
+
+                int rMin = dataValues.GetLowerBound(0);
+                int rMax = dataValues.GetUpperBound(0);
+                int cMin = dataValues.GetLowerBound(1);
+                int cMax = dataValues.GetUpperBound(1);
+
+                int colParam = -1;
+                int colVal = -1;
+
+                for (int r = rMin; r <= Math.Min(rMin + 15, rMax); r++)
+                {
+                    for (int c = cMin; c <= cMax; c++)
+                    {
+                        var text = dataValues[r, c]?.ToString()?.Trim() ?? string.Empty;
+                        if (string.IsNullOrEmpty(text)) continue;
+
+                        if ((text.Contains("Input", StringComparison.OrdinalIgnoreCase) && text.Contains("parameter", StringComparison.OrdinalIgnoreCase)) ||
+                            text.Equals("Parameter", StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (colParam == -1) colParam = c;
+                        }
+                        else if (text.Equals("Value", StringComparison.OrdinalIgnoreCase) ||
+                                 (text.StartsWith("Value", StringComparison.OrdinalIgnoreCase) && !text.Contains("MOM", StringComparison.OrdinalIgnoreCase)))
+                        {
+                            if (colVal == -1) colVal = c;
+                        }
+                    }
+                    if (colParam != -1 && colVal != -1) break;
+                }
+
+                if (colParam == -1) colParam = cMin;
+                if (colVal == -1) colVal = cMin + 1;
+
+                foreach (var (paramName, overrideVal) in inputOverrides!)
+                {
+                    for (int r = rMin + 1; r <= rMax; r++)
+                    {
+                        var cellParam = dataValues[r, colParam]?.ToString()?.Trim() ?? string.Empty;
+                        if (string.Equals(cellParam, paramName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            DiagnosticsLogger.Instance.Info($"Writing override for input '{paramName}' in Data row {r}, col {colVal}: '{overrideVal}'");
+                            dynamic cell = usedRange.Cells[r, colVal];
+                            if (double.TryParse(overrideVal, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double numVal))
+                            {
+                                cell.Value2 = numVal;
+                            }
+                            else
+                            {
+                                cell.Value2 = overrideVal;
+                            }
+                            try { Marshal.FinalReleaseComObject(cell); } catch { }
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Recalculate
-            progress?.Report("Recalculating Excel formulas (Full Rebuild)...");
             var sw = Stopwatch.StartNew();
 
-            try
+            if (hasOverrides)
             {
-                excelApp.CalculateFullRebuild();
-            }
-            catch
-            {
+                progress?.Report("Recalculating Excel formulas (Full Rebuild)...");
                 try
                 {
-                    excelApp.CalculateFull();
+                    excelApp.CalculateFullRebuild();
                 }
                 catch
                 {
+                    try
+                    {
+                        excelApp.CalculateFull();
+                    }
+                    catch
+                    {
+                        excelApp.Calculate();
+                    }
+                }
+            }
+            else
+            {
+                progress?.Report("Validating Excel formulas...");
+                try
+                {
                     excelApp.Calculate();
                 }
+                catch { }
             }
 
             // Poll for calculation completion
@@ -197,12 +277,19 @@ public sealed class ExcelAutomationSession
             sw.Stop();
             DiagnosticsLogger.Instance.Info($"Recalculation completed in {sw.ElapsedMilliseconds} ms.");
 
+            if (hasOverrides)
+            {
+                progress?.Report("Saving recalculated disposable workbook...");
+                wb.Save();
+                DiagnosticsLogger.Instance.Info($"Saved disposable workbook with parameter overrides: {workbookPath}");
+            }
+
             cancellationToken.ThrowIfCancellationRequested();
 
             // Step 5: Parse Data tab
             progress?.Report("Parsing 'Data' worksheet...");
-            dynamic wsData = scope.Track<object>(wb.Worksheets["Data"]);
-            dynamic rngData = scope.Track<object>(wsData.UsedRange);
+            dynamic wsData = workbookScope.Track<object>(sheets.Item["Data"]);
+            dynamic rngData = workbookScope.Track<object>(wsData.UsedRange);
             object[,] dataArray = (object[,])rngData.Value2;
             var (dataInputs, errVal, errRaw, isPassed) = DataTabParser.Parse(dataArray);
 
@@ -210,17 +297,17 @@ public sealed class ExcelAutomationSession
 
             // Step 5: Parse Sheet1 tab
             progress?.Report("Parsing 'Sheet1' worksheet...");
-            dynamic wsSheet1 = scope.Track<object>(wb.Worksheets["Sheet1"]);
-            dynamic rngSheet1 = scope.Track<object>(wsSheet1.UsedRange);
+            dynamic wsSheet1 = workbookScope.Track<object>(sheets.Item["Sheet1"]);
+            dynamic rngSheet1 = workbookScope.Track<object>(wsSheet1.UsedRange);
             object[,] sheet1Array = (object[,])rngSheet1.Value2;
-            var sheet1Params = Sheet1TabParser.Parse(sheet1Array);
+            var (sheet1Params, holeSchedules, archetype) = Sheet1TabParser.ParseDetailed(sheet1Array);
 
             cancellationToken.ThrowIfCancellationRequested();
 
             // Step 5: Parse Channel Loc tab
             progress?.Report("Parsing 'Channel Loc' worksheet...");
-            dynamic wsChan = scope.Track<object>(wb.Worksheets["Channel Loc"]);
-            dynamic rngChan = scope.Track<object>(wsChan.UsedRange);
+            dynamic wsChan = workbookScope.Track<object>(sheets.Item["Channel Loc"]);
+            dynamic rngChan = workbookScope.Track<object>(wsChan.UsedRange);
             object[,] chanArray = (object[,])rngChan.Value2;
             var channelLocs = ChannelLocTabParser.Parse(chanArray);
             var unifiedChannels = ChannelUnificationService.Unify(channelLocs);
@@ -235,6 +322,8 @@ public sealed class ExcelAutomationSession
                 IsErrorCheckPassed = isPassed,
                 DataInputs = dataInputs,
                 Sheet1Parameters = sheet1Params,
+                DetectedArchetype = archetype,
+                HoleSchedules = holeSchedules,
                 ChannelLocations = channelLocs,
                 UnifiedChannels = unifiedChannels
             };
@@ -255,7 +344,14 @@ public sealed class ExcelAutomationSession
         }
         finally
         {
-            // Clean up Excel COM and process
+            // 1. Release all workbook, worksheet, and range COM objects
+            try
+            {
+                workbookScope.Dispose();
+            }
+            catch { }
+
+            // 2. Quit Excel application while no child COM references exist
             try
             {
                 excelApp?.Quit();
@@ -265,12 +361,20 @@ public sealed class ExcelAutomationSession
                 // Best-effort quit
             }
 
-            scope.Dispose();
+            // 3. Release Excel Application COM wrapper
+            try
+            {
+                appScope.Dispose();
+            }
+            catch { }
+
+            excelApp = null;
 
             GC.Collect();
             GC.WaitForPendingFinalizers();
+            GC.Collect();
 
-            // Ensure the specific Excel process is terminated
+            // 4. Ensure the specific Excel process is terminated
             if (excelPid.HasValue)
             {
                 try
@@ -278,7 +382,7 @@ public sealed class ExcelAutomationSession
                     var proc = Process.GetProcessById(excelPid.Value);
                     if (!proc.HasExited)
                     {
-                        if (!proc.WaitForExit(3000))
+                        if (!proc.WaitForExit(5000))
                         {
                             proc.Kill();
                             DiagnosticsLogger.Instance.Warn($"Force-killed Excel PID {excelPid.Value} after timeout.");

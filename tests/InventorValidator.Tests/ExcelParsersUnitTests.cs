@@ -207,7 +207,8 @@ public class ExcelParsersUnitTests
 
         var items = ChannelLocTabParser.Parse(array);
 
-        Assert.Equal(4, items.Count);
+        // Expecting 3 items because inactive FLOOR_CHAN_6 (Qty 0, Z 0) is silently filtered
+        Assert.Equal(3, items.Count);
 
         // FLOOR_CHAN_1: Valid
         var fc1 = items[0];
@@ -220,19 +221,15 @@ public class ExcelParsersUnitTests
         Assert.Equal(9.000, positions[0], precision: 3);
         Assert.Equal(9.000 + (3 * 5.267), positions[3], precision: 3);
 
-        // FLOOR_CHAN_6: Skipped
-        var fc6 = items[1];
-        Assert.Equal(ChannelStatus.SkippedInvalidRow, fc6.Status);
-
         // ROOF_CHAN_3: Skipped due to #REF!
-        var rc3 = items[2];
+        var rc3 = items[1];
         Assert.Equal("ROOF_CHAN_3", rc3.ChannelName);
         Assert.Equal("Roof Channels", rc3.ChannelGroup);
         Assert.Equal(ChannelStatus.SkippedInvalidRow, rc3.Status);
         Assert.Contains("#REF!", rc3.Notes);
 
         // LEFT_HAND_CHAN_1: Valid without referenced part number
-        var lhc1 = items[3];
+        var lhc1 = items[2];
         Assert.Equal("LEFT_HAND_CHAN_1", lhc1.ChannelName);
         Assert.Equal("South Wall Channels", lhc1.ChannelGroup);
         Assert.Equal("Y", lhc1.Axis);
@@ -242,7 +239,7 @@ public class ExcelParsersUnitTests
     }
 
     [Fact]
-    public void ChannelLocTabParser_Parse_WhenZLocationZero_ShouldMarkSkippedWithZeroZNote()
+    public void ChannelLocTabParser_Parse_WhenZLocationZero_ShouldSilentlyFilterOutInactiveRow()
     {
         var array = new object[3, 8];
         array[1, 1] = "Channel Name";
@@ -252,7 +249,7 @@ public class ExcelParsersUnitTests
         array[1, 5] = "X_ARRAY_SPACING";
         array[1, 6] = "FLOOR CHANNELS";
 
-        // Row has non-zero qty and offset, but Z is 0.0
+        // Row has non-zero qty and offset, but Z is 0.0 (inactive template slot)
         array[2, 1] = "FLOOR_CHAN_2";
         array[2, 2] = 0.000;
         array[2, 3] = 10.0;
@@ -260,9 +257,131 @@ public class ExcelParsersUnitTests
         array[2, 5] = 5.0;
 
         var items = ChannelLocTabParser.Parse(array);
+        Assert.Empty(items);
+    }
+
+    [Fact]
+    public void ChannelLocTabParser_Parse_WhenActiveChannelMissingOffset_ShouldMarkSkippedWithMissingCoordinatesNote()
+    {
+        var array = new object[3, 8];
+        array[1, 1] = "Channel Name";
+        array[1, 2] = "Z_LOCATION";
+        array[1, 3] = "X_ARRAY_OFFSET";
+        array[1, 4] = "X_ARRAY_QTY";
+        array[1, 5] = "X_ARRAY_SPACING";
+        array[1, 6] = "FLOOR CHANNELS";
+
+        // Row has active Z and Qty, but Offset is missing/null
+        array[2, 1] = "FLOOR_CHAN_2";
+        array[2, 2] = 12.5;
+        array[2, 3] = null; // Missing offset
+        array[2, 4] = 4;
+        array[2, 5] = 5.0;
+
+        var items = ChannelLocTabParser.Parse(array);
         Assert.Single(items);
         Assert.Equal(ChannelStatus.SkippedInvalidRow, items[0].Status);
-        Assert.Contains("Zero Z-location", items[0].Notes);
+        Assert.Contains("Missing required numeric coordinates", items[0].Notes);
+    }
+
+    [Fact]
+    public void ChannelLocTabParser_Parse_WhenBlankColumnAAndShiftedHeaders_ShouldResolveColumnsDynamically()
+    {
+        // Layout: Col 1 is empty, Col 2 is Channel Name, Col 7 is group header, Col 8 is Part
+        var array = new object[3, 9];
+        array[1, 2] = "Channel Name";
+        array[1, 3] = "Z_LOCATION";
+        array[1, 4] = "X_ARRAY_OFFSET";
+        array[1, 5] = "X_ARRAY_QTY";
+        array[1, 6] = "X_ARRAY_SPACING";
+        array[1, 7] = "FLOOR CHANNELS";
+        array[1, 8] = "Component Part #";
+
+        array[2, 2] = "FLOOR_CHAN_1";
+        array[2, 3] = 21.0;
+        array[2, 4] = 13.0;
+        array[2, 5] = 2;
+        array[2, 6] = 1.0;
+        array[2, 8] = "091-30103-139:1";
+
+        var items = ChannelLocTabParser.Parse(array);
+        Assert.Single(items);
+        Assert.Equal(ChannelStatus.Valid, items[0].Status);
+        Assert.Equal("091-30103-139:1", items[0].ReferencedPart);
+    }
+
+    [Fact]
+    public void Sheet1TabParser_ParseDetailed_WithArchetype2FanSkid_ShouldExtractDrivingParametersAndHoleSchedules()
+    {
+        // Archetype 2: Cols 1-4 Hole Schedule, Cols 6-8 Driving Parameters
+        var array = new object[5, 9];
+        // Header row
+        array[1, 1] = "HOLE";
+        array[1, 2] = "XDIM";
+        array[1, 3] = "YDIM";
+        array[1, 4] = "DESCRIPTION";
+        array[1, 6] = "NAME";
+        array[1, 7] = "VALUE";
+        array[1, 8] = "COMMENT";
+
+        // Hole schedule row
+        array[2, 1] = "H1";
+        array[2, 2] = 2.5;
+        array[2, 3] = 4.0;
+        array[2, 4] = "Mounting Hole Front";
+
+        // Driving parameter rows
+        array[2, 6] = "D6";
+        array[2, 7] = 38.5;
+        array[2, 8] = "Overall Skid Width";
+
+        array[3, 6] = "D7";
+        array[3, 7] = 34.2;
+        array[3, 8] = "Overall Skid Length";
+
+        var (parameters, holeSchedules, archetype) = Sheet1TabParser.ParseDetailed(array);
+
+        Assert.Equal(Sheet1Archetype.MultiTableFanSkid, archetype);
+        Assert.Single(holeSchedules);
+        Assert.Equal("H1", holeSchedules[0].HoleIdentifier);
+        Assert.Equal(2.5, holeSchedules[0].XDim);
+        Assert.Equal(4.0, holeSchedules[0].YDim);
+        Assert.Equal("Mounting Hole Front", holeSchedules[0].Description);
+
+        Assert.Equal(2, parameters.Count);
+        Assert.Equal("D6", parameters[0].ParameterName);
+        Assert.Equal("38.5", parameters[0].DisplayedValue);
+        Assert.Equal(ParameterCategory.Dimension, parameters[0].Category);
+        Assert.Equal("D7", parameters[1].ParameterName);
+    }
+
+    [Fact]
+    public void Sheet1TabParser_ParseDetailed_WithHeaderlessSheet_ShouldStartAtRow1()
+    {
+        // Headerless sheet starting directly at Row 1 with parameter data
+        var array = new object[4, 4];
+        array[1, 1] = "Side_BH_to_Shell_Clearance";
+        array[1, 2] = 0.310;
+        array[1, 3] = "in";
+
+        array[2, 1] = "Clearance";
+        array[2, 2] = 0.031;
+        array[2, 3] = "in";
+
+        array[3, 1] = "IH";
+        array[3, 2] = 118.0;
+        array[3, 3] = "in";
+
+        var (parameters, holeSchedules, archetype) = Sheet1TabParser.ParseDetailed(array);
+
+        Assert.Equal(Sheet1Archetype.Headerless, archetype);
+        Assert.Empty(holeSchedules);
+        Assert.Equal(3, parameters.Count);
+        Assert.Equal("Side_BH_to_Shell_Clearance", parameters[0].ParameterName);
+        Assert.Equal("0.31", parameters[0].DisplayedValue);
+        Assert.Equal(1, parameters[0].RowIndex);
+        Assert.Equal("Clearance", parameters[1].ParameterName);
+        Assert.Equal("IH", parameters[2].ParameterName);
     }
 
     [Fact]

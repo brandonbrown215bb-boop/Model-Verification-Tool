@@ -1277,37 +1277,532 @@
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type vm:ParameterPreviewViewModel}">
-                            <Border Background="{DynamicResource BgSecondaryBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    Padding="24">
-                                <StackPanel>
-                                    <TextBlock Text="Parameter Diff &amp; Preview (Phase 4)"
-                                               FontSize="15"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource FgBrightBrush}"
-                                               Margin="0,0,0,8"/>
-                                    <TextBlock Text="{Binding StatusMessage}"
-                                               Foreground="{DynamicResource FgMutedBrush}"/>
-                                </StackPanel>
-                            </Border>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Top Toolbar Card: Status, iLogic Rule Picker & Action Buttons -->
+                                <Border Grid.Row="0"
+                                        Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Status & Rule Selector -->
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="PARAMETER PREVIEW &amp; APPLY MODE (PHASE 4)"
+                                                       FontWeight="Bold"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource FgMutedBrush}"
+                                                       Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding StatusMessage}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="13"
+                                                       Foreground="{DynamicResource FgBrightBrush}"/>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0" VerticalAlignment="Center">
+                                                <TextBlock Text="Assembly iLogic Rule to Execute:"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"
+                                                           Margin="0,0,8,0"/>
+                                                <ComboBox ItemsSource="{Binding AvailableRules}"
+                                                          SelectedItem="{Binding SelectedRule}"
+                                                          Width="240" Height="26"
+                                                          VerticalContentAlignment="Center"
+                                                          Margin="0,0,16,0"/>
+                                                <TextBlock Text="(Active representation will be preserved)"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource FgMutedBrush}"
+                                                           VerticalAlignment="Center"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- Action Buttons -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="VIEW IN INVENTOR"
+                                                    Command="{Binding ViewInInventorCommand}"
+                                                    Height="32" Padding="14,0"
+                                                    Margin="0,0,8,0"/>
+                                            <Button Content="APPLY CHANGES TO MODEL"
+                                                    Command="{Binding ApplyChangesCommand}"
+                                                    Style="{DynamicResource AccentButtonStyle}"
+                                                    Height="32" Padding="16,0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Error / Warning Banner -->
+                                <Border Grid.Row="1"
+                                        Background="{DynamicResource BgTertiaryBrush}"
+                                        BorderBrush="{DynamicResource ErrorBrush}"
+                                        BorderThickness="1"
+                                        Padding="12,8"
+                                        Margin="0,0,0,12"
+                                        Visibility="{Binding HasErrors, Converter={StaticResource BoolToVisConverter}}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="⚠️ " Foreground="{DynamicResource ErrorBrush}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding ErrorMessage}" Foreground="{DynamicResource ErrorBrush}" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Main Tabbed Layout -->
+                                <TabControl Grid.Row="2"
+                                            SelectedIndex="{Binding SelectedTabIndex}"
+                                            Background="{DynamicResource BgSecondaryBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1">
+
+                                    <!-- Tab 1: Planned CAD Parameter Changes -->
+                                    <TabItem Header="Planned Parameter Changes"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Summary Counters -->
+                                            <Border Grid.Row="0"
+                                                    Background="{DynamicResource BgTertiaryBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    Padding="12,8"
+                                                    Margin="0,0,0,10">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Planned Rows: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding PlannedChanges.Count}" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Discrepancies: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding DiscrepancyCount}" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Linked Table Parameters: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding SafeToWriteCount}" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Protected Formulas: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding ProtectedFormulaCount}" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <DataGrid Grid.Row="1"
+                                                      ItemsSource="{Binding PlannedChanges}"
+                                                      AutoGenerateColumns="False"
+                                                      IsReadOnly="True"
+                                                      HeadersVisibility="Column"
+                                                      GridLinesVisibility="Horizontal"
+                                                      Background="Transparent">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                                                    <DataGridTextColumn Header="Excel Parameter" Binding="{Binding ExcelParameterName}" Width="150" FontWeight="SemiBold"/>
+                                                    <DataGridTextColumn Header="Excel Value" Binding="{Binding ExcelValueRaw}" Width="110"/>
+                                                    <DataGridTextColumn Header="Model Parameter" Binding="{Binding TargetParameterName}" Width="150"/>
+                                                    <DataGridTextColumn Header="Current CAD Expr" Binding="{Binding ModelExpression}" Width="140"/>
+                                                    <DataGridTextColumn Header="Units" Binding="{Binding ExcelUnit}" Width="70"/>
+                                                    <DataGridTextColumn Header="Linkage / Policy" Binding="{Binding LinkageStatus}" Width="160"/>
+                                                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Tab 2: Primary Data Inputs (Editable what-if testing) -->
+                                    <TabItem Header="Primary Data Inputs (What-If)"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Header & Buttons -->
+                                            <Grid Grid.Row="0" Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock Text="Modify primary engineering inputs below to test 'what-if' scenarios on the temporary model copy. Formulas will recalculate naturally."
+                                                           Foreground="{DynamicResource FgMutedBrush}"
+                                                           VerticalAlignment="Center"/>
+
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                                    <Button Content="Reset All Overrides"
+                                                            Command="{Binding ResetAllInputsCommand}"
+                                                            Height="26" Margin="0,0,8,0"
+                                                            IsEnabled="{Binding HasModifiedInputs}"/>
+                                                    <Button Content="Recalculate Inputs"
+                                                            Command="{Binding RecalculateCommand}"
+                                                            Style="{DynamicResource AccentButtonStyle}"
+                                                            Height="26" Padding="12,0"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <DataGrid Grid.Row="1"
+                                                      ItemsSource="{Binding DataInputs}"
+                                                      AutoGenerateColumns="False"
+                                                      CanUserAddRows="False"
+                                                      CanUserDeleteRows="False"
+                                                      HeadersVisibility="Column"
+                                                      GridLinesVisibility="Horizontal"
+                                                      Background="Transparent">
+                                                <DataGrid.Columns>
+                                                    <DataGridTextColumn Header="Input Parameter" Binding="{Binding ParameterName}" IsReadOnly="True" FontWeight="SemiBold" Width="160"/>
+                                                    <DataGridTextColumn Header="Current Value (Editable)" Binding="{Binding CurrentValue, UpdateSourceTrigger=PropertyChanged}" Width="160"/>
+                                                    <DataGridTextColumn Header="Original Spreadsheet Value" Binding="{Binding OriginalValue}" IsReadOnly="True" Width="160" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <DataGridCheckBoxColumn Header="Modified?" Binding="{Binding IsModified}" IsReadOnly="True" Width="80"/>
+                                                    <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" Width="200"/>
+                                                    <DataGridTextColumn Header="Allowed Values / Notes" Binding="{Binding AllowedValues}" IsReadOnly="True" Width="*"/>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                        </Grid>
+                                    </TabItem>
+
+                                    <!-- Tab 3: Applied Results (Before vs After) -->
+                                    <TabItem Header="Applied Results (Before vs After)"
+                                             FontWeight="SemiBold"
+                                             Padding="12,6">
+                                        <Grid Margin="12">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="*"/>
+                                            </Grid.RowDefinitions>
+
+                                            <!-- Delta Counters -->
+                                            <Border Grid.Row="0"
+                                                    Background="{DynamicResource BgTertiaryBrush}"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="1"
+                                                    Padding="12,8"
+                                                    Margin="0,0,0,10">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="Modified Dimensions: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding ChangedParamsCount}" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Suppression Changes: " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding ChangedOccsCount}" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Turned ON (Unsuppressed): " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding UnsuppressedCount}" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                                                    <TextBlock Text="Turned OFF (Suppressed): " Foreground="{DynamicResource FgMutedBrush}"/>
+                                                    <TextBlock Text="{Binding SuppressedCount}" FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
+                                                <!-- Sub-tab A: Parameter Deltas -->
+                                                <TabItem Header="Modified Dimensions">
+                                                    <DataGrid ItemsSource="{Binding ChangedParameters}"
+                                                              AutoGenerateColumns="False"
+                                                              IsReadOnly="True"
+                                                              HeadersVisibility="Column"
+                                                              GridLinesVisibility="Horizontal"
+                                                              Background="Transparent"
+                                                              Margin="0,8,0,0">
+                                                        <DataGrid.Columns>
+                                                            <DataGridTextColumn Header="Parameter Name" Binding="{Binding ParameterName}" FontWeight="SemiBold" Width="180"/>
+                                                            <DataGridTextColumn Header="Document" Binding="{Binding DocumentName}" Width="160"/>
+                                                            <DataGridTextColumn Header="Before Value" Binding="{Binding BeforeValue}" Width="120"/>
+                                                            <DataGridTextColumn Header="After Value" Binding="{Binding AfterValue}" Width="120" FontWeight="SemiBold"/>
+                                                            <DataGridTextColumn Header="Net Delta" Binding="{Binding Delta, StringFormat='{}{0:+0.###;-0.###;0}'}" Width="100"/>
+                                                            <DataGridTextColumn Header="Units" Binding="{Binding Units}" Width="80"/>
+                                                            <DataGridTextColumn Header="Before Expression" Binding="{Binding BeforeExpression}" Width="160"/>
+                                                            <DataGridTextColumn Header="After Expression" Binding="{Binding AfterExpression}" Width="*"/>
+                                                        </DataGrid.Columns>
+                                                    </DataGrid>
+                                                </TabItem>
+
+                                                <!-- Sub-tab B: Suppression Deltas -->
+                                                <TabItem Header="Component Suppressions">
+                                                    <DataGrid ItemsSource="{Binding ChangedSuppressions}"
+                                                              AutoGenerateColumns="False"
+                                                              IsReadOnly="True"
+                                                              HeadersVisibility="Column"
+                                                              GridLinesVisibility="Horizontal"
+                                                              Background="Transparent"
+                                                              Margin="0,8,0,0">
+                                                        <DataGrid.Columns>
+                                                            <DataGridTextColumn Header="Occurrence Name" Binding="{Binding OccurrenceName}" FontWeight="SemiBold" Width="240"/>
+                                                            <DataGridTextColumn Header="Part Number" Binding="{Binding PartNumber}" Width="180"/>
+                                                            <DataGridTextColumn Header="Transition Status" Binding="{Binding TransitionText}" Width="200" FontWeight="SemiBold"/>
+                                                            <DataGridCheckBoxColumn Header="Previously Suppressed" Binding="{Binding BeforeSuppressed}" Width="160"/>
+                                                            <DataGridCheckBoxColumn Header="Now Suppressed" Binding="{Binding AfterSuppressed}" Width="*"/>
+                                                        </DataGrid.Columns>
+                                                    </DataGrid>
+                                                </TabItem>
+                                            </TabControl>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type vm:ChannelResultsViewModel}">
-                            <Border Background="{DynamicResource BgSecondaryBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    Padding="24">
-                                <StackPanel>
-                                    <TextBlock Text="Channel Verification Results (Phase 5)"
-                                               FontSize="15"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource FgBrightBrush}"
-                                               Margin="0,0,0,8"/>
-                                    <TextBlock Text="{Binding StatusMessage}"
-                                               Foreground="{DynamicResource FgMutedBrush}"/>
-                                </StackPanel>
-                            </Border>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <!-- Header & KPI Cards -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Diagnostic Banner -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Filter Toolbar -->
+                                    <RowDefinition Height="Auto"/>
+                                    <!-- Results DataGrid -->
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Row 0: Header & Summary KPI Cards -->
+                                <Grid Grid.Row="0" Margin="0,0,0,12">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="0" Margin="0,0,0,10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="CHANNEL HOLE LOCATION VERIFICATION"
+                                                       FontWeight="Bold"
+                                                       FontSize="15"
+                                                       Foreground="{DynamicResource FgBrightBrush}"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                <TextBlock Text="Segment Start Reference: "
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding SegmentStartReference}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource FgBrightBrush}"/>
+                                                <TextBlock Text="  •  Offset: "
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding SegmentStartZOffset}"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource AccentBrush}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <Button Grid.Column="1"
+                                                Content="Export Results CSV"
+                                                Command="{Binding ExportCsvCommand}"
+                                                Height="28" Padding="12,0"/>
+                                    </Grid>
+
+                                    <!-- KPI Cards -->
+                                    <UniformGrid Grid.Row="1" Columns="6" Margin="0,0,0,4">
+                                        <!-- Total -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1" Padding="10,8" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="TOTAL EXPECTED" FontSize="10" FontWeight="Bold" Foreground="{DynamicResource FgMutedBrush}"/>
+                                                <TextBlock Text="{Binding TotalExpectedCount}" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource FgBrightBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Matched -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="#2EA043"
+                                                BorderThickness="1,1,1,3" Padding="10,8" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="MATCHED" FontSize="10" FontWeight="Bold" Foreground="#2EA043"/>
+                                                <TextBlock Text="{Binding MatchedCount}" FontSize="18" FontWeight="Bold" Foreground="#2EA043" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Warnings -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="#D29922"
+                                                BorderThickness="1,1,1,3" Padding="10,8" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="WARNINGS" FontSize="10" FontWeight="Bold" Foreground="#D29922"/>
+                                                <TextBlock Text="{Binding WarningCount}" FontSize="18" FontWeight="Bold" Foreground="#D29922" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Failures -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="#F85149"
+                                                BorderThickness="1,1,1,3" Padding="10,8" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="DISCREPANCIES" FontSize="10" FontWeight="Bold" Foreground="#F85149"/>
+                                                <TextBlock Text="{Binding FailureCount}" FontSize="18" FontWeight="Bold" Foreground="#F85149" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Missing -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="#CF222E"
+                                                BorderThickness="1,1,1,3" Padding="10,8" Margin="0,0,6,0">
+                                            <StackPanel>
+                                                <TextBlock Text="MISSING HOLES" FontSize="10" FontWeight="Bold" Foreground="#CF222E"/>
+                                                <TextBlock Text="{Binding MissingCount}" FontSize="18" FontWeight="Bold" Foreground="#CF222E" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <!-- Extra -->
+                                        <Border Background="{DynamicResource BgSecondaryBrush}"
+                                                BorderBrush="#A371F7"
+                                                BorderThickness="1,1,1,3" Padding="10,8" Margin="0,0,0,0">
+                                            <StackPanel>
+                                                <TextBlock Text="EXTRA CAD HOLES" FontSize="10" FontWeight="Bold" Foreground="#A371F7"/>
+                                                <TextBlock Text="{Binding ExtraCount}" FontSize="18" FontWeight="Bold" Foreground="#A371F7" Margin="0,2,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </UniformGrid>
+                                </Grid>
+
+                                <!-- Row 1: Pattern Diagnostic Banner -->
+                                <Border Grid.Row="1"
+                                        Background="{DynamicResource BgTertiaryBrush}"
+                                        BorderBrush="{DynamicResource AccentBrush}"
+                                        BorderThickness="1"
+                                        Padding="12,8"
+                                        Margin="0,0,0,10"
+                                        Visibility="{Binding HasSelectedDiagnostic, Converter={StaticResource BoolToVisConverter}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="PATTERN DIAGNOSTIC:"
+                                                   FontWeight="Bold"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource AccentBrush}"
+                                                   Margin="0,0,8,0"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="{Binding SelectedDiagnostic.DiagnosticMessage}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource FgBrightBrush}"
+                                                   VerticalAlignment="Center"
+                                                   TextWrapping="Wrap"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Row 2: Filter Toolbar -->
+                                <Border Grid.Row="2"
+                                        Background="{DynamicResource BgSecondaryBrush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        Padding="10,8"
+                                        Margin="0,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Group Filter -->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                                            <TextBlock Text="Group:" Foreground="{DynamicResource FgMutedBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <ComboBox ItemsSource="{Binding GroupFilterOptions}"
+                                                      SelectedItem="{Binding SelectedGroupFilter, Mode=TwoWay}"
+                                                      Width="140" Height="26"/>
+                                        </StackPanel>
+
+                                        <!-- Channel Filter -->
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                                            <TextBlock Text="Channel:" Foreground="{DynamicResource FgMutedBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <ComboBox ItemsSource="{Binding AvailableChannelNames}"
+                                                      SelectedItem="{Binding SelectedChannelFilter, Mode=TwoWay}"
+                                                      Width="150" Height="26"/>
+                                        </StackPanel>
+
+                                        <!-- Status Filter -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,12,0" VerticalAlignment="Center">
+                                            <TextBlock Text="Status:" Foreground="{DynamicResource FgMutedBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                            <ComboBox ItemsSource="{Binding StatusFilterOptions}"
+                                                      SelectedItem="{Binding SelectedStatusFilter, Mode=TwoWay}"
+                                                      Width="140" Height="26"/>
+                                        </StackPanel>
+
+                                        <!-- Search Box -->
+                                        <TextBox Grid.Column="3"
+                                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                                 Height="26"
+                                                 VerticalContentAlignment="Center"
+                                                 Margin="0,0,12,0"/>
+
+                                        <!-- Show Extra Holes Toggle -->
+                                        <CheckBox Grid.Column="4"
+                                                  Content="Show Extra CAD Holes"
+                                                  IsChecked="{Binding ShowExtraHoles, Mode=TwoWay}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,12,0"/>
+
+                                        <!-- Reset Filter Button -->
+                                        <Button Grid.Column="5"
+                                                Content="Reset Filters"
+                                                Command="{Binding ClearFiltersCommand}"
+                                                Height="26" Padding="8,0"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Row 3: Results DataGrid -->
+                                <DataGrid Grid.Row="3"
+                                          ItemsSource="{Binding FilteredResults}"
+                                          AutoGenerateColumns="False"
+                                          IsReadOnly="True"
+                                          HeadersVisibility="Column"
+                                          GridLinesVisibility="Horizontal"
+                                          Background="Transparent"
+                                          CanUserSortColumns="True">
+                                    <DataGrid.Columns>
+                                        <!-- Status Badge -->
+                                        <DataGridTemplateColumn Header="Status" Width="95" SortMemberPath="StatusBadge">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{DynamicResource BgTertiaryBrush}"
+                                                            BorderBrush="{Binding StatusColor}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="2"
+                                                            Padding="4,1"
+                                                            HorizontalAlignment="Left">
+                                                        <TextBlock Text="{Binding StatusBadge}"
+                                                                   FontWeight="Bold"
+                                                                   FontSize="10"
+                                                                   Foreground="{Binding StatusColor}"/>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+
+                                        <DataGridTextColumn Header="Group" Binding="{Binding ChannelGroup}" Width="120"/>
+                                        <DataGridTextColumn Header="Channel" Binding="{Binding ChannelName}" FontWeight="SemiBold" Width="140"/>
+                                        <DataGridTextColumn Header="#" Binding="{Binding HoleIndexDisplay}" Width="45"/>
+                                        <DataGridTextColumn Header="Part Number" Binding="{Binding ReferencedPart}" Width="120"/>
+                                        <DataGridTextColumn Header="Owning Part" Binding="{Binding OwningPart}" Width="120"/>
+                                        <DataGridTextColumn Header="Expected (X, Y, Z)" Binding="{Binding ExpectedCoordDisplay}" Width="160"/>
+                                        <DataGridTextColumn Header="Actual (X, Y, Z)" Binding="{Binding ActualCoordDisplay}" Width="160"/>
+                                        <DataGridTextColumn Header="Δ Axis" Binding="{Binding DeltaAxisDisplay}" FontWeight="SemiBold" Width="80"/>
+                                        <DataGridTextColumn Header="Δ Z" Binding="{Binding DeltaZDisplay}" FontWeight="SemiBold" Width="80"/>
+                                        <DataGridTextColumn Header="Auth Error" Binding="{Binding AuthoritativeErrorDisplay}" Width="80"/>
+                                        <DataGridTextColumn Header="3D Dist" Binding="{Binding Total3DDistanceDisplay}" Width="80"/>
+                                        <DataGridTextColumn Header="Exp Dia" Binding="{Binding ExpectedDiameterDisplay}" Width="65"/>
+                                        <DataGridTextColumn Header="Act Dia" Binding="{Binding ActualDiameterDisplay}" Width="65"/>
+                                        <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
                         </DataTemplate>
                     </ContentControl.Resources>
                 </ContentControl>

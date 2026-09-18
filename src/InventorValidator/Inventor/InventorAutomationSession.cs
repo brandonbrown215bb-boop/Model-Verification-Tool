@@ -1,7 +1,11 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
+using InventorValidator.Excel;
+using InventorValidator.Geometry;
+using InventorValidator.Geometry.Models;
 using InventorValidator.Infrastructure;
+using InventorValidator.Inventor.ILogic;
 using InventorValidator.Inventor.Models;
 
 namespace InventorValidator.Inventor;
@@ -84,7 +88,7 @@ public sealed class InventorAutomationSession : IDisposable
     }
 
     /// <summary>
-    /// Starts dedicated Inventor, opens the copied assembly, and inventories the model on the dedicated STA thread.
+    /// Starts dedicated Inventor, opens the copied assembly, optionally repoints linked Excel spreadsheets, and inventories the model on the dedicated STA thread.
     /// </summary>
     public async Task<AssemblyInventoryResult> StartAndInventoryAsync(
         string iamPath,
@@ -92,6 +96,7 @@ public sealed class InventorAutomationSession : IDisposable
         bool isVisible = false,
         TimeSpan? timeout = null,
         IProgress<string>? progress = null,
+        string? repointCalculatorPath = null,
         CancellationToken cancellationToken = default)
     {
         var effectiveTimeout = timeout ?? TimeSpan.FromSeconds(300);
@@ -100,7 +105,7 @@ public sealed class InventorAutomationSession : IDisposable
 
         var task = ExecuteOnStaAsync(() =>
         {
-            return StartAndInventoryInternal(iamPath, requestedVersion, isVisible, effectiveTimeout, progress, linkedCts.Token);
+            return StartAndInventoryInternal(iamPath, requestedVersion, isVisible, effectiveTimeout, progress, repointCalculatorPath, linkedCts.Token);
         });
 
         var timeoutTask = Task.Delay(effectiveTimeout, cancellationToken);
@@ -120,6 +125,7 @@ public sealed class InventorAutomationSession : IDisposable
         bool isVisible,
         TimeSpan timeout,
         IProgress<string>? progress,
+        string? repointCalculatorPath,
         CancellationToken cancellationToken)
     {
         if (!File.Exists(iamPath))
@@ -128,25 +134,72 @@ public sealed class InventorAutomationSession : IDisposable
         }
 
         int targetYear = _launcher.ResolveTargetVersion(requestedVersion);
-        progress?.Report($"Starting dedicated Autodesk Inventor {targetYear}...");
 
-        cancellationToken.ThrowIfCancellationRequested();
+        bool canReuse = false;
+        if (_inventorApp != null && !_isDisposed && _processInfo != null && _processInfo.MajorVersion == targetYear)
+        {
+            try
+            {
+                var proc = Process.GetProcessById(_processInfo.ProcessId);
+                if (!proc.HasExited)
+                {
+                    canReuse = true;
+                }
+            }
+            catch { }
+        }
 
-        // Launch dedicated instance directly on STA thread
-        var (app, info) = _launcher.LaunchDedicatedInstance(
-            targetYear,
-            _sessionScope,
-            isVisible,
-            progress,
-            cancellationToken);
+        if (canReuse)
+        {
+            progress?.Report($"Reusing active Autodesk Inventor {_processInfo!.MajorVersion} session (PID {_processInfo.ProcessId})...");
+            DiagnosticsLogger.Instance.Info($"Reusing existing Inventor {_processInfo.MajorVersion} instance PID {_processInfo.ProcessId}");
 
-        _inventorApp = app;
-        _processInfo = info;
+            // Close any currently open assembly document
+            if (_activeAssemblyDoc != null)
+            {
+                try
+                {
+                    _activeAssemblyDoc.Close(true);
+                }
+                catch { }
+                _activeAssemblyDoc = null;
+            }
+
+            try
+            {
+                _inventorApp.Visible = isVisible;
+            }
+            catch { }
+        }
+        else
+        {
+            // Close any stale session objects
+            if (_activeAssemblyDoc != null)
+            {
+                try { _activeAssemblyDoc.Close(true); } catch { }
+                _activeAssemblyDoc = null;
+            }
+
+            progress?.Report($"Starting dedicated Autodesk Inventor {targetYear}...");
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Launch dedicated instance directly on STA thread
+            var (app, info) = _launcher.LaunchDedicatedInstance(
+                targetYear,
+                _sessionScope,
+                isVisible,
+                progress,
+                cancellationToken);
+
+            _inventorApp = app;
+            _processInfo = info;
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
         progress?.Report($"Opening copied assembly: {Path.GetFileName(iamPath)}...");
-        DiagnosticsLogger.Instance.Info($"Opening assembly in Inventor PID {info.ProcessId} (Visible={isVisible}): {iamPath}");
+        DiagnosticsLogger.Instance.Info($"Opening assembly in Inventor PID {_processInfo.ProcessId} (Visible={isVisible}): {iamPath}");
 
         // Re-assert SilentOperation to ensure all dialogs are suppressed during document open
         try
@@ -166,6 +219,27 @@ public sealed class InventorAutomationSession : IDisposable
             throw new InvalidOperationException($"Inventor failed to open assembly: {iamPath}");
         }
         _activeAssemblyDoc = asmDoc;
+
+        // Repoint linked OLE Excel spreadsheets if a calculator workbook is specified
+        if (!string.IsNullOrEmpty(repointCalculatorPath))
+        {
+            progress?.Report($"Repointing linked Excel spreadsheets to {Path.GetFileName(repointCalculatorPath)}...");
+            int repointedCount = RepointDocumentOleReferences(asmDoc, repointCalculatorPath);
+            DiagnosticsLogger.Instance.Info($"Repointed {repointedCount} OLE spreadsheet reference(s) to '{repointCalculatorPath}'.");
+            if (repointedCount > 0)
+            {
+                progress?.Report("Updating assembly with repointed spreadsheet parameters...");
+                try
+                {
+                    asmDoc.Update2(true);
+                }
+                catch (Exception ex)
+                {
+                    DiagnosticsLogger.Instance.Warn($"Assembly Update2 failed after OLE repointing: {ex.Message}; trying Update()...");
+                    try { asmDoc.Update(); } catch { }
+                }
+            }
+        }
 
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -191,11 +265,12 @@ public sealed class InventorAutomationSession : IDisposable
         cancellationToken.ThrowIfCancellationRequested();
 
         // Perform deep recursive inventory
+        using var inventoryScope = new ComReleaseScope();
         var inventory = _inventoryService.InventoryAssembly(
             asmDoc,
-            info.VersionString,
-            info.ProcessId,
-            _sessionScope,
+            _processInfo!.VersionString,
+            _processInfo!.ProcessId,
+            inventoryScope,
             progress,
             cancellationToken);
 
@@ -240,6 +315,429 @@ public sealed class InventorAutomationSession : IDisposable
                 return false;
             }
         });
+    }
+
+    /// <summary>
+    /// Repoints all linked OLE Excel spreadsheet references in the active assembly and all referenced child documents
+    /// to the specified calculator workbook, and triggers an assembly update.
+    /// </summary>
+    public Task<int> RepointOleSpreadsheetReferencesAsync(string newCalculatorPath)
+    {
+        if (string.IsNullOrWhiteSpace(newCalculatorPath))
+            throw new ArgumentException("New calculator path cannot be empty.", nameof(newCalculatorPath));
+
+        return ExecuteOnStaAsync(() =>
+        {
+            if (_activeAssemblyDoc == null)
+                throw new InvalidOperationException("No active assembly document to repoint.");
+
+            int count = RepointDocumentOleReferences(_activeAssemblyDoc, newCalculatorPath);
+            if (count > 0)
+            {
+                try { _activeAssemblyDoc.Update2(true); } catch { _activeAssemblyDoc.Update(); }
+            }
+            return count;
+        });
+    }
+
+    private int RepointDocumentOleReferences(dynamic rootDoc, string newCalculatorPath)
+    {
+        int repointedCount = 0;
+        string fullCalculatorPath = Path.GetFullPath(newCalculatorPath);
+        var visitedDocs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        void RepointSingleDoc(dynamic doc)
+        {
+            try
+            {
+                string docPath = (string)doc.FullFileName;
+                if (!string.IsNullOrEmpty(docPath) && !visitedDocs.Add(docPath))
+                    return;
+
+                dynamic oleDescriptors = doc.ReferencedOLEFileDescriptors;
+                if (oleDescriptors == null) return;
+                int count = oleDescriptors.Count;
+
+                for (int i = 1; i <= count; i++)
+                {
+                    try
+                    {
+                        dynamic oleDesc = oleDescriptors.Item[i];
+                        string currentRef = (string)oleDesc.FullFileName;
+
+                        string ext = Path.GetExtension(currentRef).ToLowerInvariant();
+                        if (ext is ".xls" or ".xlsx" or ".xlsm")
+                        {
+                            if (!string.Equals(currentRef, fullCalculatorPath, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DiagnosticsLogger.Instance.Info(
+                                    $"Replacing OLE reference in '{Path.GetFileName(docPath)}': '{currentRef}' -> '{fullCalculatorPath}'");
+                                oleDesc.ReplaceReference(fullCalculatorPath);
+                                repointedCount++;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        DiagnosticsLogger.Instance.Warn($"Could not repoint OLE descriptor #{i} in doc: {ex.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                DiagnosticsLogger.Instance.Warn($"Could not query OLE references for doc: {ex.Message}");
+            }
+        }
+
+        // 1. Repoint root assembly document
+        RepointSingleDoc(rootDoc);
+
+        // 2. Repoint all referenced documents (subassemblies and parts)
+        try
+        {
+            dynamic allRefDocs = rootDoc.AllReferencedDocuments;
+            if (allRefDocs != null)
+            {
+                int count = allRefDocs.Count;
+                for (int i = 1; i <= count; i++)
+                {
+                    try
+                    {
+                        dynamic childDoc = allRefDocs.Item[i];
+                        RepointSingleDoc(childDoc);
+                    }
+                    catch { }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Could not iterate AllReferencedDocuments for OLE repointing: {ex.Message}");
+        }
+
+        return repointedCount;
+    }
+
+    /// <summary>
+    /// Retrieves the names of all internal iLogic rules present in the active assembly document.
+    /// </summary>
+    public Task<IReadOnlyList<string>> GetAvailableRulesAsync()
+    {
+        return ExecuteOnStaAsync<IReadOnlyList<string>>(() =>
+        {
+            if (_activeAssemblyDoc == null || _isDisposed)
+                return Array.Empty<string>();
+
+            var ruleService = new ILogicRuleService();
+            return ruleService.GetAssemblyRules(_activeAssemblyDoc);
+        });
+    }
+
+    /// <summary>
+    /// Refreshes linked spreadsheet parameters, executes the chosen iLogic rule (if requested),
+    /// rebuilds the assembly, and computes before/after deltas for dimensions and suppressions.
+    /// </summary>
+    public Task<ApplyModeDeltaResult> ApplyAndRebuildAsync(
+        string? selectedRuleName,
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        return ExecuteOnStaAsync(() =>
+        {
+            return ApplyAndRebuildInternal(selectedRuleName, progress, cancellationToken);
+        });
+    }
+
+    private ApplyModeDeltaResult ApplyAndRebuildInternal(
+        string? selectedRuleName,
+        IProgress<string>? progress,
+        CancellationToken cancellationToken)
+    {
+        if (_activeAssemblyDoc == null || _isDisposed)
+            throw new InvalidOperationException("No active assembly document available in this Inventor session.");
+
+        var sw = Stopwatch.StartNew();
+        var result = new ApplyModeDeltaResult
+        {
+            ExecutedRuleName = selectedRuleName
+        };
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // 1. Capture BEFORE snapshot of parameters and suppressions
+        progress?.Report("Capturing pre-apply state snapshot...");
+        var (beforeParams, beforeOccs) = CaptureAssemblySnapshot((object)_activeAssemblyDoc!);
+
+        // 2. Trigger Inventor to refresh linked spreadsheet parameters
+        progress?.Report("Updating assembly from linked spreadsheet...");
+        try
+        {
+            _activeAssemblyDoc.Update2(true);
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Assembly Update2 before rule execution: {ex.Message}; trying Update()...");
+            try { _activeAssemblyDoc.Update(); } catch { }
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // 3. Execute selected iLogic rule if specified and not skipped
+        if (!string.IsNullOrWhiteSpace(selectedRuleName) &&
+            !selectedRuleName.StartsWith("None", StringComparison.OrdinalIgnoreCase))
+        {
+            progress?.Report($"Executing iLogic rule '{selectedRuleName}'...");
+            var ruleService = new ILogicRuleService();
+            bool ruleSuccess = ruleService.RunRule(_activeAssemblyDoc, selectedRuleName, out string? ruleError);
+            result.RuleExecutedSuccessfully = ruleSuccess;
+            result.RuleMessage = ruleError ?? "Rule executed successfully.";
+
+            if (!ruleSuccess)
+            {
+                DiagnosticsLogger.Instance.Warn($"iLogic rule '{selectedRuleName}' encountered an issue: {ruleError}");
+            }
+        }
+        else
+        {
+            result.RuleExecutedSuccessfully = true;
+            result.RuleMessage = "No iLogic rule specified (skipped).";
+            DiagnosticsLogger.Instance.Info("Skipping iLogic rule execution as requested.");
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // 4. Rebuild assembly
+        progress?.Report("Rebuilding assembly after updates...");
+        try
+        {
+            _activeAssemblyDoc.Update2(true);
+            result.Success = true;
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Assembly Update2 after rule execution: {ex.Message}; trying Rebuild2...");
+            try
+            {
+                _activeAssemblyDoc.Rebuild2(true);
+                result.Success = true;
+            }
+            catch (Exception rebuildEx)
+            {
+                result.Success = false;
+                result.ErrorMessage = $"Rebuild error: {rebuildEx.Message}";
+                DiagnosticsLogger.Instance.Error($"Rebuild failed: {rebuildEx.Message}", rebuildEx);
+            }
+        }
+
+        // 5. Capture AFTER snapshot of parameters and suppressions
+        progress?.Report("Computing before vs. after deltas...");
+        var (afterParams, afterOccs) = CaptureAssemblySnapshot((object)_activeAssemblyDoc!);
+
+        // 6. Compute deltas
+        ComputeDeltas(beforeParams, afterParams, beforeOccs, afterOccs, result);
+
+        result.Duration = sw.Elapsed;
+        DiagnosticsLogger.Instance.Success(
+            $"Apply Mode complete in {sw.Elapsed.TotalSeconds:F2}s: {result.ChangedParametersCount} parameter(s) changed, " +
+            $"{result.ChangedSuppressionsCount} occurrence suppression(s) changed ({result.UnsuppressedCount} turned ON, {result.SuppressedCount} turned OFF).");
+
+        return result;
+    }
+
+    private (Dictionary<string, (double Value, string Expression, string Units, string DocName)> Params,
+            Dictionary<string, (string PartNumber, bool IsSuppressed)> Occs) CaptureAssemblySnapshot(object asmDocObj)
+    {
+        dynamic asmDoc = asmDocObj;
+        var paramMap = new Dictionary<string, (double Value, string Expression, string Units, string DocName)>(StringComparer.OrdinalIgnoreCase);
+        var occMap = new Dictionary<string, (string PartNumber, bool IsSuppressed)>(StringComparer.OrdinalIgnoreCase);
+
+        try
+        {
+            dynamic compDef = asmDoc.ComponentDefinition;
+            dynamic parameters = compDef.Parameters;
+            int paramCount = parameters.Count;
+            string docName = string.Empty;
+            try { docName = (string)asmDoc.DisplayName; } catch { }
+
+            for (int i = 1; i <= paramCount; i++)
+            {
+                try
+                {
+                    dynamic p = parameters.Item[i];
+                    string name = (string)p.Name;
+                    double val = 0;
+                    try { val = (double)p.Value; } catch { }
+                    string expr = string.Empty;
+                    try { expr = (string)p.Expression; } catch { }
+                    string units = string.Empty;
+                    try { units = (string)p.Units; } catch { }
+
+                    paramMap[name] = (val, expr, units, docName);
+                }
+                catch { }
+            }
+
+            dynamic occurrences = compDef.Occurrences;
+            int occCount = occurrences.Count;
+            for (int i = 1; i <= occCount; i++)
+            {
+                try
+                {
+                    dynamic occ = occurrences.Item[i];
+                    CaptureOccurrencesRecursive(occ, occMap);
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Error capturing assembly snapshot: {ex.Message}");
+        }
+
+        return (paramMap, occMap);
+    }
+
+    private void CaptureOccurrencesRecursive(dynamic occ, Dictionary<string, (string PartNumber, bool IsSuppressed)> occMap)
+    {
+        try
+        {
+            string name = (string)occ.Name;
+            bool isSuppressed = false;
+            try { isSuppressed = (bool)occ.Suppressed; } catch { }
+            string partNum = string.Empty;
+
+            try
+            {
+                if (!isSuppressed)
+                {
+                    dynamic def = occ.Definition;
+                    dynamic doc = def.Document;
+                    dynamic propSets = doc.PropertySets;
+                    dynamic dtProps = propSets["Design Tracking Properties"];
+                    partNum = (string)dtProps["Part Number"].Value;
+                }
+            }
+            catch { }
+
+            occMap[name] = (partNum, isSuppressed);
+
+            if (!isSuppressed)
+            {
+                try
+                {
+                    dynamic subOccs = occ.SubOccurrences;
+                    if (subOccs != null)
+                    {
+                        int count = subOccs.Count;
+                        for (int i = 1; i <= count; i++)
+                        {
+                            try
+                            {
+                                CaptureOccurrencesRecursive(subOccs.Item[i], occMap);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+        catch { }
+    }
+
+    private void ComputeDeltas(
+        Dictionary<string, (double Value, string Expression, string Units, string DocName)> beforeParams,
+        Dictionary<string, (double Value, string Expression, string Units, string DocName)> afterParams,
+        Dictionary<string, (string PartNumber, bool IsSuppressed)> beforeOccs,
+        Dictionary<string, (string PartNumber, bool IsSuppressed)> afterOccs,
+        ApplyModeDeltaResult result)
+    {
+        foreach (var (name, afterData) in afterParams)
+        {
+            if (beforeParams.TryGetValue(name, out var beforeData))
+            {
+                var delta = new ParameterDelta
+                {
+                    ParameterName = name,
+                    DocumentName = afterData.DocName,
+                    BeforeValue = beforeData.Value,
+                    AfterValue = afterData.Value,
+                    BeforeExpression = beforeData.Expression,
+                    AfterExpression = afterData.Expression,
+                    Units = afterData.Units
+                };
+                result.ParameterDeltas.Add(delta);
+            }
+        }
+
+        var allOccNames = beforeOccs.Keys.Union(afterOccs.Keys, StringComparer.OrdinalIgnoreCase);
+        foreach (var name in allOccNames)
+        {
+            bool beforeSup = beforeOccs.TryGetValue(name, out var bData) ? bData.IsSuppressed : false;
+            bool afterSup = afterOccs.TryGetValue(name, out var aData) ? aData.IsSuppressed : false;
+            string partNum = aData.PartNumber ?? bData.PartNumber ?? string.Empty;
+
+            var sDelta = new SuppressionDelta
+            {
+                OccurrenceName = name,
+                PartNumber = partNum,
+                BeforeSuppressed = beforeSup,
+                AfterSuppressed = afterSup
+            };
+            result.SuppressionDeltas.Add(sDelta);
+        }
+    }
+
+    /// <summary>
+    /// Extracts physical holes and Segment Start reference planes from the active assembly document on the dedicated STA thread.
+    /// </summary>
+    public async Task<InventorHoleExtractionResult> ExtractHolesAsync(
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (_activeAssemblyDoc == null)
+        {
+            throw new InvalidOperationException("No assembly document is currently open in the Inventor session.");
+        }
+
+        var extractor = new InventorHoleExtractionService();
+        return await ExecuteOnStaAsync(() =>
+        {
+            using var opScope = new ComReleaseScope();
+            return extractor.ExtractHoles(_activeAssemblyDoc, opScope, progress, cancellationToken);
+        });
+    }
+
+    /// <summary>
+    /// Runs full geometry extraction and compares against expected channel locations.
+    /// </summary>
+    public async Task<GeometryValidationResult> ValidateGeometryAsync(
+        IEnumerable<ChannelLocationItem> channelLocations,
+        double roofHeight = 0.0,
+        double unitWidth = 0.0,
+        GeometryComparisonOptions? options = null,
+        IProgress<string>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        progress?.Report("Extracting physical hole geometry from CAD assembly...");
+        var extraction = await ExtractHolesAsync(progress, cancellationToken);
+
+        progress?.Report("Generating expected hole coordinates from Channel Loc...");
+        var expectedHoles = ExpectedHoleGenerator.GenerateExpectedHoles(
+            channelLocations,
+            extraction.SegmentStartZOffset,
+            roofHeight,
+            unitWidth);
+
+        progress?.Report($"Matching {expectedHoles.Count} expected holes against {extraction.MergedHoleCount} physical holes...");
+        var matchingEngine = new HoleMatchingEngine(options);
+        var validation = matchingEngine.Validate(
+            expectedHoles,
+            extraction.Holes,
+            extraction.SegmentStartReferenceName,
+            extraction.SegmentStartZOffset);
+
+        return validation;
     }
 
     /// <summary>
@@ -299,7 +797,7 @@ public sealed class InventorAutomationSession : IDisposable
         }
     }
 
-    private void DoCloseInternal()
+    private void CloseAllDocumentsInternal()
     {
         try
         {
@@ -307,20 +805,50 @@ public sealed class InventorAutomationSession : IDisposable
             {
                 try
                 {
-                    DiagnosticsLogger.Instance.Info("Closing assembly document without saving...");
-                    try
-                    {
-                        if (_inventorApp != null) _inventorApp.SilentOperation = true;
-                    }
-                    catch { }
                     _activeAssemblyDoc.Close(true);
                 }
-                catch (Exception ex)
-                {
-                    DiagnosticsLogger.Instance.Warn($"Error closing active assembly document: {ex.Message}");
-                }
+                catch { }
                 _activeAssemblyDoc = null;
             }
+
+            if (_inventorApp != null)
+            {
+                try
+                {
+                    dynamic docs = _inventorApp.Documents;
+                    if (docs != null)
+                    {
+                        int count = docs.Count;
+                        for (int i = count; i >= 1; i--)
+                        {
+                            try
+                            {
+                                dynamic doc = docs.Item[i];
+                                doc.Close(true);
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                catch { }
+            }
+        }
+        catch (Exception ex)
+        {
+            DiagnosticsLogger.Instance.Warn($"Error while closing open Inventor documents: {ex.Message}");
+        }
+        finally
+        {
+            _activeAssemblyDoc = null;
+        }
+    }
+
+    private void DoCloseInternal()
+    {
+        try
+        {
+            DiagnosticsLogger.Instance.Info("Closing assembly and open documents without saving...");
+            CloseAllDocumentsInternal();
 
             InventorProcessInfo? info = _processInfo;
             dynamic? app = _inventorApp;

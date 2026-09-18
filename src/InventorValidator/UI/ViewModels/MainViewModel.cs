@@ -118,6 +118,17 @@ public class MainViewModel : ViewModelBase
             }
         });
         ModelInventoryVM.ViewInInventorCommand = ShowInInventorCommand;
+        ParameterPreviewVM.ViewInInventorCommand = ShowInInventorCommand;
+        ParameterPreviewVM.OnGeometryValidated = geomResult =>
+        {
+            ChannelResultsVM.LoadResults(geomResult);
+            SelectedNav = "Channel Results";
+        };
+        ParameterPreviewVM.OnApplyCompletedWithoutGeometry = () =>
+        {
+            ChannelResultsVM.Reset("No channel locations defined in calculator for this model. View applied parameters and model inventory for results.");
+            StageStatus = $"Apply Mode complete: {ParameterPreviewVM.ChangedParamsCount} parameter(s) modified, {ParameterPreviewVM.ChangedOccsCount} suppression(s) updated. (No channel geometry defined in calculator).";
+        };
 
         SetupVM.InspectCalculatorCommand = new RelayCommand(async () => await ExecuteInspectCalculatorAsync(), () => !IsBusy);
 
@@ -225,6 +236,26 @@ public class MainViewModel : ViewModelBase
             return;
         }
 
+        // Clean up previous workspace if exists
+        if (ActiveManifest != null)
+        {
+            try
+            {
+                _workspaceManager.CleanupWorkspace(ActiveManifest);
+            }
+            catch (Exception ex)
+            {
+                DiagnosticsLogger.Instance.Warn($"Could not clean up previous workspace: {ex.Message}");
+            }
+            ActiveManifest = null;
+        }
+
+        // Reset all result ViewModels so stale results from previous sessions are never displayed
+        CalculatorVM.Clear();
+        ModelInventoryVM.Clear();
+        ParameterPreviewVM.Clear();
+        ChannelResultsVM.Reset("Validation session in progress...");
+
         IsBusy = true;
         IsProgressIndeterminate = true;
         StageStatus = "Initializing session workspace...";
@@ -234,18 +265,23 @@ public class MainViewModel : ViewModelBase
         {
             DiagnosticsLogger.Instance.Info($"Starting session: IAM='{SetupVM.IamPath}', Calc='{SetupVM.CalculatorPath}', Mode='{SetupVM.SelectedMode}', Version='{SetupVM.SelectedVersion}', AllowFormulaOverwrite={SetupVM.AllowFormulaOverwrite}");
 
-            var progress = new Progress<string>(msg =>
+            IProgress<string> progress = new Progress<string>(msg =>
             {
                 StageStatus = msg;
             });
 
-            // Close any existing Inventor automation session from previous runs
-            if (_activeInventorSession != null)
+            // Keep existing Inventor session alive if healthy for warm reuse
+            if (_activeInventorSession != null && !_activeInventorSession.IsActive)
             {
-                StageStatus = "Closing previous Inventor session...";
                 _activeInventorSession.CloseSession();
                 _activeInventorSession = null;
             }
+
+            if (_activeInventorSession == null)
+            {
+                _activeInventorSession = new Inventor.InventorAutomationSession();
+            }
+            var inventorSession = _activeInventorSession;
 
             // Step 3: Create disposable workspace
             ActiveManifest = await _workspaceManager.CreateWorkspaceAsync(
@@ -255,13 +291,26 @@ public class MainViewModel : ViewModelBase
                 _cts.Token
             );
 
-            // Step 4 & 5: Recalculate and parse Excel calculator in disposable workspace
+            // Step 4-7: Concurrently recalculate/parse Excel and inventory Inventor assembly
             var excelSession = new ExcelAutomationSession();
-            var calcResult = await excelSession.RecalculateAndParseAsync(
+            var excelTask = excelSession.RecalculateAndParseAsync(
                 ActiveManifest.CopiedCalculatorPath,
                 progress: progress,
                 cancellationToken: _cts.Token
             );
+
+            var inventorTask = inventorSession.StartAndInventoryAsync(
+                ActiveManifest.CopiedIamPath,
+                requestedVersion: SetupVM.SelectedVersion,
+                isVisible: SetupVM.ShowInventorWindow,
+                progress: progress,
+                cancellationToken: _cts.Token
+            );
+
+            await Task.WhenAll(excelTask, inventorTask);
+
+            var calcResult = await excelTask;
+            var invResult = await inventorTask;
 
             CalculatorVM.LoadResult(calcResult);
 
@@ -277,34 +326,57 @@ public class MainViewModel : ViewModelBase
                 }
             }
 
-            // Step 6 & 7: Dedicated Inventor launch & Assembly inventory (Phase 3)
-            var inventorSession = new Inventor.InventorAutomationSession();
-            _activeInventorSession = inventorSession;
-
-            var invResult = await inventorSession.StartAndInventoryAsync(
-                ActiveManifest.CopiedIamPath,
-                requestedVersion: SetupVM.SelectedVersion,
-                isVisible: SetupVM.ShowInventorWindow,
-                progress: progress,
-                cancellationToken: _cts.Token
-            );
-
             // Step 8: Parameter matching & Inspect mode discrepancy analysis
             var matchingService = new Inventor.ParameterMatchingService();
             var comparisonResult = matchingService.CompareParameters(calcResult.Sheet1Parameters, invResult);
 
             ModelInventoryVM.LoadResults(invResult, comparisonResult);
-            SelectedNav = "Model Inventory";
 
             if (SetupVM.SelectedMode.Equals("Apply", StringComparison.OrdinalIgnoreCase))
             {
-                StageStatus = $"Phase 3 complete: Model inventory ready ({invResult.TotalOccurrencesCount} components). Parameter application & iLogic rebuild scheduled for Phase 4.";
-                DiagnosticsLogger.Instance.Success($"Phase 3 complete (Apply Preview): {invResult.TotalOccurrencesCount} components inventoried. Safe to write: {comparisonResult.SafeToWriteCount}, Protected formulas: {comparisonResult.ProtectedFormulaCount}.");
+                ParameterPreviewVM.LoadSessionData(
+                    ActiveManifest,
+                    calcResult,
+                    invResult,
+                    comparisonResult,
+                    _activeInventorSession
+                );
+                ChannelResultsVM.Reset(calcResult.ChannelLocations.Count > 0
+                    ? "Apply Preview ready: review parameters and apply changes to run geometry verification."
+                    : "No channel locations defined in calculator for this model. Geometry validation will be skipped after apply.");
+                SelectedNav = "Parameter Preview";
+                StageStatus = $"Apply Preview ready: {calcResult.DataInputs.Count} inputs, {comparisonResult.TotalRows} parameters, {invResult.AvailableRules.Count} rule(s). Review and click 'Apply Changes'.";
+                DiagnosticsLogger.Instance.Success($"Apply Preview initialized with {invResult.AvailableRules.Count} iLogic rule(s) detected.");
             }
             else
             {
-                StageStatus = $"Phase 3 complete (Inspect Mode): Model inventory verified ({invResult.TotalOccurrencesCount} components, {comparisonResult.MatchedCount} matched, {comparisonResult.DiscrepancyCount} discrepancies).";
-                DiagnosticsLogger.Instance.Success($"Phase 3 complete (Inspect Mode): Model inventory verified with {comparisonResult.DiscrepancyCount} discrepancies out of {comparisonResult.TotalRows} parameters.");
+                // Step 9: Geometry validation across channel groups
+                if (calcResult.ChannelLocations.Count > 0)
+                {
+                    progress?.Report("Extracting CAD hole geometry and validating channel locations...");
+                    double roofH = calcResult.GetRoofHeight();
+                    double unitW = calcResult.GetUnitWidth();
+
+                    var geomResult = await inventorSession.ValidateGeometryAsync(
+                        calcResult.ChannelLocations,
+                        roofHeight: roofH,
+                        unitWidth: unitW,
+                        progress: progress,
+                        cancellationToken: _cts.Token
+                    );
+
+                    ChannelResultsVM.LoadResults(geomResult);
+                    SelectedNav = "Channel Results";
+                    StageStatus = $"Inspect Mode complete: {geomResult.MatchedCount} matched, {geomResult.WarningCount} warnings, {geomResult.FailureCount} failures, {geomResult.MissingCount} missing.";
+                    DiagnosticsLogger.Instance.Success($"Inspect Mode complete: Geometry verified ({geomResult.MatchedCount} matched, {geomResult.FailureCount} failures, {geomResult.MissingCount} missing).");
+                }
+                else
+                {
+                    ChannelResultsVM.Reset("No channel locations defined in calculator for this model. Model inventory and parameter comparison verified.");
+                    SelectedNav = "Model Inventory";
+                    StageStatus = $"Inspect Mode complete: Model inventory verified ({invResult.TotalOccurrencesCount} components, {comparisonResult.MatchedCount} matched, {comparisonResult.DiscrepancyCount} discrepancies).";
+                    DiagnosticsLogger.Instance.Success($"Inspect Mode complete: Model inventory verified with {comparisonResult.DiscrepancyCount} discrepancies out of {comparisonResult.TotalRows} parameters (no channel locations in calculator).");
+                }
             }
         }
         catch (OperationCanceledException)

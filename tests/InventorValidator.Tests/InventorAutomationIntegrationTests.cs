@@ -88,6 +88,21 @@ public class InventorAutomationIntegrationTests
             Assert.True(comparison.TotalRows > 0);
             Assert.True(comparison.SafeToWriteCount >= 0);
 
+            // 4b. Session Reuse & Warm Run Benchmark
+            _output.WriteLine("[4b/5] Testing warm session reuse on active Inventor instance...");
+            var warmSw = Stopwatch.StartNew();
+            var warmResult = await session.StartAndInventoryAsync(
+                manifest.CopiedIamPath,
+                requestedVersion: "Automatic",
+                timeout: TimeSpan.FromSeconds(30),
+                progress: progress
+            );
+            warmSw.Stop();
+            _output.WriteLine($"[WARM RUN] Warm inventory completed in {warmSw.Elapsed.TotalSeconds:F2} seconds (PID {warmResult.ProcessId})");
+            Assert.True(warmSw.Elapsed.TotalSeconds < 30, $"Warm run expected < 30s, took {warmSw.Elapsed.TotalSeconds:F2}s");
+            Assert.Equal(inventoryResult.ProcessId, warmResult.ProcessId);
+            Assert.True(warmResult.TotalOccurrencesCount >= 100);
+
             // 5. Clean teardown verification
             int trackedPid = inventoryResult.ProcessId;
             session.CloseSession();

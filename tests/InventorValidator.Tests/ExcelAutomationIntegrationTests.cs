@@ -52,8 +52,8 @@ public class ExcelAutomationIntegrationTests
             Assert.True(result.DimensionCount > 50, $"Expected > 50 Dimensions, got {result.DimensionCount}");
             Assert.True(result.SuppressionCount >= 95, $"Expected >= 95 Suppression parameters, got {result.SuppressionCount}");
 
-            // Verify Channel Locations and Unification across unit sides
-            Assert.True(result.ChannelLocations.Count >= 20, $"Expected >= 20 raw channel rows, got {result.ChannelLocations.Count}");
+            // Verify Channel Locations and Unification across unit sides (inactive template rows filtered)
+            Assert.True(result.ChannelLocations.Count >= 10 && result.ChannelLocations.Count <= 15, $"Expected 10-15 active/formula-error channel rows (inactive template rows filtered), got {result.ChannelLocations.Count}");
             Assert.Single(result.UnifiedChannels);
             Assert.Equal(1, result.ValidChannelsCount);
             var uChan1 = result.UnifiedChannels[0];
@@ -225,5 +225,95 @@ public class ExcelAutomationIntegrationTests
                 Directory.Delete(tempDir, recursive: true);
             }
         }
+    }
+
+    [Fact]
+    public async Task RecalculateAndParseAsync_WithFanSkidWorkbook_ShouldDetectMultiTableAndExtractParameters()
+    {
+        string? fanSkidPath = GetInventoryFilePath("391_10004_002.xls");
+        if (fanSkidPath == null || !File.Exists(fanSkidPath))
+        {
+            return;
+        }
+
+        string tempDir = Path.Combine(Path.GetTempPath(), $"iv_fanskid_test_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+        string tempCalc = Path.Combine(tempDir, Path.GetFileName(fanSkidPath));
+        File.Copy(fanSkidPath, tempCalc, overwrite: true);
+
+        try
+        {
+            var session = new ExcelAutomationSession();
+            var result = await session.RecalculateAndParseAsync(tempCalc, timeout: TimeSpan.FromSeconds(60));
+
+            Assert.NotNull(result);
+            Assert.Equal(Sheet1Archetype.MultiTableFanSkid, result.DetectedArchetype);
+            Assert.True(result.HoleSchedules.Count > 0, $"Expected hole schedules in fan skid, got {result.HoleSchedules.Count}");
+            Assert.True(result.TotalSheet1Parameters > 0, $"Expected driving parameters in Cols K-M, got {result.TotalSheet1Parameters}");
+            Assert.Contains(result.Sheet1Parameters, p => p.ParameterName.StartsWith("D", StringComparison.OrdinalIgnoreCase));
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                foreach (var f in new DirectoryInfo(tempDir).GetFiles("*", SearchOption.AllDirectories))
+                {
+                    f.Attributes = FileAttributes.Normal;
+                }
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RecalculateAndParseAsync_WithHeaderlessWorkbook_ShouldDetectHeaderlessAndStartAtRow1()
+    {
+        string? headerlessPath = GetInventoryFilePath("391_10006_021.xls");
+        if (headerlessPath == null || !File.Exists(headerlessPath))
+        {
+            return;
+        }
+
+        string tempDir = Path.Combine(Path.GetTempPath(), $"iv_headerless_test_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(tempDir);
+        string tempCalc = Path.Combine(tempDir, Path.GetFileName(headerlessPath));
+        File.Copy(headerlessPath, tempCalc, overwrite: true);
+
+        try
+        {
+            var session = new ExcelAutomationSession();
+            var result = await session.RecalculateAndParseAsync(tempCalc, timeout: TimeSpan.FromSeconds(60));
+
+            Assert.NotNull(result);
+            Assert.Equal(Sheet1Archetype.Headerless, result.DetectedArchetype);
+            Assert.True(result.TotalSheet1Parameters > 50, $"Expected >50 parameters, got {result.TotalSheet1Parameters}");
+            // First parameter in 391_10006_021.xls on Row 1 is Side_BH_to_Shell_Clearance
+            Assert.Contains(result.Sheet1Parameters, p => p.ParameterName.Equals("Side_BH_to_Shell_Clearance", StringComparison.OrdinalIgnoreCase) && p.RowIndex == 1);
+        }
+        finally
+        {
+            if (Directory.Exists(tempDir))
+            {
+                foreach (var f in new DirectoryInfo(tempDir).GetFiles("*", SearchOption.AllDirectories))
+                {
+                    f.Attributes = FileAttributes.Normal;
+                }
+                Directory.Delete(tempDir, recursive: true);
+            }
+        }
+    }
+
+    private static string? GetInventoryFilePath(string fileName)
+    {
+        string direct = Path.Combine(Directory.GetCurrentDirectory(), "Calc_Sheet_Inventory", fileName);
+        if (File.Exists(direct)) return direct;
+
+        string fromBase = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "Calc_Sheet_Inventory", fileName));
+        if (File.Exists(fromBase)) return fromBase;
+
+        string hardcoded = Path.Combine(@"c:\Users\jbrow263\OneDrive - Johnson Controls\Documents\Model Verification\Calc_Sheet_Inventory", fileName);
+        if (File.Exists(hardcoded)) return hardcoded;
+
+        return null;
     }
 }

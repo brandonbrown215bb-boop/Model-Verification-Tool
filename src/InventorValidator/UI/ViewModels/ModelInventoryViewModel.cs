@@ -119,6 +119,33 @@ public class ModelInventoryViewModel : ViewModelBase
         ClearSearchCommand = new RelayCommand(() => SearchText = string.Empty);
     }
 
+    public void Clear()
+    {
+        Inventory = null;
+        Comparison = null;
+
+        ParameterRows.Clear();
+        OccurrenceRows.Clear();
+        FeatureRows.Clear();
+
+        OnPropertyChanged(nameof(AssemblyName));
+        OnPropertyChanged(nameof(InventorVersionInfo));
+        OnPropertyChanged(nameof(ActiveRepresentation));
+        OnPropertyChanged(nameof(HasILogicLOD));
+        OnPropertyChanged(nameof(TotalOccurrences));
+        OnPropertyChanged(nameof(ActiveOccurrences));
+        OnPropertyChanged(nameof(SuppressedOccurrences));
+        OnPropertyChanged(nameof(TotalParameters));
+        OnPropertyChanged(nameof(TotalFeatures));
+        OnPropertyChanged(nameof(MatchedCount));
+        OnPropertyChanged(nameof(DiscrepancyCount));
+        OnPropertyChanged(nameof(SafeToWriteCount));
+        OnPropertyChanged(nameof(ProtectedFormulaCount));
+        OnPropertyChanged(nameof(CanViewInInventor));
+
+        ApplyFilters();
+    }
+
     public void LoadResults(AssemblyInventoryResult inventory, ParameterComparisonResult? comparison = null)
     {
         Inventory = inventory;

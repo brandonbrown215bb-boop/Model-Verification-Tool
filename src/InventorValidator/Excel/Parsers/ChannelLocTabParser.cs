@@ -117,47 +117,70 @@ public static class ChannelLocTabParser
                 }
             }
 
-            ChannelStatus status;
-            string? note = null;
-
+            // Case 1: Formula errors (#REF!, #VALUE!, etc.)
             if (formulaError != null)
             {
-                status = ChannelStatus.SkippedInvalidRow;
-                note = $"Formula error in row ({formulaError})";
-            }
-            else if (!parsedZ.HasValue || parsedZ.Value <= 0.0001)
-            {
-                status = ChannelStatus.SkippedInvalidRow;
-                note = "Zero Z-location / Z-offset (Unused or invalid)";
-            }
-            else if (!parsedQty.HasValue || parsedQty.Value <= 0)
-            {
-                status = ChannelStatus.SkippedInvalidRow;
-                note = "Zero quantity (Unused)";
-            }
-            else if (!parsedOffset.HasValue || !parsedSpacing.HasValue)
-            {
-                status = ChannelStatus.SkippedInvalidRow;
-                note = "Missing required numeric coordinates";
-            }
-            else
-            {
-                status = ChannelStatus.Valid;
+                items.Add(new ChannelLocationItem
+                {
+                    RowIndex = r,
+                    ChannelGroup = currentGroup,
+                    ChannelName = nameStr,
+                    Axis = currentAxis,
+                    Offset = parsedOffset,
+                    Spacing = parsedSpacing,
+                    Quantity = parsedQty,
+                    ZLocation = parsedZ,
+                    ReferencedPart = partNumber,
+                    Status = ChannelStatus.SkippedInvalidRow,
+                    Notes = $"Formula error in row ({formulaError})"
+                });
+                continue;
             }
 
+            // Case 2: Inactive template row: silently filter out
+            bool isZeroOrMissingZ = !parsedZ.HasValue || parsedZ.Value <= 0.0001;
+            bool isZeroOrMissingQty = !parsedQty.HasValue || parsedQty.Value <= 0;
+
+            if (isZeroOrMissingZ || isZeroOrMissingQty)
+            {
+                // Inactive template row (e.g. Qty <= 0 or Z <= 0): silently filter out
+                continue;
+            }
+
+            // Case 3: Active channel missing required offset or spacing
+            if (!parsedOffset.HasValue || !parsedSpacing.HasValue)
+            {
+                items.Add(new ChannelLocationItem
+                {
+                    RowIndex = r,
+                    ChannelGroup = currentGroup,
+                    ChannelName = nameStr,
+                    Axis = currentAxis,
+                    Offset = parsedOffset,
+                    Spacing = parsedSpacing,
+                    Quantity = parsedQty,
+                    ZLocation = parsedZ,
+                    ReferencedPart = partNumber,
+                    Status = ChannelStatus.SkippedInvalidRow,
+                    Notes = "Missing required numeric coordinates (Offset or Spacing)"
+                });
+                continue;
+            }
+
+            // Case 4: Valid active channel
             items.Add(new ChannelLocationItem
             {
                 RowIndex = r,
                 ChannelGroup = currentGroup,
                 ChannelName = nameStr,
                 Axis = currentAxis,
-                Offset = parsedOffset,
-                Spacing = parsedSpacing,
-                Quantity = parsedQty,
-                ZLocation = parsedZ,
+                Offset = parsedOffset!.Value,
+                Spacing = parsedSpacing!.Value,
+                Quantity = parsedQty!.Value,
+                ZLocation = parsedZ!.Value,
                 ReferencedPart = partNumber,
-                Status = status,
-                Notes = note
+                Status = ChannelStatus.Valid,
+                Notes = null
             });
         }
 
@@ -171,13 +194,13 @@ public static class ChannelLocTabParser
             var text = values[r, c]?.ToString()?.Trim() ?? string.Empty;
             if (string.IsNullOrEmpty(text)) continue;
 
-            if (text.Contains("FLOOR CHANNELS", StringComparison.OrdinalIgnoreCase))
+            if (text.Contains("FLOOR CHANNEL", StringComparison.OrdinalIgnoreCase))
                 return "Floor Channels";
-            if (text.Contains("ROOF CHANNELS", StringComparison.OrdinalIgnoreCase))
+            if (text.Contains("ROOF CHANNEL", StringComparison.OrdinalIgnoreCase))
                 return "Roof Channels";
-            if (text.Contains("SOUTH WALL CHANNELS", StringComparison.OrdinalIgnoreCase))
+            if (text.Contains("SOUTH WALL", StringComparison.OrdinalIgnoreCase) || text.Contains("LEFT HAND", StringComparison.OrdinalIgnoreCase))
                 return "South Wall Channels";
-            if (text.Contains("NORTH WALL CHANNELS", StringComparison.OrdinalIgnoreCase))
+            if (text.Contains("NORTH WALL", StringComparison.OrdinalIgnoreCase) || text.Contains("RIGHT HAND", StringComparison.OrdinalIgnoreCase))
                 return "North Wall Channels";
         }
 

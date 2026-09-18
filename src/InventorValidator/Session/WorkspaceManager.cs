@@ -74,6 +74,29 @@ public class WorkspaceManager
                         continue;
 
                     var relativePath = Path.GetRelativePath(sourceDir, filePath);
+
+                    // Skip historical backup directories (OldVersions)
+                    if (relativePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                        .Any(segment => segment.Equals("OldVersions", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    // Skip 2D drawing files not used in 3D model validation (.idw, .dwg)
+                    var ext = fi.Extension;
+                    if (ext.Equals(".idw", StringComparison.OrdinalIgnoreCase) ||
+                        ext.Equals(".dwg", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    // Skip temporary / lock files
+                    var fileName = fi.Name;
+                    if (fileName.StartsWith("~") || ext.Equals(".tmp", StringComparison.OrdinalIgnoreCase) || ext.Equals(".bak", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     var destinationPath = Path.Combine(workspaceDir, relativePath);
 
                     var destSubDir = Path.GetDirectoryName(destinationPath);
@@ -82,7 +105,11 @@ public class WorkspaceManager
                         Directory.CreateDirectory(destSubDir);
                     }
 
-                    progress?.Report($"Copying: {Path.GetFileName(filePath)}");
+                    if (filesCopied % 10 == 0 || filesCopied == 0)
+                    {
+                        progress?.Report($"Copying workspace files ({filesCopied} copied)...");
+                    }
+
                     File.Copy(filePath, destinationPath, overwrite: true);
 
                     // Strip ReadOnly attribute on copied file

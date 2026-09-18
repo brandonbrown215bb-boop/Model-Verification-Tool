@@ -30,7 +30,13 @@ public class RealSampleWorkspaceIntegrationTests
             Assert.Equal(SessionStatus.Ready, manifest.Status);
             Assert.True(Directory.Exists(manifest.WorkspaceDirectory));
             Assert.True(manifest.TotalFilesCopied > 50, $"Expected >50 files, got {manifest.TotalFilesCopied}");
-            Assert.True(manifest.TotalBytesCopied > 50 * 1024 * 1024, $"Expected >50MB, got {manifest.TotalBytesCopied} bytes");
+            Assert.True(manifest.TotalBytesCopied > 35 * 1024 * 1024, $"Expected >35MB, got {manifest.TotalBytesCopied} bytes");
+
+            // Verify OldVersions and .idw drawing files were cleanly excluded
+            var excludedFiles = Directory.GetFiles(manifest.WorkspaceDirectory, "*.*", SearchOption.AllDirectories)
+                .Where(f => f.Contains("OldVersions", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".idw", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+            Assert.Empty(excludedFiles);
 
             // Verify copied IAM exists
             Assert.True(File.Exists(manifest.CopiedIamPath));

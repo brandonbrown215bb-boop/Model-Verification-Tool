@@ -32,6 +32,17 @@ public enum SafeWriteClassification
     NotApplicable
 }
 
+public enum ParameterLinkageClassification
+{
+    LinkedTableParameter,      // Native driving parameter originating from linked Excel spreadsheet
+    ParametricEquation,        // Model or sketch parameter driven by equation referencing a linked parameter
+    DirectModelParameter,      // Model parameter with standalone value
+    SuppressionControl,        // Controls component occurrence suppression via iLogic
+    InformationalOnly,         // Informational calculator output
+    MissingInModel,            // Calculator parameter not found in CAD hierarchy
+    NotApplicable              // Header or non-parameter row
+}
+
 public class ParameterComparisonRow
 {
     public string ExcelParameterName { get; set; } = string.Empty;
@@ -49,6 +60,7 @@ public class ParameterComparisonRow
     public bool? ModelSuppressionState { get; set; } // true = Active (1), false = Suppressed (0)
 
     public MatchClassification MatchType { get; set; } = MatchClassification.NoMatch;
+    public ParameterLinkageClassification LinkageStatus { get; set; } = ParameterLinkageClassification.NotApplicable;
     public SafeWriteClassification WritePolicy { get; set; } = SafeWriteClassification.NotApplicable;
     public ComparisonStatus Status { get; set; } = ComparisonStatus.NotApplicable;
     public string Notes { get; set; } = string.Empty;
@@ -62,6 +74,8 @@ public class ParameterComparisonResult
     public int MatchedCount => Rows.Count(r => r.Status == ComparisonStatus.Match);
     public int DiscrepancyCount => Rows.Count(r => r.Status == ComparisonStatus.Discrepancy);
     public int MissingInModelCount => Rows.Count(r => r.Status == ComparisonStatus.MissingInModel);
+    public int LinkedTableCount => Rows.Count(r => r.LinkageStatus == ParameterLinkageClassification.LinkedTableParameter);
+    public int EquationCount => Rows.Count(r => r.LinkageStatus == ParameterLinkageClassification.ParametricEquation);
     public int SafeToWriteCount => Rows.Count(r => r.WritePolicy == SafeWriteClassification.SafeToWrite);
     public int ProtectedFormulaCount => Rows.Count(r => r.WritePolicy == SafeWriteClassification.ReadOnlyFormula);
 }
